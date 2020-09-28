@@ -1,0 +1,5 @@
+#divDisplayQueryResult table tr { line-height: 1.4 !important }
+#divDisplayQueryResult table th { white-space:nowrap; }
+
+#divDisplayQueryResult table .cls-deposit-payment { padding:0px .5em; }
+#divDisplayQueryResult table span.cls-spn-deposit-payment { padding:0px .5em;vertical-align:top; }

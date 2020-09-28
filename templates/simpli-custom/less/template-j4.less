@@ -1,0 +1,297 @@
+/** 
+ *------------------------------------------------------------------------------
+ * @package       SIMPLI - Free Template for Joomla!
+ *------------------------------------------------------------------------------
+ * @copyright     Copyright (C) 2004-2016 JoomlArt.com. All Rights Reserved.
+ * @license       GNU General Public License version 2 or later; see LICENSE.txt
+ * @authors       JoomlArt
+ *------------------------------------------------------------------------------
+**/
+
+// Boostrap 4
+@import "../../../media/vendor/bootstrap/css/bootstrap.min.css";
+//
+// JUI
+// ---------------------------------------------
+// CSS Reset
+@import "../jui/less/reset.less";
+
+// Core variables and mixins
+@import "../jui/less/mixins.less";
+@import "_mixins.less";  // Extra Useful Mixins in Template
+
+// Grid system and page structure
+// @import "../jui/less/scaffolding.less";
+@import "../jui/less/grid.less";
+@import "../jui/less/layouts.less";
+
+// Base CSS
+// @import "../jui/less/type.less";
+@import "../jui/less/code.less";
+@import "../jui/less/forms.less";
+@import "../jui/less/tables.less";
+
+// Components: common
+// @import "../jui/less/sprites.less";
+@import "../jui/less/dropdowns.less";
+//@import "../jui/less/wells.less";
+@import "../jui/less/component-animations.less";
+@import "../jui/less/close.less";
+
+// Components: Buttons & Alerts
+@import "../jui/less/buttons.less";
+@import "../jui/less/button-groups.less";
+@import "../jui/less/alerts.less"; // Note: alerts share common CSS with buttons and thus have styles in buttons.less
+
+// Components: Nav
+@import "../jui/less/navs.less";
+@import "../jui/less/navbar.less";
+@import "../jui/less/breadcrumbs.less";
+@import "../jui/less/pagination.less";
+// @import "../jui/less/pager.less";
+
+// Components: Popovers
+@import "../jui/less/modals.less";
+@import "../jui/less/tooltip.less";
+@import "../jui/less/popovers.less";
+
+// Components: Misc
+@import "../jui/less/thumbnails.less";
+@import "../jui/less/labels-badges.less";
+@import "../jui/less/progress-bars.less";
+@import "../jui/less/accordion.less";
+@import "../jui/less/carousel.less";
+@import "../jui/less/hero-unit.less";
+
+// Icomoon
+@font-face {
+	font-family: 'IcoMoon';
+	src: url('../jui/fonts/IcoMoon.eot');
+	src: url('../jui/fonts/IcoMoon.eot?#iefix') format('embedded-opentype'),
+	url('../jui/fonts/IcoMoon.woff') format('woff'),
+	url('../jui/fonts/IcoMoon.ttf') format('truetype'),
+	url('../jui/fonts/IcoMoon.svg#IcoMoon') format('svg');
+	font-weight: normal;
+	font-style: normal;
+}
+@import "../jui/less/icomoon.less";
+
+// Utility classes
+@import "../jui/less/utilities.less";
+
+// Responsive Classes
+@import "../jui/less/responsive-utilities.less";
+
+// Phones to portrait tablets and narrow desktops
+@import "../jui/less/responsive-767px-max.less";
+
+// Tablets to regular desktops
+@import "../jui/less/responsive-768px-979px.less";
+
+// Large desktops
+@import "../jui/less/responsive-1200px-min.less";
+
+// Responsive Navbar
+@import "../jui/less/responsive-navbar.less";
+
+// Extended for JUI
+@import "../jui/less/bootstrap-extended.less"; // Has to be last to override when necessary
+// div.modal (instead of .modal)
+@import "../jui/less/modals.joomla.less";
+@import "../jui/less/responsive-767px-max.joomla.less";
+
+
+//
+// External Libraries
+// ---------------------------------------------
+@import "../vendors/font-awesome-4.5.0/css/font-awesome.min.css";
+
+
+//
+// Templates Assets
+// ---------------------------------------------
+@import "_variables.less";
+@import "_core.less";
+@import "_form.less";
+@import "_navigation.less";
+@import "_components.less";
+@import "_modules.less";
+@import "_joomla.less";
+@import "_typo.less";
+@import "_styles.less";
+
+// Compatible style for j4
+
+.container {
+	padding-left: 0;
+	padding-right: 0;
+  @media (min-width: @screen-md-min) and (max-width: @screen-md-max) {
+    max-width: 980px;
+  }
+
+	.row {
+	  @media only screen and (max-width: @screen-xs-max) {
+	    margin-right: 0;
+	  }
+	}
+}
+
+select, textarea, 
+input[type="text"], 
+input[type="password"], 
+input[type="datetime"], 
+input[type="datetime-local"], 
+input[type="date"], 
+input[type="month"], 
+input[type="time"], 
+input[type="week"], 
+input[type="number"], 
+input[type="email"], 
+input[type="url"], 
+input[type="search"], 
+input[type="tel"], 
+input[type="color"], 
+.form-control {
+	height: 40px;
+}
+
+.collapse.show {
+  height: auto;
+}
+
+.form-control {
+  max-width: 240px;
+  background-color: #fefefe; }
+  .form-control.input-xlarge {
+    max-width: 350px; }
+  .form-control.input-xxlarge {
+    max-width: 550px; }
+  .form-control.input-full {
+    max-width: 100%; }
+
+.control-group::after {
+  display: table;
+  clear: both;
+  content: ""; }
+
+form:not(.form-no-margin) .control-group {
+  margin-bottom: 18px; 
+}
+
+form:not(.form-no-margin) .control-group .control-label {
+  float: left;
+  width: auto;
+  padding-top: 5px;
+  padding-right: 5px;
+  text-align: left; 
+}
+form:not(.form-no-margin) .control-group .controls {
+  margin-left: 220px; 
+}
+
+form .form-no-margin .control-group .controls {
+  margin-left: 0; 
+}
+
+form .form-no-margin .control-group .control-label {
+  float: none; 
+}
+
+// Edit modules
+form#modules-form {
+	.row {
+		margin: 0 -15px;
+	}
+}
+
+// switcher
+.js-switcher {
+  position: relative;
+  box-sizing: content-box;
+  display: inline-block;
+  width: 60px;
+  height: 26px;
+  margin-top: 2px;
+  vertical-align: middle;
+  cursor: pointer;
+  user-select: none;
+  background-color: #f9f9f9;
+  background-clip: content-box;
+  border: 1px solid rgba(0, 0, 0, 0.12);
+  border-radius: 0.25rem;
+  box-shadow: 0 0 0 0 #dfdfdf inset;
+  transition: border .4s ease 0s, box-shadow .4s ease 0s; }
+  .js-switcher.active {
+    background-color: #64bd63;
+    border-color: #64bd63;
+    box-shadow: 0 0 0 16px #64bd63 inset;
+    transition: border .4s ease 0s, box-shadow .4s ease 0s, background-color 1.2s ease 0s; }
+  .js-switcher.switcher-danger.active {
+    background-color: #bc6564;
+    border-color: #bc6564;
+    box-shadow: 0 0 0 16px #bc6564 inset; }
+  .js-switcher.switcher-primary.active {
+    background-color: #648fba;
+    border-color: #648fba;
+    box-shadow: 0 0 0 16px #648fba inset; }
+  .js-switcher input {
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 2;
+    width: 50px;
+    height: 26px;
+    padding: 0;
+    margin: 0;
+    cursor: pointer;
+    zoom: 1;
+    filter: alpha(opacity=0);
+    opacity: 0; }
+  .js-switcher .switch {
+    position: absolute;
+    top: 0;
+    width: 30px;
+    height: 26px;
+    background: #fefefe;
+    border-radius: 0.25rem;
+    box-shadow: 0 0 1px rgba(0, 0, 0, 0.1) inset, 0 1px 3px rgba(0, 0, 0, 0.15);
+    transition: left .2s ease 0s; }
+  .js-switcher input:checked ~ .switch {
+    left: 0; }
+  .js-switcher input ~ :checked ~ .switch {
+    left: 30px; }
+  .js-switcher input:checked {
+    z-index: 0; }
+
+.switcher-labels {
+  position: relative;
+  margin-left: 10px; }
+  .switcher-labels span {
+    position: absolute;
+    top: 0;
+    left: 0;
+    color: #aaa;
+    visibility: hidden;
+    opacity: 0;
+    transition: all .2s ease-in-out; }
+    .switcher-labels span.active {
+      visibility: visible;
+      opacity: 1;
+      transition: all .2s ease-in-out; }
+
+// Popover
+.popover.bs-popover-right {
+  h3 {
+    margin: 0;
+  }
+
+  .arrow {
+    margin-left: -10px;
+
+    &:after {
+      top: 1px;
+      left: -11px;
+    }
+  }
+}
+

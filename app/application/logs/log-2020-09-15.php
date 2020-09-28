@@ -1,0 +1,9 @@
+<?php defined('BASEPATH') OR exit('No direct script access allowed'); ?>
+
+ERROR - 2020-09-15 05:44:55 --> Severity: Warning --> Use of undefined constant DEFAULT_TITLE - assumed 'DEFAULT_TITLE' (this will throw an Error in a future version of PHP) D:\#wamp_root\www\polomaker_screen_process\app\application\views\_public\_template_main.php 5
+ERROR - 2020-09-15 05:45:47 --> Severity: Warning --> Use of undefined constant DEFAULT_TITLE - assumed 'DEFAULT_TITLE' (this will throw an Error in a future version of PHP) D:\#wamp_root\www\polomaker_screen_process\app\application\views\_public\_template_main.php 5
+ERROR - 2020-09-15 05:45:51 --> Severity: Warning --> Use of undefined constant DEFAULT_TITLE - assumed 'DEFAULT_TITLE' (this will throw an Error in a future version of PHP) D:\#wamp_root\www\polomaker_screen_process\app\application\views\_public\_template_main.php 5
+ERROR - 2020-09-15 05:46:30 --> Severity: Warning --> Use of undefined constant DEFAULT_TITLE - assumed 'DEFAULT_TITLE' (this will throw an Error in a future version of PHP) D:\#wamp_root\www\polomaker_screen_process\app\application\views\_public\_template_main.php 5
+ERROR - 2020-09-15 07:49:05 --> Severity: Warning --> Use of undefined constant DEFAULT_TITLE - assumed 'DEFAULT_TITLE' (this will throw an Error in a future version of PHP) D:\#wamp_root\www\polomaker_screen_process\app\application\views\_public\_template_main.php 5
+ERROR - 2020-09-15 14:43:16 --> Severity: Warning --> Use of undefined constant DEFAULT_TITLE - assumed 'DEFAULT_TITLE' (this will throw an Error in a future version of PHP) D:\#wamp_root\www\polomaker_screen_process\app\application\views\_public\_template_main.php 5
+ERROR - 2020-09-15 14:43:32 --> Severity: Warning --> Use of undefined constant DEFAULT_TITLE - assumed 'DEFAULT_TITLE' (this will throw an Error in a future version of PHP) D:\#wamp_root\www\polomaker_screen_process\app\application\views\_public\_template_main.php 5

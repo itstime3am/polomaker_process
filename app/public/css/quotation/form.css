@@ -1,0 +1,47 @@
+table.cls-tbl-list td select.cls-sel-change-status { width:180px; }
+
+#tabs {width:100%;height:100%;}
+
+div.div-sum-title {width:40%;text-align:right;display:inline-block;}
+div.div-sum-value {width:60%;text-align:right;display:inline-block;}
+span.spn-sum-value {width:8em;display:inline-block;text-align:right;padding-right:.5em;margin-right:.5em;border-radius:4px;border:1px solid red;height:1.8em;vertical-align:middle;}
+
+#divDetailTabs {width:100%;height:100%;overflow-y:scroll;}
+.cls-detail-panel {}
+.cls-detail-panel table {}
+.cls-detail-panel table th, .cls-detail-panel table td { line-height:20px;padding:0; }
+.cls-detail-panel table .frm-edit-row { padding:0;margin:0; }
+/*.cls-detail-panel table.cls-tbl-edit .frm-edit-row-group span.group-title { padding:0;font-size:14px;font-weight:200; }*/
+.cls-detail-panel table table-title { font-size:12px;font-weight:200; }
+
+.cls-button-container {width:100%;text-align: center;padding: 1em 0;}
+
+.progress { position:relative;width:98%;border:1px solid #ddd;padding:1px;border-radius:3px;}
+.bar { background-color: #B4F5B4; width:0%; height:20px; border-radius: 3px; }
+.percent { position:absolute; display:inline-block; top:3px; left:48%; }
+
+.frm-edit-row-value .ui-button-text {margin:0px;padding:0px;}
+
+table.cls-tbl-edit td .frm-edit-row-value.display-upload {display:inline-block;cursor:pointer;background-repeat:no-repeat;text-align:center;margin:0;padding:0;}
+table.cls-tbl-edit td .frm-edit-row-value.display-upload input[type="file"] {display:block;width:90%;margin:0;padding:0;opacity:0;}
+
+table.cls-tbl-edit td .frm-edit-row-value.display-upload div.form-edit-row-title {display:block;margin:0;}
+table.cls-tbl-edit td .frm-edit-row-value.display-upload span.spn-image-select {display:block;margin:0;}
+
+div.display-upload.disp-upload-main {height:360px;width:460px;max-height:360px;max-width:460px;background-size:auto 460px;-o-background-size:auto 460px;-webkit-background-size:auto 460px;-moz-background-size:auto 460px;}
+div.display-upload.disp-upload-sub {height:200px;width:200px;max-height:200px;max-width:200px;background-size:auto 200px;-o-background-size:auto 200px;-webkit-background-size:auto 200px;-moz-background-size:auto 200px;}
+
+.hidden > * {display:none !important;}
+
+.cls-quotation-row-control-panel img { margin: 0 1px !important;cursor:pointer !important; }
+
+.cls-percent-na { font-weight:bold;color:gray; }
+.cls-percent-not-ready { font-weight:bold;color:salmon; }
+.cls-percent-ready { font-weight:bold;color:green; }
+
+#div_staus_remark span.cls-label { display:block;font-size:1.2em;font-weight:600; }
+
+.cls-quotation-status {}
+.cls-qs-with-remark {background:url(../../images/icons/24/chat-bubble-o.png) no-repeat right;cursor:pointer;background-size:contain;display:inline;padding:0px 18px;}
+.cls-qs-rowid-90 {font-weight:bold;color:green;}
+

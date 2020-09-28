@@ -1,0 +1,7 @@
+tr.cls-tr-delivery td { border-bottom:1px dashed red;color:blue;font-weight:bold; }
+tr.cls-tr-delivery.odd td { background-color:#a356602e; }
+tr.cls-tr-delivery.even td { background-color:#d236455e; }
+.cls-link-view-delivery { margin-left:1em; }
+.cls-link-view-delivery img { vertical-align:top; }
+
+.cls-empty-qty-detail { font-weight:bold;color: lightgray; }

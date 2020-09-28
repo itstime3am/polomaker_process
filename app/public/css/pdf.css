@@ -1,0 +1,156 @@
+body {
+    margin:0;
+    padding:0;
+    background-color:#FAFAFA;
+    font:12px "Tahoma";
+}
+* {
+    box-sizing:border-box;
+    -moz-box-sizing:border-box;
+}
+
+/* A4 = 21 x 29.5 cm. but set left margin pdf 1cm right margin .5 cm. */
+.page {
+    width:19.5cm;
+    min-height:28cm;
+    /*padding: 1cm 0.5cm;*/
+    margin:0.5cm auto;
+    /*border:1px solid black;
+    border-radius:5px;*/
+    background:white;
+    /*box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);*/
+}
+
+.pdf-header {width:100%;text-align:center;font-size:14px;font-weight:bold;border:1px solid black;border-top-left-radius:5px;border-top-right-radius:5px;height:1cm;line-height:1cm;}
+.pdf-row {clear:both;width:100%;display:block;height:0.7cm;position:relative;padding-right:0.2cm;border-left:1px solid black;border-right:1px solid black;}
+.pdf-row div {display:block;float:left;vertical-align:middle;line-height:0.7cm;height:0.7cm;}
+.pdf-label {text-align:left;padding-left:0.2cm;}
+.pdf-title {text-align:right;padding-right:0.2cm;}
+.pdf-value {background:url('../images/background_underline.png') repeat-x;background-position:0 80%;text-indent:0.1cm;}
+.pdf-checkbox { margin-left:0.2cm;margin-right:0px;width:0.6cm;padding-top:0;}
+.pdf-checkbox img {}
+.pdf-text-center {text-align:center;}
+.pdf-text-right {text-align:right;}
+.pdf-text-left {text-align:left;}
+.pdf-border-left {border-left:1px solid black;}
+.pdf-border-right {border-right:1px solid black;}
+.pdf-border-bottom {border-bottom:1px solid black;}
+.pdf-user-input {background:url('../images/background_underline.png') repeat-x;background-position:0 80%;text-indent:0.1cm;}
+
+.pdf-underline {border-bottom:1px solid black;}
+
+.pdf-tag-separator {height:0.3cm;background:url('../images/background_dashed.png') repeat-x center;margin:0 auto;width:98%;}
+
+.pdf-footer {width:98%;text-align:right;font-size:14px;font-weight:bold;padding-right:2%;margin-top:0.2cm;height:0.8cm;line-height:0.8cm;}
+
+.line-row {display:block;position:relative;}
+.line-row div {display:block;float:left;vertical-align:middle;}
+
+.bl {border-left:1px solid black;}
+.br {border-right:1px solid black;}
+
+.clr-bth {clear:both;}
+
+.f-none {float:none;}
+.f-left {float:left;}
+.f-right {float:right;}
+
+.t-bold {font-weight:bold;}
+
+.bc-gray {}
+
+.w-100p {width:100%;}
+.w-0_5 {width:0.5cm;}
+.w-0_6 {width:0.6cm;}
+.w-0_7 {width:0.7cm;}
+.w-0_8 {width:0.8cm;}
+.w-0_9 {width:0.9cm;}
+.w-1 {width:1cm;}
+.w-1_1 {width:1.1cm;}
+.w-1_2 {width:1.2cm;}
+.w-1_3 {width:1.3cm;}
+.w-1_4 {width:1.4cm;}
+.w-1_5 {width:1.5cm;}
+.w-1_6 {width:1.6cm;}
+.w-1_7 {width:1.7cm;}
+.w-1_8 {width:1.8cm;}
+.w-2 {width:2cm;}
+.w-2_1 {width:2.1cm;}
+.w-2_2 {width:2.2cm;}
+.w-2_3 {width:2.3cm;}
+.w-2_4 {width:2.4cm;}
+.w-2_5 {width:2.5cm;}
+.w-2_7 {width:2.7cm;}
+.w-2_8 {width:2.8cm;}
+.w-3 {width:3cm;}
+.w-3_2 {width:3.2cm;}
+.w-3_3 {width:3.3cm;}
+.w-3_4 {width:3.4cm;}
+.w-3_5 {width:3.5cm;}
+.w-3_6 {width:3.6cm;}
+.w-3_8 {width:3.8cm;}
+.w-4 {width:4cm;}
+.w-4_2 {width:4.2cm;}
+.w-4_3 {width:4.3cm;}
+.w-4_5 {width:4.5cm;}
+.w-4_6 {width:4.6cm;}
+.w-4_7 {width:4.7cm;}
+.w-5 {width:5cm;}
+.w-5_1 {width:5.1cm;}
+.w-5_5 {width:5.5cm;}
+.w-5_6 {width:5.6cm;}
+.w-5_8 {width:5.8cm;}
+.w-6 {width:6cm;}
+.w-6_5 {width:6.5cm;}
+.w-7 {width:7cm;}
+.w-7_5 {width:7.5cm;}
+.w-8 {width:8cm;}
+.w-9 {width:9cm;}
+.w-9_2 {width:9.2cm;}
+.w-9_5 {width:9.5cm;}
+.w-10 {width:10cm;}
+.w-10_1 {width:10.1cm;}
+.w-10_2 {width:10.2cm;}
+.w-10_3 {width:10.3cm;}
+.w-11 {width:11cm;}
+.w-11_1 {width:11.1cm;}
+.w-11_3 {width:11.3cm;}
+.w-11_6 {width:11.6cm;}
+.w-12 {width:12cm;}
+.w-12_1 {width:12.1cm;}
+.w-12_2 {width:12.2cm;}
+.w-12_5 {width:12.5cm;}
+.w-12_6 {width:12.6cm;}
+.w-15 {width:15cm;}
+.w-all {width:auto;}
+
+.h-0_5 {height:0.5cm;}
+.h-1 {height:1cm;}
+.h-4 {height:4cm;}
+.h-6 {height:6cm;}
+
+.ml-0_02 {margin-left:0.02cm;}
+.ml-0_1 {margin-left:0.1cm;}
+.ml-0_2 {margin-left:0.2cm;}
+.ml-0_5 {margin-left:0.5cm;}
+.ml-0_8 {margin-left:0.8cm;}
+.ml-1_5 {margin-left:1.5cm;}
+.ml-1_7 {margin-left:1.7cm;}
+.ml-2 {margin-left:2cm;}
+.ml-6_3 {margin-left:6.3cm;}
+.ml-6_4 {margin-left:6.4cm;}
+.ml-6_5 {margin-left:6.5cm;}
+.ml-8 {margin-left:8cm;}
+
+.mb-0_1 {margin-bottom:0.1cm;}
+
+.pl-0_2 {padding-left:0.2cm;}
+.pl-1 {padding-left:1cm;}
+.pl-6_2 {padding-left:6.2cm;}
+.pl-6_4 {padding-left:6.4cm;}
+
+.pr-0 {padding-right:0;}
+.pr-0_2 {padding-right:0.2cm;}
+
+.pb-0_05 {padding-bottom:0.05cm;}
+.pb-0_1 {padding-bottom:0.1cm;}

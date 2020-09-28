@@ -1,0 +1,28 @@
+table.cls-tbl-deposit-payment { width:98%;margin:0 auto;/*border-collapse:collapse;*/ }
+
+table.cls-tbl-deposit-payment thead th { padding:2px;padding-top:8px;border-bottom:2px solid white;font-size:1.2em;font-weight:600;color:#039;background:#b9c9fe; }
+table.cls-tbl-deposit-payment thead th:first-child { border-top-left-radius:6px; }
+table.cls-tbl-deposit-payment thead th:last-child { border-top-right-radius:6px; }
+
+table.cls-tbl-deposit-payment tbody td { padding:1px 1em;font-size:1em;border-top:1px solid #fff;color:#669;background:#e8edff; }
+table.cls-tbl-deposit-payment tbody tr td:first-child { text-align:center; }
+table.cls-tbl-deposit-payment tbody tr td:nth-child(2) { text-align:center; }
+table.cls-tbl-deposit-payment tbody tr td:nth-child(3) { text-align:right; }
+
+table.cls-tbl-deposit-payment tbody td input { font-weight:normal;font-size:12px;color:#039;width:70%;border-top-right-radius:0px;border-bottom-right-radius:0px;padding:2px 0px 1.5px 5px;vertical-align:top; }
+
+table.cls-tbl-deposit-payment tfoot td { vertical-align:top;text-align:center;padding:2px;font-size:1.2em;color:#039;background:#b9c9fe; }
+table.cls-tbl-deposit-payment tfoot td:first-child { border-bottom-left-radius:6px; }
+table.cls-tbl-deposit-payment tfoot td:last-child { border-bottom-right-radius:6px; }
+
+table.cls-tbl-deposit-payment tfoot td input, table.cls-tbl-deposit-payment tfoot td textarea { padding-left:5px;margin-left:0px;border-radius:4px;opacity:.8;filter:Alpha(Opacity=80);border:1px solid #dddddd;background:#f2f5f7 50% top repeat-x;color:#362b36; }
+table.cls-tbl-deposit-payment tfoot td input.hasDatepicker { text-align:center !important;margin-right:.5em; }
+
+table.cls-tbl-deposit-payment tfoot tr#tr_edit_deposit_payment td.control-button { min-width:40px; }
+
+button#btnDepositPaymentDialog { font-size:.8em;margin-right:1em; }
+
+.ui-dialog-titlebar-close { visibility: inherit !important; }
+
+.cls-payment-approved { padding:0 1em 0 .5em;font-weight:bold;color:green; }
+.cls-payment-rejected { padding:0 1em 0 .5em;font-weight:bold;color:salmon; }

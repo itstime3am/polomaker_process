@@ -1,0 +1,15 @@
+#div_summary_panel {width:100%;margin-top:70px;}
+#tbl_summary_panel {width:100%;}
+/*#div_summay_panel tbody tr:hover td {background:#e8edff;}*/
+#tbl_summary_panel th {width:100%;text-align:center;font-size:1.2em;font-weight:bold;text-decoration:underline;}
+
+#div_summary_panel .form-edit-elem-container {width:100%;display:block;box-sizing:border-box;margin:0px auto;}
+#div_summary_panel .frm-edit-row-group {width:100%;display:block;box-sizing:border-box;border:1px solid white;padding:2px;margin:2px;}
+#div_summary_panel .frm-edit-row-group .group-title {font-weight:bold;font-size:14px;display:block;width:90%;text-align:start;padding:5px 0px;margin-left:15px;}
+#div_summary_panel .frm-edit-row {display:inline-flex;width:100%;margin:5px auto;}
+#div_summary_panel .frm-edit-row-title {text-align:right;margin-right:5px;display:inline;}
+#div_summary_panel .frm-edit-row-value {text-align:left;margin-left:10px;display:inline;}
+#div_summary_panel .frm-edit-row-singleset {margin-left:10px;margin-right:5px;display:inline;}
+#div_summary_panel .frm-edit-row-value span.cls-summary-value {width:95%;display:block;height:1.6em;border-radius:4px;border:1px solid gray;background-color:#dddddd;text-align:right;margin-right:5px;padding-right:.5em;}
+
+#divDisplayQueryResult table.dataTable {font-size:xx-small;}

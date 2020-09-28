@@ -1,0 +1,8 @@
+.cls-div-sub-list {position:relative;top:25px;height:auto;width:auto;}
+.cls-div-sub-list table th {font-weight:bold;}
+.cls-div-sub-list table td.center {text-align: center;}
+.cls-div-sub-list table td.right {text-align: right;}
+.cls-div-sub-list table td.apply {font-weight:bold;color:green;font-size:9px;}
+.cls-div-sub-list table td img {cursor:pointer;}
+
+.cls-tbl-list {border-collapse:collapse;}
