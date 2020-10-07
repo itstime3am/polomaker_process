@@ -31,7 +31,7 @@ $db['joomla'] = array(
 	'username' => 'postgres',
 	'password' => 'admin',
 	'dbdriver' => 'postgre',
-	'database' => 'polomaker_joomla',
+	'database' => 'polomaker_manu_joomla',
 	'dbprefix' => 'jo392_', // 'public.jo392_'
 	'pconnect' => FALSE,
 	'db_debug' => (ENVIRONMENT !== 'production'),

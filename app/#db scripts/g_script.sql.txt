@@ -1,0 +1,7 @@
+CREATE SERVER polomaker_manu_joomla FOREIGN DATA WRAPPER postgres_fdw OPTIONS (host 'localhost', dbname 'polomaker_manu_joomla', port '5432', updatable 'false');
+
+CREATE USER MAPPING FOR CURRENT_USER SERVER polomaker_manu_joomla OPTIONS( user 'postgres', password 'admin' );
+
+create schema polomaker_manu_joomla
+
+import foreign schema public from server polomaker_manu_joomla into polomaker_manu_joomla

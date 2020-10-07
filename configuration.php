@@ -16,7 +16,7 @@ class JConfig {
 	public $host = 'localhost';
 	public $user = 'postgres';
 	public $password = 'admin';
-	public $db = 'polomaker_joomla';
+	public $db = 'polomaker_manu_joomla';
 	public $dbprefix = 'jo392_';
 	public $live_site = '';
 	public $secret = '8Kbhbvnz8Upp2UXd';

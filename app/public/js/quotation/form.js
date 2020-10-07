@@ -17,15 +17,14 @@ $(function() {
 		}
 		, buttons: {
 			'Commit': function() {
-				var _rowid = $(this).attr('qo_rowid') || false;
-				var _code = $(this).attr('qo_code') || false;
+				var _rowid = $(this).attr('ps_rowid') || false;
+				var _code = $(this).attr('ps_code') || false;
 				var _curr_status = $(this).attr('curr_status_text') || false;
 				var _status_rowid = $(this).attr('status_rowid') || false;
 				var _status_text = $(this).attr('status_text') || false;
 				var _remark = getValue($('#sel-status_remark'), '');
 				_remark += ' ' + getValue($('#txa-status_remark'), '');
 				_remark = _remark.trim();
-				
 				doClearVldrErrorElement($('#sel-status_remark'));
 				doClearVldrErrorElement($('#txa-status_remark'));
 				if (_remark == '') {
@@ -68,17 +67,20 @@ $(function() {
 	//-- Validation
 	//++ ChangeStatus
 	$('body').on('change', '#tblSearchResult .cls-sel-change-status', function() {
-		var _rowid = $(this).attr('qo_rowid') || -1;
-		var _code = $(this).attr('qo_code') || false;
+		var _rowid = $(this).attr('ps_rowid') || -1;
+		var _code = $(this).attr('ps_code') || false;
+		var _order_rowid = $(this).attr('order_rowid') || -1;
+		var _type_id = $(this).attr('type_id') || -1;
 		var _curr_status_text = $(this).attr('curr_status_text') || false;
 		var _selOpt = $('option:selected', this);
 		var _selText = _selOpt.attr('name') || false;
 		var _status_rowid = (_selOpt.length > 0) ? _selOpt.val() : -1;
 		var _status_text = (_selOpt.length > 0) ? _selOpt.html() : '';
-
 		var _str = 'id:' + _rowid;
 		if (_code) _str = 'เลขที่ \"' + _code + '\"';
-		if ((_rowid > 0) && (_status_rowid > 0)) {
+		if(_rowid < 0) _rowid = '0';
+		if ((_rowid >= 0) && (_status_rowid > 0)) {
+			console.log(_rowid);
 			// 100:CMP, 180:CNL, 200:CLO
 			if ((_status_rowid > 100) && (_status_rowid < 200)) {
 				$('#div_status_remark').attr('qo_rowid', _rowid).attr('qo_code', _code)
@@ -86,7 +88,13 @@ $(function() {
 					.attr('status_rowid', _status_rowid).attr('status_text', _status_text);
 				_DLG_STATUS_REMARK.dialog('option', 'title', 'ใบเสนอราคา' + _str + ' เปลี่ยนสถานะ จาก \"' + _curr_status_text + '\" เป็น \"' + _selText + '\"').dialog( "open" );
 			} else {
-				if (confirm('กรุณายืนยันการเปลี่ยนสถานะของใบเสนอราคา ' + _str + ' เป็นสถานะ "' + _status_text + '"')) __doChangeQuotationStatus(_rowid, _status_rowid);
+				if (confirm('กรุณายืนยันการเปลี่ยนสถานะของใบเสนอราคา ' + _str + ' เป็นสถานะ "' + _status_text + '"')){
+					if (_rowid == 0){
+						__doChangeQuotationStatus(_rowid, _status_rowid, _order_rowid, _type_id)
+					}else{
+						__doChangeQuotationStatus(_rowid, _status_rowid)
+					}
+				};
 			}
 		}
 		$(this).val($.data(this, 'current'));
@@ -786,21 +794,27 @@ function _doCreateNew(customer_rowid, customer_name) {
 	$('#hdn-customer_rowid', _frm).val(_cus_rowid);
 }
 
-function __doChangeQuotationStatus(rowid, status_rowid, strStatusRemark, fncOnSuccess) {
+function __doChangeQuotationStatus(rowid, status_rowid, order_rowid, type_id, strStatusRemark, fncOnSuccess) {
 	var _index = 0;
 	var _rowid = rowid || false;
 	var _status_rowid = status_rowid || false;
 	var _status_remark = strStatusRemark || false;
+	var _order_rowid = order_rowid || false;
+	var _type_id = type_id || false;
 	if (! (_rowid && _status_rowid)) {
 		alert('Invalid parameters to change quotation status ( rowid = ' + rowid + ', status_rowid = ' + status_rowid + ' )');
 		return false;
 	}
+	
 	var _json = {"rowid": _rowid, "status_rowid": _status_rowid};
 	if (_status_remark) _json["status_remark"] = _status_remark;
+	if (_order_rowid) _json["order_rowid"] = _order_rowid;
+	if (_type_id) _json["type_id"] = _type_id;
+	console.log(_json)
 	_str = JSON.stringify(_json);
 	$.ajax({
 		type:"POST",
-		url:"./quotation/change_status_by_id",
+		url:"./Process_screening_order/change_status_by_id",
 		contentType:"application/json;charset=utf-8",
 		dataType:"json",
 		data:_str,
@@ -883,23 +897,27 @@ function fnc__DDT_Row_RenderPercentPayment(data, type, full) {
 }
 
 function fnc__DDT_Row_RenderAvailStatus(data, type, full) {
+	console.log(full);
 	var _elPanel = $('<div>');
-	var _qo_rowid = full['rowid'] || -1;
-	var _qo_code = full['qo_number'] || false;
+	var _qo_rowid = full['prod_id'] || -1;
+	var _qo_code = full['prod_id'] || false;
+	var _qo_order_rowid = full['order_rowid'] || -1;
+	var _qo_type_id = full['type_id'] || -1;
 	var _currStatusName = full['disp_status'] || false;
-	if (_qo_rowid < 1) return '';
-	
-	var _elSel = $('<select>').attr('qo_rowid', _qo_rowid)
+	// if (_qo_rowid < 1) return '';
+	var _elSel = $('<select>').attr('ps_rowid', _qo_rowid)
+		.attr('order_rowid', _qo_order_rowid)
+		.attr('type_id', _qo_type_id)
 		.addClass('cls-sel-change-status')
 		.append($('<option>').html('--'))
 		.appendTo(_elPanel);
-
 	var _arrStt = [];
 	if ('arr_avail_status' in full) {
 		_arrStt = full['arr_avail_status'];
 		if (typeof _arrStt == 'string') _arrStt = JSON.parse(_arrStt);
+		if (_arrStt == '')_arrStt = ["s1"];
 	}
-	if (_qo_code) _elSel.attr("qo_code", _qo_code);
+	if (_qo_code) _elSel.attr("ps_code", _qo_code);
 	if (_currStatusName) _elSel.attr("curr_status_text", _currStatusName);
 	if (_arrStt.length > 0) {
 		if ($.isArray(_ARR_QO_STATUS)) {
@@ -1022,14 +1040,13 @@ function fnc__DDT_Row_RenderDraftDetailOrder(data, type, full) {
 }
 
 function fnc__DDT_Row_RenderStatus(data, type, full) {
-	var _dispText = (full['disp_status'] || '').trim();
-	var _status_rowid = full['status_rowid'] || -1;
+	var _dispText = (full['disp_status'] || 'สร้าง').trim();
+	var _status_rowid = full['prods_rowid'] || 0;
 	var _strRemark = (full['status_remark'] || '').trim();
-	
 	var _elPanel = $('<div>');
 	var _div = $('<div>').html(_dispText)
-		.addClass('cls-quotation-status')
-		.addClass('cls-qs-rowid-' + _status_rowid)
+		.addClass('cls-manu-status')
+		.addClass('cls-ms-rowid-' + _status_rowid)
 		.appendTo(_elPanel)
 	;
 	if (_strRemark.length > 0) {

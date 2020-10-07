@@ -87,7 +87,26 @@ SCRPT
 		/*++ dummy field, use it value to show span on panel (just add to array keep value) */
 		$this->_setController("type_id", "", NULL);
 		$this->_setController("order_rowid", "", NULL);
+		$this->_setController("rowid", "", NULL);
+		$this->_setController("disp_status", "", NULL);
+		$this->_setController("prod_id", "", NULL);
+		$this->_setController("prods_rowid", "", NULL);
+		$this->_setController("arr_avail_status", "", array());
+		$this->_setController("arr_avail_action", "", array());
 		/*-- dummy field, use it value to show span on panel (just add to array keep value) */
+
+		$_custom_columns = array( 
+			array(
+				"column" => <<<CCLMS
+{ "sTitle":"สถานะ","width":"100","sClass":"center","mData":'rowid',"mRender":function(data,type,full) { return fnc__DDT_Row_RenderStatus(data, type, full); }, "bSortable": true }
+CCLMS
+				, "order" => 8
+			),
+			array(
+			"column" => <<<CCLMS
+{ "sTitle":"แก้ไขสถานะ","width":"180","sClass":"center","mData":'rowid',"mRender":function(data,type,full) { return fnc__DDT_Row_RenderAvailStatus(data, type, full); }, "bSortable": false }
+CCLMS
+			, "order" => 9));
 
 /*
 		$_custom_columns = array(
@@ -137,7 +156,7 @@ CCLMS
 			'list_editable' => FALSE,
 			'list_deleteable' => FALSE,
 			'dataview_fields' => $this->_arrDataViewFields
-			//,'custom_columns' => $_custom_columns
+			,'custom_columns' => $_custom_columns
 			//, 'jqDataTable' => '1.10.11'
 		);		
 		//$template['edit_template'] = $this->_getEditTemplate();
@@ -148,7 +167,7 @@ CCLMS
 		$this->add_js('public/js/quotation/detail.js');
 		//$this->add_js('public/js/quotation/payment.js');
 				
-		$qo_status = $this->mt->list_where('quotation_status', 'is_cancel=0', NULL, 'm_');
+		$qo_status = $this->mt->list_where('manu_screen_status', 'is_cancel=0', NULL, 'm_');
 		$this->add_js("var _ARR_QO_STATUS = " . json_encode($qo_status) . ";", 'custom');
 
 		$this->_DISABLE_ON_LOAD_SEARCH = True;
@@ -465,14 +484,20 @@ TMP;
 		$this->load->model($this->modelName, 'm');
 		$json_input_data = json_decode(trim(file_get_contents('php://input')), true); //get json
 		$_arrData = (isset($json_input_data))?$json_input_data:$this->input->post(); //or post data submit
+	
 		if (isset($_arrData) && ($_arrData != FALSE)) {
 			if (! isset($_arrData['rowid'])) $strError .= '"rowid" not found,';
 			if (! isset($_arrData['status_rowid'])) $strError .= '"status_rowid" not found,';
 			$_remark = FALSE;
 			if (isset($_arrData['status_remark']) && (!(empty($_arrData['status_remark'])))) $_remark = $_arrData['status_remark'];
 			if ($strError == '') {
-				$this->m->change_status_by_id($_arrData['rowid'], $_arrData['status_rowid'], $_remark);
-				$strError = $this->m->error_message;
+				if (isset($_arrData['order_rowid']) && isset($_arrData['type_id'])){
+					$this->m->change_status_by_id($_arrData['rowid'], $_arrData['status_rowid'], $_remark, $_arrData['order_rowid'], $_arrData['type_id']);
+					$strError = $this->m->error_message;
+				}else{
+					$this->m->change_status_by_id($_arrData['rowid'], $_arrData['status_rowid'],  $_remark, '', '');
+					$strError = $this->m->error_message;
+				}
 			}
 		} else {
 			$strError = 'Invalid parameters passed ( None )';
