@@ -21,9 +21,14 @@ class Process_screening_order extends MY_Ctrl_crud {
 			'public/css/jquery/fileupload/fileupload.css',
 			//'public/css/order/form.css',
 			//'public/css/order/_detail_premade.css',
-			'public/css/quotation/form.css'
+			'public/css/quotation/form.css',
+			array('a.DTTT_button_commit_page span { background: url(public/images/ok-grey.png) no-repeat bottom right;display: inline-block;height: 24px;line-height: 24px;padding-right: 30px; }', 'custom'),
+			array('a.DTTT_button_commit_page:hover span { background: url(public/images/ok-green.png) no-repeat center right; }', 'custom')
 		));
+
+		$_allowEdit = "true";
 		$this->add_js(array(
+			array("var _ALLOW_EDIT = " . $_allowEdit . ";", 'custom_init'),
 			'public/js/jquery/1.11.0/jquery.js',
 			'public/js/jquery/ui/1.10.4/jquery-ui.min.js',
 			'public/js/jquery/ui/1.10.3/jquery-ui-autocomplete-combobox.js',
@@ -47,6 +52,7 @@ class Process_screening_order extends MY_Ctrl_crud {
 			'public/js/jquery/dataTable/extensions/type-detection/moment_2.8.4.min.js',
 			'public/js/jquery/dataTable/extensions/type-detection/datetime-moment.js',
 			'public/js/jquery/dataTable/extensions/type-detection/numeric-comma.js',
+			'public/js/jquery/editable/1.7.1/jquery.editable.min.js',
 			'public/js/jquery/ui/timepicker/1.6.1/jquery-ui-timepicker-addon.min.js',
 			'public/js/jquery/ui/timepicker/1.6.1/jquery-ui-sliderAccess.js',
 			'public/js/jquery/fileupload/load-image.min.js',
@@ -56,10 +62,10 @@ class Process_screening_order extends MY_Ctrl_crud {
 			'public/js/jquery/fileupload/jquery.fileupload-process.js',
 			'public/js/jquery/fileupload/jquery.fileupload-image.js',
 			'public/js/jquery/fileupload/jquery.form.js',
-			'public/js/_public/_fmg_controller.js'
-			, 'public/js/jsGlobal.js'
-			, 'public/js/jsUtilities.js'
-			, 'public/js/jsGlobalConstants.js'
+			'public/js/_public/_fmg_controller.js', 
+			'public/js/jsGlobal.js', 
+			'public/js/jsUtilities.js', 
+			'public/js/jsGlobalConstants.js'
 			, array(<<<SCRPT
 		$.fn.dataTable.moment( 'YYYY/MM/DD', moment.locale('en') );
 		$.fn.dataTable.moment( 'DD/MM/YYYY', moment.locale('en') );
@@ -76,21 +82,32 @@ SCRPT
 		$this->_prepareControlsDefault();
 
 		//++ set special attributes		
-		$this->_setController("disp_type", "หัวข้อ", NULL, array("selectable"=>TRUE,"default"=>TRUE,"class"=>"center","order"=>1));
-		$this->_setController("disp_order", "จากใบงาน", NULL, array("selectable"=>TRUE,"default"=>TRUE,"class"=>"center","order"=>2));
-		$this->_setController("position", "ตำแหน่ง", NULL, array("selectable"=>TRUE,"default"=>FALSE,"class"=>"center","order"=>4));
-		$this->_setController("job_hist", "ลักษณะงาน", NULL, array("selectable"=>TRUE,"default"=>TRUE,"class"=>"center","order"=>5));
-		$this->_setController("detail", "รายละเอียด", NULL, array("selectable"=>TRUE,"default"=>TRUE,"order"=>6));
-		$this->_setController("size", "ขนาด", NULL, array("selectable"=>TRUE,"default"=>TRUE,"class"=>"center","order"=>7));
+		$this->_setController("job_number", "เลขที่งาน", NULL, array("selectable"=>TRUE,"default"=>TRUE,"class"=>"center","order"=>1));
+		$this->_setController("customer", "ลูกค้า", NULL, array("selectable"=>TRUE,"default"=>TRUE,"class"=>"center","order"=>2));
+		// $this->_setController("fabric_date", "วันที่รับผ้า", NULL, array("selectable"=>TRUE,"default"=>FALSE,"class"=>"center","order"=>5));
+		$this->_setController("fabric_date", "วันที่รับผ้า", NULL, array("selectable"=>TRUE,"default"=>TRUE,"class"=>"center","order"=>5));
+		$this->_setController("disp_order", "ประเภทสินค้า", NULL, array("selectable"=>TRUE,"default"=>TRUE,"class"=>"center","order"=>6));
+		$this->_setController("pattern", "แบบเสื้อ", NULL, array("selectable"=>TRUE,"default"=>TRUE,"order"=>7));
+		$this->_setController("position", "ตำแหน่ง", NULL, array("selectable"=>TRUE,"default"=>TRUE,"class"=>"center position","order"=>8));
+		$this->_setController("disp_screen_type", "ประเภท", NULL, array("selectable"=>TRUE,"default"=>TRUE,"class"=>"edit center screen_type","order"=>9));
+		// $this->_setController("detail", "รายละเอียด", NULL, array("selectable"=>TRUE,"default"=>TRUE,"class"=>"center","order"=>9));
+		$this->_setController("width", "กว้าง", NULL, array("selectable"=>TRUE,"default"=>TRUE,"class"=>"edit center width","width"=>"60","order"=>11));
+		$this->_setController("high", "สูง", NULL, array("selectable"=>TRUE,"default"=>TRUE,"class"=>"edit center high","width"=>"60","order"=>12));
+		$this->_setController("fabric", "ชนิดผ้า", NULL, array("selectable"=>TRUE,"default"=>TRUE,"class"=>"center","order"=>13));
+		$this->_setController("qty", "จำนวน", NULL, array("selectable"=>TRUE,"default"=>TRUE,"class"=>"center","order"=>14));
+		$this->_setController("block_date", "วันที่ตีบล็อค", NULL, array("selectable"=>TRUE,"default"=>TRUE,"class"=>"center","order"=>15));
+		$this->_setController("block_emp", "ช่างตีบล็อค", NULL, array("selectable"=>TRUE,"default"=>TRUE,"class"=>"edit center block_emp","order"=>17));
+		$this->_setController("color_qty", "จำนวนสี", NULL, array("selectable"=>TRUE,"default"=>TRUE,"class"=>"edit center color_qty","order"=>18));
 		//-- set special attribute
 
 		/*++ dummy field, use it value to show span on panel (just add to array keep value) */
-		$this->_setController("type_id", "", NULL);
+		$this->_setController("order_s_rowid", "", NULL);
 		$this->_setController("order_rowid", "", NULL);
+		$this->_setController("seq", "", NULL);
 		$this->_setController("rowid", "", NULL);
 		$this->_setController("disp_status", "", NULL);
 		$this->_setController("prod_id", "", NULL);
-		$this->_setController("prods_rowid", "", NULL);
+		$this->_setController("status_rowid", "", NULL);
 		$this->_setController("arr_avail_status", "", array());
 		$this->_setController("arr_avail_action", "", array());
 		/*-- dummy field, use it value to show span on panel (just add to array keep value) */
@@ -100,52 +117,15 @@ SCRPT
 				"column" => <<<CCLMS
 { "sTitle":"สถานะ","width":"100","sClass":"center","mData":'rowid',"mRender":function(data,type,full) { return fnc__DDT_Row_RenderStatus(data, type, full); }, "bSortable": true }
 CCLMS
-				, "order" => 8
+				, "order" => 3
 			),
 			array(
 			"column" => <<<CCLMS
 { "sTitle":"แก้ไขสถานะ","width":"180","sClass":"center","mData":'rowid',"mRender":function(data,type,full) { return fnc__DDT_Row_RenderAvailStatus(data, type, full); }, "bSortable": false }
 CCLMS
-			, "order" => 9));
+			, "order" => 4),
+			);
 
-/*
-		$_custom_columns = array(
-			array(
-				"column" => <<<CCLMS
-{ "sTitle":"ชำระแล้ว (%)","width":"100","sClass":"right","mData":'rowid', "mRender": function(data,type,full) { return fnc__DDT_Row_RenderPercentPayment(data, type, full); }, "bSortable": true }
-CCLMS
-				, "order" => 12
-			)
-			, array(
-				"column" => <<<CCLMS
-{ "sTitle":"สถานะ","width":"100","sClass":"center","mData":'rowid',"mRender":function(data,type,full) { return fnc__DDT_Row_RenderStatus(data, type, full); }, "bSortable": true }
-CCLMS
-				, "order" => 16
-			)
-			, array(
-				"column" => <<<CCLMS
-{ "sTitle":"ร่างใบงาน","width":"180","sClass":"center","mData":'rowid',"mRender":function(data,type,full) { return fnc__DDT_Row_RenderDraftDetailOrder(data, type, full); }, "bSortable": false }
-CCLMS
-				, "order" => 17
-			)
-			, array(
-				"column" => <<<CCLMS
-{ "sTitle":"แก้ไขสถานะ","width":"180","sClass":"center","mData":'rowid',"mRender":function(data,type,full) { return fnc__DDT_Row_RenderAvailStatus(data, type, full); }, "bSortable": false }
-CCLMS
-				, "order" => 18
-			)
-			, array(
-				"column" => <<<CCLMS
-{ "sTitle":"จัดการข้อมูล","width":"120","sClass":"center","mData":'rowid',"mRender":function(data,type,full) { return fnc__DDT_Row_RenderAvailAction(data, type, full); }, "bSortable": false }
-CCLMS
-				, "order" => 19
-			)
-			, array(
-				"column" => '{"sTitle":"เอกสาร", "sClass":"center","mData":function() { return \'<img class="tblButton" command="pdf" src="./public/images/pdf_icon_40.png" title="Export to PDF" />\';}, "bSortable": false}'
-				, "order" => 20
-			)
-		);
-*/
 		$pass['left_panel'] = $this->add_view('_public/_search_panel', $this->_arrSearchParams(), TRUE);
 
 		$this->load->helper('order_detail_helper');
@@ -159,8 +139,22 @@ CCLMS
 			,'custom_columns' => $_custom_columns
 			//, 'jqDataTable' => '1.10.11'
 		);		
-		//$template['edit_template'] = $this->_getEditTemplate();
+		$template['edit_template'] = $this->_getEditTemplate();
 		$pass['work_panel'] = $this->add_view('_public/_list', $template, TRUE);
+		$pass['work_panel'] .= <<<SCR
+	<script language="javascript">
+	if (_tableToolButtons) {
+		_tableToolButtons.push({"text": "&nbsp;","className": "DTTT_button_space"});
+		_tableToolButtons.push({
+			"text": "บันทึกข้อมูล"
+			, "className": "DTTT_button_commit_page DTTT_button_disabled"
+			, "action": function () {__doCommitChangeMultiDataTable(_dataToUpdateColumn)}
+		});
+	}
+	</script>
+SCR;
+// , "className": "DTTT_button_commit_page DTTT_button_disabled"
+
 		$pass['title'] = "งานสกรีน";
 		
 		$this->add_js('public/js/quotation/form.js');
@@ -170,8 +164,24 @@ CCLMS
 		$qo_status = $this->mt->list_where('manu_screen_status', 'is_cancel=0', NULL, 'm_');
 		$this->add_js("var _ARR_QO_STATUS = " . json_encode($qo_status) . ";", 'custom');
 
+		$qo_status = $this->mt->list_where('manu_screen_type', 'is_cancel=0', NULL, 'm_');
+		$this->add_js("var _ARR_SCREEN_TYPE = " . json_encode($qo_status) . ";", 'custom');
+
 		$this->_DISABLE_ON_LOAD_SEARCH = True;
 		$this->add_view_with_script_header('_public/_template_main', $pass);
+	}
+
+	function _getEditTemplate() {
+		return <<<TMP
+		<div id="div_edit_column">
+	<span class="cls-label" style="font-weight:bold;"></span>
+		<div class="edit-file-wrapper" style="display:flex;justify-content: center;">
+			<textarea id="txa-edit_column" style="width:96%;display:none" class="user-input" rows="3" placeholder=""></textarea>
+			<select id="sel-edit_column" style="width:50%;display:none" class="user-input" rows="3" placeholder=""></select>
+		</div>
+</div>
+TMP;
+
 	}
 /*
 	function _getEditTemplate() {
@@ -196,7 +206,7 @@ CCLMS
 		array_unshift($this->_selOptions["list_title"], array('rowid'=>'', 'name'=>' '));
 
 		$this->load->helper('crud_controller_helper');
-		$subListControls = hlpr_prepareControlsDefault('Mdl_quotation_detail', $this->_selOptions);
+		// $subListControls = hlpr_prepareControlsDefault('Mdl_quotation_detail', $this->_selOptions);
 		hlpr_setController($subListControls, "quotation_rowid", "", array("type"=>"hdn", "value"=>"-1"));
 		hlpr_setController($subListControls, "title", "หัวข้อ", NULL, array("selectable"=>TRUE,"order"=>0));
 		hlpr_setController($subListControls, "description", "คำอธิบาย", NULL);
@@ -265,21 +275,6 @@ CCLMS
 </div>
 <div id="div_status_remark">
 	<span class="cls-label" style="font-weight:bold;">สาเหตุ</span>
-	<!-- 
-	<select id="sel-status_remark" style="width:45%;vertical-align:top;" class="user-input">
-		<option>&nbsp;</option>
-		<option value="ไม่ทราบเหตุผลลูกค้า">ไม่ทราบเหตุผลลูกค้า</option>
-		<option value="ไม่เข้าเงื่อนไขการเงิน (ของลูกค้า)">ไม่เข้าเงื่อนไขการเงิน (ของลูกค้า)</option>
-		<option value="สินค้าไม่เพียงพอ">สินค้าไม่เพียงพอ</option>
-		<option value="สินค้าไม่ตรงกับความต้องการ">สินค้าไม่ตรงกับความต้องการ</option>
-		<option value="ขั้นต่ำในการผลิตน้อยไป">ขั้นต่ำในการผลิตน้อยไป</option>
-		<option value="ติดต่อสาขาอื่นแล้ว">ติดต่อสาขาอื่นแล้ว</option>
-		<option value="ติดต่อเจ้าอื่นแล้ว">ติดต่อเจ้าอื่นแล้ว</option>
-		<option value="ราคาไม่ผ่าน">ราคาไม่ผ่าน</option>
-		<option value="ระยะเวลาในการผลิตสั้นไป">ระยะเวลาในการผลิตสั้นไป</option>
-		<option value="สินค้าและเทคนิคไม่รับทำ">สินค้าและเทคนิคไม่รับทำ</option>
-	</select>
-	-->
 	<textarea id="txa-status_remark" style="width:96%;" class="user-input" rows="3" placeholder="สาเหตุ หรือ ข้อมูลเพิ่มเติม"></textarea>
 </div>
 TMP;
@@ -477,6 +472,44 @@ TMP;
 		header('content-type: application/json; charset=utf-8');
 		echo isset($_GET['callback'])? "{" . $_GET['callback']. "}(".$json.")":$json;
 	}
+
+	function update_data_by_id() {
+		$blnSuccess = FALSE;
+		$strError = '';
+		$this->load->model($this->modelName, 'm');
+		$json_input_data = json_decode(trim(file_get_contents('php://input')), true); //get json
+		$_arrData = (isset($json_input_data))?$json_input_data:$this->input->post(); //or post data submit
+		// echo count($_arrData);exit;
+		// echo print_r($_arrData);exit;
+		if (isset($_arrData) && ($_arrData != FALSE)) {
+			for($i = 0 ; $i < count($_arrData) ; $i++){
+				if (! isset($_arrData[$i]['rowid'])) $strError .= '"rowid" not found,';
+				if (! isset($_arrData[$i]['width'])) $strError .= '"width" in rowid '.$_arrData[$i]['rowid'].' not found,';
+				if (! isset($_arrData[$i]['high'])) $strError .= '"high" in rowid '.$_arrData[$i]['rowid'].' not found,';
+				if (! isset($_arrData[$i]['color_qty'])) $strError .= '"color_qty" in rowid '.$_arrData[$i]['rowid'].' not found,';
+				if (! isset($_arrData[$i]['block_emp'])) $strError .= '"block_emp" in rowid '.$_arrData[$i]['rowid'].' not found,';
+			}
+			$_remark = FALSE;
+			// if (isset($_arrData['status_remark']) && (!(empty($_arrData['status_remark'])))) $_remark = $_arrData['status_remark'];
+			if ($strError == '') {
+			$this->m->update_data_by_id($_arrData);
+			$strError = $this->m->error_message;
+			}
+		} else {
+			$strError = 'Invalid parameters passed ( None )';
+		}
+		if ($strError == '') {
+			$blnSuccess = TRUE;
+		}
+		$json = json_encode(
+			array(
+				'success' => $blnSuccess,
+				'error' => $strError
+			)
+		);
+		header('content-type: application/json; charset=utf-8');
+		echo isset($_GET['callback'])? "{" . $_GET['callback']. "}(".$json.")":$json;
+	}
 	
 	function change_status_by_id() {
 		$blnSuccess = FALSE;
@@ -484,18 +517,18 @@ TMP;
 		$this->load->model($this->modelName, 'm');
 		$json_input_data = json_decode(trim(file_get_contents('php://input')), true); //get json
 		$_arrData = (isset($json_input_data))?$json_input_data:$this->input->post(); //or post data submit
-	
+		// print_r($_arrData);exit;
 		if (isset($_arrData) && ($_arrData != FALSE)) {
 			if (! isset($_arrData['rowid'])) $strError .= '"rowid" not found,';
 			if (! isset($_arrData['status_rowid'])) $strError .= '"status_rowid" not found,';
 			$_remark = FALSE;
 			if (isset($_arrData['status_remark']) && (!(empty($_arrData['status_remark'])))) $_remark = $_arrData['status_remark'];
 			if ($strError == '') {
-				if (isset($_arrData['order_rowid']) && isset($_arrData['type_id'])){
-					$this->m->change_status_by_id($_arrData['rowid'], $_arrData['status_rowid'], $_remark, $_arrData['order_rowid'], $_arrData['type_id']);
+				if (isset($_arrData['order_rowid']) && isset($_arrData['order_s_rowid']) && isset($_arrData['seq'])){
+					$this->m->change_status_by_id($_arrData['rowid'], $_arrData['status_rowid'], $_remark, $_arrData['order_rowid'], $_arrData['order_s_rowid'], $_arrData['seq']);
 					$strError = $this->m->error_message;
 				}else{
-					$this->m->change_status_by_id($_arrData['rowid'], $_arrData['status_rowid'],  $_remark, '', '');
+					$this->m->change_status_by_id($_arrData['rowid'], $_arrData['status_rowid'],  $_remark, '', '', '');
 					$strError = $this->m->error_message;
 				}
 			}

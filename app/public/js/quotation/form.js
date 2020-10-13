@@ -1,22 +1,25 @@
 var _QO_YEAR = (new Date()).getFullYear();
 var _DLG_STATUS_REMARK = false;
-$(function() {
-//	$('.cls-div-form-edit-dialog[index="0"]').dialog('option', 'height', 520);
-//	$('.cls-div-form-edit-dialog[index="1"]').dialog('option', 'height', 500);
+var _DLG_EDIT_COLUMN = false;
+var _dataToUpdateColumn = [];
+$(function () {
+	console.log(_ARR_SCREEN_TYPE);
+	//	$('.cls-div-form-edit-dialog[index="0"]').dialog('option', 'height', 520);
+	//	$('.cls-div-form-edit-dialog[index="1"]').dialog('option', 'height', 500);
 	_DLG_STATUS_REMARK = $('#div_status_remark').dialog({
 		height: 180
 		, width: 780
-		, show: {effect:"puff", duration: 1000}
-		, hide: {effect:"fade", duration:1000}
+		, show: { effect: "puff", duration: 1000 }
+		, hide: { effect: "fade", duration: 1000 }
 		, modal: true
 		, resizable: true
 		, closeOnEscape: true
 		, autoOpen: false
-		, beforeClose: function(event, ui) {
+		, beforeClose: function (event, ui) {
 			$(this).removeAttr('status_rowid').removeAttr('status_text');
 		}
 		, buttons: {
-			'Commit': function() {
+			'Commit': function () {
 				var _rowid = $(this).attr('ps_rowid') || false;
 				var _code = $(this).attr('ps_code') || false;
 				var _curr_status = $(this).attr('curr_status_text') || false;
@@ -35,7 +38,7 @@ $(function() {
 					var _str = 'id:' + _rowid;
 					if (_code) _str = 'เลขที่ \"' + _code + '\"';
 					if (confirm('กรุณายืนยันการเปลี่ยนสถานะของใบเสนอราคา ' + _str + ' เป็นสถานะ "' + _status_text + '"')) {
-						__doChangeQuotationStatus(_rowid, _status_rowid, _remark, function() {
+						__doChangeQuotationStatus(_rowid, _status_rowid, _remark, function () {
 							clearValue($('#sel-status_remark'));
 							clearValue($('#txa-status_remark'));
 						});
@@ -44,12 +47,58 @@ $(function() {
 				}
 				return false;
 			}
-			, 'Cancel': function() {
+			, 'Cancel': function () {
 				$(this).dialog('close');
 			}
 		}
 	});
-	
+
+	_DLG_EDIT_COLUMN = $('#div_edit_column').dialog({
+		height: 180
+		, width: 780
+		, show: { effect: "puff", duration: 1 }
+		, hide: { effect: "fade", duration: 1 }
+		, modal: true
+		, resizable: true
+		, closeOnEscape: true
+		, autoOpen: false
+		, beforeClose: function (event, ui) {
+			$(this).removeAttr('status_rowid').removeAttr('status_text');
+		}
+		, buttons: {
+			'Commit': function () {
+				var _rowid = $(this).attr('ps_rowid') || false;
+				var _column = $(this).attr('column') || false;
+				var _status_text = $(this).attr('column_disp') || false;
+				var _remark = getValue($('#sel-edit_column'), '');
+				_remark += ' ' + getValue($('#txa-edit_column'), '');
+				_remark = _remark.trim();
+				doClearVldrErrorElement($('#sel-edit_column'));
+				doClearVldrErrorElement($('#txa-edit_column'));
+				if (_remark == '') {
+					doSetVldrError($('#sel-edit_column'), 'edit_column', 'required', 'กรุณาระบุข้อมูล', 1);
+					_doDisplayToastMessage('กรุณาระบุข้อมูล : \"' + _status_text + '\"', 3, false);
+				} else {
+					if (confirm('กรุณายืนยันการเปลี่ยนแปลงข้อมูล ' + _status_text + ' เป็น "' + _remark + '"')) {
+						if (_doPrepareChangeDataColumn(_rowid, _column, _remark, function () {
+							clearValue($('#sel-edit_column'));
+							clearValue($('#txa-edit_column'));
+						})) {
+							_updateRowAfterChangeData(_rowid, _column, _remark)
+							$('.DTTT_button_commit_page').removeClass('DTTT_button_disabled');
+						}
+						$(this).dialog('close');
+					}
+				}
+				return false;
+			}
+			, 'Cancel': function () {
+				clearValue($('#txa-edit_column'));
+				$(this).dialog('close');
+			}
+		}
+	});
+
 	//++ Validation
 	$('.input-integer').on('change', function (ev) {
 		doClearVldrErrorElement(this);
@@ -64,13 +113,123 @@ $(function() {
 			}
 		}
 	});
+
+	//++edit data each cell
+	if (_ALLOW_EDIT === false) {
+		_doSetEditColumns = function () {
+			//do nothing
+		}
+	} else {
+		/*
+		var _elSel = $('<select>').attr('ps_rowid', _qo_rowid)
+		.attr('order_rowid', _qo_order_rowid)
+		.attr('order_s_rowid', _qo_order_s_rowid)
+		.attr('seq', _qo_seq)
+		.addClass('cls-sel-change-status_prod')
+		.append($('<option>').html('--'))
+		.appendTo(_elPanel);
+
+		*/
+
+		$('body').on('click', '#tblSearchResult tbody tr td.screen_type', function (e) {
+			var ps_rowid = $(e.target).closest('tr').find(".cls-sel-change-status_prod").attr('ps_rowid');
+			if (ps_rowid > 0) {
+				var ownTextVal = '';
+				if(($(this).text()) !== '0') ownTextVal = $(this).text();
+				$('#sel-edit_column').show().find('option').remove()
+			;
+				var _elSel = $('#sel-edit_column')
+				_elSel.append($('<option>').html('--'))
+				if ($.isArray(_ARR_SCREEN_TYPE)) {
+					$.each(_ARR_SCREEN_TYPE, function(indx, obj) {
+						if (('rowid' in obj) && ('name' in obj)) {
+							var _code = obj['rowid'] || false;
+							if (! _code) return true;
+							_code = _code.toLowerCase();
+							_elSel.append($('<option>').attr("code", obj["rowid"]).attr("name", obj["name"]).html(obj["name"]));
+						}
+					});
+				}
+				$('#txa-edit_column').val(ownTextVal);
+				$('#div_edit_column').attr('ps_rowid', ps_rowid)
+					.attr('column', 'screen_type')
+					.attr('column_disp', 'ประเภทงานสกรีน')
+				var _column_disp = $('#div_edit_column').attr('column_disp') || -1;
+				_DLG_EDIT_COLUMN.dialog('option', 'title', '( rowid ' + ps_rowid + ') ' + 'แก้ไข : ' + _column_disp).dialog("open");
+			}
+		});
+
+		$('body').on('click', '#tblSearchResult tbody tr td.width', function (e) {
+			var ps_rowid = $(e.target).closest('tr').find(".cls-sel-change-status_prod").attr('ps_rowid');
+			if (ps_rowid > 0) {
+				var ownTextVal = '';
+				if(($(this).text()) !== '0') ownTextVal = $(this).text();
+				$('#txa-edit_column').show();
+				$('#txa-edit_column').val(ownTextVal);
+				$('#div_edit_column').attr('ps_rowid', ps_rowid)
+					.attr('column', 'width')
+					.attr('column_disp', 'ความกว้าง')
+				var _column_disp = $('#div_edit_column').attr('column_disp') || -1;
+				_DLG_EDIT_COLUMN.dialog('option', 'title', '( rowid ' + ps_rowid + ') ' + 'แก้ไข : ' + _column_disp).dialog("open");
+			}
+		});
+
+		$('body').on('click', '#tblSearchResult tbody tr td.high', function (e) {
+			var ps_rowid = $(e.target).closest('tr').find(".cls-sel-change-status_prod").attr('ps_rowid');
+			if (ps_rowid > 0) {
+				var ownTextVal = '';
+				if(($(this).text()) !== '0') ownTextVal = $(this).text();
+				$('#txa-edit_column').show();
+				$('#txa-edit_column').val(ownTextVal);
+				$('#div_edit_column').attr('ps_rowid', ps_rowid)
+					.attr('column', 'high')
+					.attr('column_disp', 'ความสูง')
+				var _column_disp = $('#div_edit_column').attr('column_disp') || -1;
+				_DLG_EDIT_COLUMN.dialog('option', 'title', '( rowid ' + ps_rowid + ') ' + 'แก้ไข : ' + _column_disp).dialog("open");
+			}
+		});
+
+		$('body').on('click', '#tblSearchResult tbody tr td.color_qty', function (e) {
+			var ps_rowid = $(e.target).closest('tr').find(".cls-sel-change-status_prod").attr('ps_rowid');
+			if (ps_rowid > 0) {
+				var ownTextVal = '';
+				if(($(this).text()) !== '0') ownTextVal = $(this).text();
+				$('#txa-edit_column').show();
+				$('#txa-edit_column').val(ownTextVal);
+				$('#div_edit_column').attr('ps_rowid', ps_rowid)
+					.attr('column', 'color_qty')
+					.attr('column_disp', 'จำนวนสี')
+				var _column_disp = $('#div_edit_column').attr('column_disp') || -1;
+				_DLG_EDIT_COLUMN.dialog('option', 'title', '( rowid ' + ps_rowid + ') ' + 'แก้ไข : ' + _column_disp).dialog("open");
+			}
+		});
+
+		$('body').on('click', '#tblSearchResult tbody tr td.block_emp', function (e) {
+			var ps_rowid = $(e.target).closest('tr').find(".cls-sel-change-status_prod").attr('ps_rowid');
+			if (ps_rowid > 0) {
+				var ownTextVal = '';
+				if(($(this).text()) !== '0') ownTextVal = $(this).text();
+				$('#txa-edit_column').show();
+				$('#txa-edit_column').val(ownTextVal);
+				$('#div_edit_column').attr('ps_rowid', ps_rowid)
+					.attr('column', 'block_emp')
+					.attr('column_disp', 'ช่างตีบล็อคช')
+				var _column_disp = $('#div_edit_column').attr('column_disp') || -1;
+				_DLG_EDIT_COLUMN.dialog('option', 'title', '( rowid ' + ps_rowid + ') ' + 'แก้ไข : ' + _column_disp).dialog("open");
+			}
+		});
+
+
+
+	}
 	//-- Validation
 	//++ ChangeStatus
-	$('body').on('change', '#tblSearchResult .cls-sel-change-status', function() {
+	$('body').on('change', '#tblSearchResult .cls-sel-change-status_prod', function () {
 		var _rowid = $(this).attr('ps_rowid') || -1;
 		var _code = $(this).attr('ps_code') || false;
 		var _order_rowid = $(this).attr('order_rowid') || -1;
-		var _type_id = $(this).attr('type_id') || -1;
+		var _order_s_rowid = $(this).attr('order_s_rowid') || -1;
+		var _seq = $(this).attr('seq') || -1;
 		var _curr_status_text = $(this).attr('curr_status_text') || false;
 		var _selOpt = $('option:selected', this);
 		var _selText = _selOpt.attr('name') || false;
@@ -78,20 +237,19 @@ $(function() {
 		var _status_text = (_selOpt.length > 0) ? _selOpt.html() : '';
 		var _str = 'id:' + _rowid;
 		if (_code) _str = 'เลขที่ \"' + _code + '\"';
-		if(_rowid < 0) _rowid = '0';
+		if (_rowid < 0) _rowid = '0';
 		if ((_rowid >= 0) && (_status_rowid > 0)) {
-			console.log(_rowid);
 			// 100:CMP, 180:CNL, 200:CLO
-			if ((_status_rowid > 100) && (_status_rowid < 200)) {
-				$('#div_status_remark').attr('qo_rowid', _rowid).attr('qo_code', _code)
+			if ((_status_rowid == 20)) {
+				$('#div_status_remark').attr('ps_rowid', _rowid)
 					.attr('curr_status_text', _curr_status_text)
 					.attr('status_rowid', _status_rowid).attr('status_text', _status_text);
-				_DLG_STATUS_REMARK.dialog('option', 'title', 'ใบเสนอราคา' + _str + ' เปลี่ยนสถานะ จาก \"' + _curr_status_text + '\" เป็น \"' + _selText + '\"').dialog( "open" );
+				_DLG_STATUS_REMARK.dialog('option', 'title', 'ใบเสนอราคา' + _str + ' เปลี่ยนสถานะ จาก \"' + _curr_status_text + '\" เป็น \"' + _selText + '\"').dialog("open");
 			} else {
-				if (confirm('กรุณายืนยันการเปลี่ยนสถานะของใบเสนอราคา ' + _str + ' เป็นสถานะ "' + _status_text + '"')){
-					if (_rowid == 0){
-						__doChangeQuotationStatus(_rowid, _status_rowid, _order_rowid, _type_id)
-					}else{
+				if (confirm('กรุณายืนยันการเปลี่ยนสถานะของใบเสนอราคา ' + _str + ' เป็นสถานะ "' + _status_text + '"')) {
+					if (_rowid == 0) {
+						__doChangeQuotationStatus(_rowid, _status_rowid, _order_rowid, _order_s_rowid, _seq)
+					} else {
 						__doChangeQuotationStatus(_rowid, _status_rowid)
 					}
 				};
@@ -101,22 +259,22 @@ $(function() {
 		return false;
 	});
 
-	$('#frm_edit #txt-start_date').on("change", function() {
+	$('#frm_edit #txt-start_date').on("change", function () {
 		var _val = $(this).val();
 		var _dummydate = $.datepicker.parseDate('dd/mm/yy', _val);
 		if (Object.prototype.toString.call(_dummydate) === '[object Date]') {
 			if (_dummydate.getFullYear() == _QO_YEAR) return;
 			_QO_YEAR = _dummydate.getFullYear();
 			var _strParams = '{"start_date":"' + _val + '"}';
-			$("#dialog-modal").dialog( "open" );
+			$("#dialog-modal").dialog("open");
 			doClearDisplayInfo();
 			$.ajax({
-				type: "POST", 
+				type: "POST",
 				url: "./quotation/json_get_qonumber",
 				contentType: "application/json;charset=utf-8",
 				dataType: "json",
 				data: _strParams,
-				success: function(data, textStatus, jqXHR) {
+				success: function (data, textStatus, jqXHR) {
 					if (data.success == false) {
 						doDisplayInfo(MSG_ALERT_QUERY_FAILED.replace(/v_XX_1/g, data.error), 'Get_QO_Number');
 					} else {
@@ -126,15 +284,15 @@ $(function() {
 							doDisplayInfo(MSG_ALERT_QUERY_NO_DATA_FOUND, 'Get_QO_Number');
 						}
 					}
-					$("#dialog-modal").dialog( "close" );					
+					$("#dialog-modal").dialog("close");
 				},
-				error: function(jqXHR, textStatus, errorThrown) {
-					$("#dialog-modal").dialog( "close" );
+				error: function (jqXHR, textStatus, errorThrown) {
+					$("#dialog-modal").dialog("close");
 					doDisplayInfo(MSG_ALERT_QUERY_FAILED.replace(/v_XX_1/g, textStatus + ' ( ' + errorThrown + ' )'), "ErrorMessage");
 				},
 				statusCode: {
-					404: function() {
-						$("#dialog-modal").dialog( "close" );
+					404: function () {
+						$("#dialog-modal").dialog("close");
 						doDisplayInfo("Page not found", "ErrorMessage");
 					}
 				}
@@ -156,10 +314,10 @@ $(function() {
 		_doUpdateDepositValues(-1, getValue($(this), -1));
 	});
 
-	$('.cls-frm-edit').on('click', '#btnDepositPaymentDialog', function() {
-		var _rowid = $('.cls-frm-edit[index=0] #hdn-rowid').val() || -1;		
+	$('.cls-frm-edit').on('click', '#btnDepositPaymentDialog', function () {
+		var _rowid = $('.cls-frm-edit[index=0] #hdn-rowid').val() || -1;
 		var _status_rowid = $('.cls-frm-edit[index=0] #hdn-status_rowid').val() || 10;
-		
+
 		var _arr_deposit_log = getValue($('.cls-frm-edit[index=0] #hdn-arr_deposit_log'), []);
 		if (typeof _arr_deposit_log == 'string') _arr_deposit_log = JSON.parse(_arr_deposit_log);
 
@@ -168,16 +326,16 @@ $(function() {
 
 		var _grand_total = getValue($('.cls-frm-edit[index=0] #spn-grand_total'), 0);
 		var _deposit_amount = getValue($('.cls-frm-edit[index=0] #txt-deposit_amount'), 0);
-		
+
 		_openPaymentListDialog({
 			"status_rowid": _status_rowid
-			,"grand_total": _grand_total
-			,"deposit_amount": _deposit_amount
-			,"deposit":
+			, "grand_total": _grand_total
+			, "deposit_amount": _deposit_amount
+			, "deposit":
 				//{"constant": {"quotation_rowid": _rowid}, "arr_payment_list": _arr_deposit_log, "is_editable": ((_status_rowid < 70) || (_status_rowid == 150) || (_status_rowid == 151)), "is_approveable": ((_status_rowid < 70) || (_status_rowid == 150) || (_status_rowid == 151)) }
-				{"constant": {"quotation_rowid": _rowid}, "arr_payment_list": _arr_deposit_log, "is_editable": true, "is_approveable": true }
+				{ "constant": { "quotation_rowid": _rowid }, "arr_payment_list": _arr_deposit_log, "is_editable": true, "is_approveable": true }
 			, "after_deposit":
-				{"constant": {"quotation_rowid": _rowid}, "arr_payment_list": _arr_payment_log, "is_enable": ((_status_rowid >= 70)), "is_editable": true, "is_approveable": true }
+				{ "constant": { "quotation_rowid": _rowid }, "arr_payment_list": _arr_payment_log, "is_enable": ((_status_rowid >= 70)), "is_editable": true, "is_approveable": true }
 		});
 		return false;
 	});
@@ -195,7 +353,7 @@ $(function() {
 		var _index = $(_frm).attr('index') || 0;
 		if (_index == 0) {
 			$('#tabs').tabs({ active: 0 });
-			$("#tabs").tabs( "disable" , 1 );
+			$("#tabs").tabs("disable", 1);
 			_populateSublistDataTable(1, [], true);
 			_QO_YEAR = '';
 
@@ -215,7 +373,7 @@ $(function() {
 			$('.total-value').html(' -- ');
 			$('.total-price').html(' -- ');
 			//-- set size cat and hide another table
-			
+
 			//remove others price items
 			$('#tbl_op_list tbody tr:not("#op_edit_panel")', _frm).remove();
 			opClearEditPanel();
@@ -226,7 +384,7 @@ $(function() {
 			scClearEditPanel();
 			_blnScChanged = false;
 
-			$('.user-input', $('#div_PO_props')).each(function() {
+			$('.user-input', $('#div_PO_props')).each(function () {
 				clearValue($(this));
 			});
 			$('#txt-po_order_date').datepicker("option", "disabled", false);
@@ -241,8 +399,8 @@ $(function() {
 			$('#divDetailTabs').tabs({ active: 0 });
 			$('#tabMnuDetail').addClass('hidden');
 			$('#tabMnuOthers').addClass('hidden');
-			$('.cls-detail-panel').each(function() { $(this).addClass('hidden'); });
-			$('.cls-others-panel').each(function() { $(this).addClass('hidden'); });
+			$('.cls-detail-panel').each(function () { $(this).addClass('hidden'); });
+			$('.cls-others-panel').each(function () { $(this).addClass('hidden'); });
 
 			$("div.display-upload", _frm).css('background-image', '');
 		}
@@ -255,19 +413,19 @@ $(function() {
 		if (_index == 0) {
 			$('#txt-start_date', _prnt).datepicker('setDate', new Date());
 			$('#txt-start_date', _prnt).trigger('change');
-			
+
 			setValue($('#sel-day_limit', _prnt), 30);
-			
-			$('[from_qs]', _prnt).filter(function() {
+
+			$('[from_qs]', _prnt).filter(function () {
 				return (parseInt($(this).attr('from_qs')) > 0);
-			}).each(function() {
+			}).each(function () {
 				$(this).addClass('hidden').css('display', 'none');
 			});
-		} else {			
+		} else {
 			//enable upload images
 			$(".spn-image-select", _prnt).css('display', '');
 			$(".spn-image-select input", _prnt).prop('disabled', false);
-			
+
 			//visible .eventView-hide
 			$('.eventView-hide', _prnt).removeClass('hidden');
 
@@ -280,12 +438,12 @@ $(function() {
 		_fnc_onChangePaymentCondition();
 	};
 
-	doView = function(dataRowObj, divEditDlg) {
+	doView = function (dataRowObj, divEditDlg) {
 		_fncTemplate_doView.apply(this, arguments);
 		var _index = $('.cls-frm-edit', divEditDlg).attr('index') || 0;
 		if (_index == 0) {
-			if (('rowid' in dataRowObj) && (dataRowObj['rowid'] > 0)) $("#tabs").tabs( "enable" , 1 );
-			
+			if (('rowid' in dataRowObj) && (dataRowObj['rowid'] > 0)) $("#tabs").tabs("enable", 1);
+
 			var _qo_status = parseInt(dataRowObj['status_rowid'] || 0);
 			__fncCheckVisibleElementsByStatus(_qo_status, divEditDlg);
 		} else {
@@ -297,11 +455,11 @@ $(function() {
 		_blnDetailsChange = false;
 	};
 
-	doEdit = function(dataRowObj, trObj, divEditDlg) {
-		_fncTemplate_doEdit.apply(this, arguments);		
+	doEdit = function (dataRowObj, trObj, divEditDlg) {
+		_fncTemplate_doEdit.apply(this, arguments);
 		var _index = $('.cls-frm-edit', divEditDlg).attr('index') || 0;
 		if (_index == 0) {
-			if (('rowid' in dataRowObj) && (dataRowObj['rowid'] > 0)) $("#tabs").tabs( "enable" , 1 );
+			if (('rowid' in dataRowObj) && (dataRowObj['rowid'] > 0)) $("#tabs").tabs("enable", 1);
 
 			var _qo_status = parseInt(dataRowObj['status_rowid'] || 0);
 			__fncCheckVisibleElementsByStatus(_qo_status, divEditDlg);
@@ -324,11 +482,11 @@ $(function() {
 			_doCommitUserControlsChanged(form);
 			var _update = {};
 			if (_currEditData !== undefined) _update = $.extend(true, {}, _currEditData);
-			var _isInsert = (! (('rowid' in _update) && (_update['rowid'] > 0)));
-			__fncSubmitQuotation(form, _formIndex, _update, function(data, textStatus, jqXHR) {
+			var _isInsert = (!(('rowid' in _update) && (_update['rowid'] > 0)));
+			__fncSubmitQuotation(form, _formIndex, _update, function (data, textStatus, jqXHR) {
 				if (data.success == false) {
 					alert(MSG_ALERT_COMMIT_FAILED.replace(/v_XX_1/g, data.error));
-					$("#dialog-modal").dialog( "close" );
+					$("#dialog-modal").dialog("close");
 				} else {
 					_currEditTr = undefined;
 					_currEditData = undefined;
@@ -336,13 +494,13 @@ $(function() {
 
 					var _rowid = -1;
 					if (_isInsert) _rowid = ((('message' in data) && (_isInt(data.message))) ? parseInt(data.message) : -1);
-					var opt_fncCallBack = function() {
+					var opt_fncCallBack = function () {
 						if (_rowid > 0) {
 							var _arrTrs = _objDataTable.DataTable().rows().nodes();
 							var _insData = false;
 							var _insRowTr = false;
 							if ((_arrTrs.length > 0)) {
-								$.each(_arrTrs, function(idx, nTr) {
+								$.each(_arrTrs, function (idx, nTr) {
 									var _nData = _objDataTable.DataTable().row(nTr).data() || false;
 									if ((_nData) && ('rowid' in _nData) && (_nData['rowid'] == _rowid)) {
 										_insData = _nData;
@@ -361,32 +519,32 @@ $(function() {
 					var _divDialog = $(form).parents(".cls-div-form-edit-dialog").get(0);
 					if (typeof _divDialog != 'undefined') {
 						if ($(_divDialog).attr("id").indexOf("Sublist") >= 0) {
-							
+
 						} else {
 							if (typeof doSearch == 'function') doSearch(false, opt_fncCallBack);
 						}
-						if ($(_divDialog).dialog( "isOpen" )) $(_divDialog).dialog( "close" );
+						if ($(_divDialog).dialog("isOpen")) $(_divDialog).dialog("close");
 					}
 					_doDisplayToastMessage(MSG_ALERT_COMMIT_SUCCESS.replace(/v_XX_1/g, ''), 3, false);
-					$("#dialog-modal").dialog( "close" );
+					$("#dialog-modal").dialog("close");
 				}
 			});
 		} else {
 			if (isScEditingRow()) {
 				var _sc_edit_price = $('#sc_edit_panel #txt-sc_price').get(0);
 				doClearVldrErrorElement(_sc_edit_price);
-				if (! blnValidateElem_TypeDouble(_sc_edit_price)) {
+				if (!blnValidateElem_TypeDouble(_sc_edit_price)) {
 					return false;
 				}
 			}
 			if (isOpEditingRow()) {
 				var _op_edit_price = $('#op_edit_panel #txt-op_price').get(0);
 				doClearVldrErrorElement(_op_edit_price);
-				if (! blnValidateElem_TypeDouble(_op_edit_price)) {
+				if (!blnValidateElem_TypeDouble(_op_edit_price)) {
 					return false;
 				}
 			}
-			
+
 			if (isDetailsEditingRow()) {
 				alert('พบข้อมูลรายละเอียดที่แก้ไขหรือสร้างใหม่โดยยังไม่ได้ทำการยืนยัน, กรุณายืนยันหรือยกเลิกก่อนทำการบันทึก');
 				return false;
@@ -405,14 +563,14 @@ $(function() {
 				}
 			}
 			// --add master link (foreign key) if master details style
-			
+
 			if ($('div#div_premade_detail_panel').filter(__fnc_filterNotNestedHiddenClass).length > 0) {
 				_arrToUpdate['json_details'] = __getPremadeDetailCtrl_CommittedChanged();
 			} else {
 				_arrToUpdate['json_details'] = _doCommitUserControlsChanged($('div.cls-detail-panel:not(.hidden)', form));
 			}
 			_arrToUpdate['json_images'] = _doCommitUserControlsChanged($('#divImages', form));
-			
+
 			_arrToUpdate['json_others'] = {};
 			//++ PO properties
 			if (('po_order_date' in _arrToUpdate)) {
@@ -453,23 +611,23 @@ $(function() {
 			_arrToUpdate['json_others']["screen"] = __getScreenCtrl_CommittedChanged();
 			//++ Others price
 			_arrToUpdate['json_others']["others_price"] = __getOtherPriceCtrl_CommittedChanged();
-			
-			__fncSubmitQuotation(form, _formIndex, _arrToUpdate, function(data, textStatus, jqXHR) {
+
+			__fncSubmitQuotation(form, _formIndex, _arrToUpdate, function (data, textStatus, jqXHR) {
 				if (data.success == false) {
 					_doUpdateTotalValue(_formIndex);
 					alert(MSG_ALERT_COMMIT_FAILED.replace(/v_XX_1/g, data.error));
-					$("#dialog-modal").dialog( "close" );
+					$("#dialog-modal").dialog("close");
 				} else {
 					_currEditTr = undefined;
 					_currEditData = undefined;
 					_doClearForm(form);
 
-					if (typeof populateSublist == 'function') populateSublist(true, null, function() {						
+					if (typeof populateSublist == 'function') populateSublist(true, null, function () {
 						var _divDialog = $(form).parents(".cls-div-form-edit-dialog").get(0);
-						if ($(_divDialog).dialog( "isOpen" )) $(_divDialog).dialog( "close" );
+						if ($(_divDialog).dialog("isOpen")) $(_divDialog).dialog("close");
 
 						_doDisplayToastMessage(MSG_ALERT_COMMIT_SUCCESS.replace(/v_XX_1/g, ''), 3, false);
-						$("#dialog-modal").dialog( "close" );
+						$("#dialog-modal").dialog("close");
 						_doUpdateTotalValue(_formIndex);
 					});
 				}
@@ -483,7 +641,7 @@ $(function() {
 		} else {
 			var _dtIndex = $(divEditDlg).attr('index');
 			if (('rowid' in dataRowObj) && (dataRowObj['rowid'] > 0)) {
-				_fncTemplate_doDelete(dataRowObj, trObj, divEditDlg, function() {
+				_fncTemplate_doDelete(dataRowObj, trObj, divEditDlg, function () {
 					_doUpdateTotalValue(_dtIndex);
 				});
 			} else {
@@ -492,19 +650,21 @@ $(function() {
 			}
 		}
 	};
-	blnDataChanged = function() {
-		if (( ! $("#divSublistFormEditDialog").is(":visible")) && (_blnDetailsChange)) {
+	blnDataChanged = function () {
+		if ((!$("#divSublistFormEditDialog").is(":visible")) && (_blnDetailsChange)) {
 			return true;
 		} else {
 			return _fncTemplate_blnDataChanged.apply(this, arguments);
 		}
 	};
+
 });
+
 
 function _fnc_onChangePaymentCondition(str, env, ui) {
 	var _val = getValue($('#sel-payment_condition_rowid'), -1);
 	var _elemDp = $('#txt-deposit_percent');
-	if (! getValue(_elemDp, false)) {
+	if (!getValue(_elemDp, false)) {
 		if (_val == 1) {
 			setValue(_elemDp, 50, false);
 			_elemDp.trigger('changed');
@@ -528,7 +688,7 @@ function _fnc_onChangePaymentCondition(str, env, ui) {
 function _doUpdateDepositValues(dblPercent, dblActual) {
 	var _dblP = dblPercent || -1;
 	var _dblA = dblActual || -1;
-	var _dblAmount = _cleanNumericValue(getValue($('#divMain #spn-grand_total'), 0));	
+	var _dblAmount = _cleanNumericValue(getValue($('#divMain #spn-grand_total'), 0));
 	if (_dblAmount <= 0) return false;
 
 	if ((_dblP < 0) && (_dblA < 0)) {
@@ -552,19 +712,19 @@ function _doUpdateDepositValues(dblPercent, dblActual) {
 }
 
 function __fncCheckVisibleElementsByStatus(qo_status, divEditDlg) {
-	$('[from_qs]', divEditDlg).each(function() {
+	$('[from_qs]', divEditDlg).each(function () {
 		$(this).removeClass('hidden');
 	});
-	$('[to_qs]', divEditDlg).each(function() {
+	$('[to_qs]', divEditDlg).each(function () {
 		$(this).removeClass('hidden');
 	});
-	
-	$('[from_qs]', divEditDlg).each(function() {
+
+	$('[from_qs]', divEditDlg).each(function () {
 		if (parseInt($(this).attr('from_qs') || 0) > qo_status) {
 			$(this).addClass('hidden');
 		}
 	});
-	$('[to_qs]', divEditDlg).each(function() {
+	$('[to_qs]', divEditDlg).each(function () {
 		if (parseInt($(this).attr('to_qs') || 0) < qo_status) {
 			$(this).addClass('hidden');
 		}
@@ -574,9 +734,9 @@ function __fncCheckVisibleElementsByStatus(qo_status, divEditDlg) {
 function __fncPopulateSpecialControls(dataRowObj, divEditDlg) {
 	var _arr = dataRowObj['json_details'];
 	if ((typeof _arr == 'string') && (_arr.trim().length > 0)) _arr = JSON.parse(_arr);
-	
-	if (! ($.isPlainObject(_arr) || $.isArray(_arr))) return false;
-	
+
+	if (!($.isPlainObject(_arr) || $.isArray(_arr))) return false;
+
 	if ($('div#div_premade_detail_panel').filter(__fnc_filterNotNestedHiddenClass).length > 0) {
 		_premadeOrderFetchDetail(_arr);
 	} else {
@@ -586,25 +746,25 @@ function __fncPopulateSpecialControls(dataRowObj, divEditDlg) {
 			var _price = 0;
 			if ('order_qty' in _arr) _qty = parseInt(_arr['order_qty'] || 0);
 			if ('order_price_each' in _arr) _price = parseFloat(_arr['order_price_each'] || 0);
-			
+
 			$('div.total-price', _div[0]).html(formatNumber(_qty * _price));
 		}
 	}
 	_doSetValueFormUserInput(divEditDlg, _arr);
 	var _size_cat = ('size_category' in _arr) ? _arr["size_category"] : -1;
-	
+
 	_arr = dataRowObj['json_images'];
 	if (typeof _arr == 'string') _arr = JSON.parse(_arr);
 	var _arrImgs = {};
 	for (var _key in _arr) {
 		var _val = _arr[_key] || false;
-		if ((typeof _key == 'string') && (typeof _val == 'string') && (_val != 'unchange')) _arrImgs[_key] = {"url": '../app/uploads/' + _val, "name": _val};
+		if ((typeof _key == 'string') && (typeof _val == 'string') && (_val != 'unchange')) _arrImgs[_key] = { "url": '../app/uploads/' + _val, "name": _val };
 	}
 	_doSetValueFormUserInput($('#divImages', divEditDlg), _arrImgs);
 
 	if (('json_others' in dataRowObj)) {
 		if (typeof dataRowObj['json_others'] == 'string') dataRowObj['json_others'] = JSON.parse(dataRowObj['json_others']);
-		
+
 		//++ po properties
 		var _objOthers = dataRowObj['json_others'];
 		if (('po_order_date' in _objOthers) || ('po_due_date' in _objOthers) || ('po_deliver_date' in _objOthers) || ('po_supplier_rowid' in _objOthers)) {
@@ -616,11 +776,11 @@ function __fncPopulateSpecialControls(dataRowObj, divEditDlg) {
 		}
 		if (('remark1' in _objOthers) && ((_objOthers["remark1"] + '').trim() != '')) setValue($('#txa-remark1', $('#div_PO_remarks')), _objOthers["remark1"]);
 		if (('remark2' in _objOthers) && ((_objOthers["remark2"] + '').trim() != '')) setValue($('#txa-remark2', $('#div_PO_remarks')), _objOthers["remark2"]);
-		
+
 		//++ size quan
 		if (_size_cat > 0) dataRowObj['json_others']['size_category'] = _size_cat;
 		_sqFetchData(dataRowObj['json_others']);
-		
+
 		//++ Screen
 		_tbl = $('table#tbl_sc_list', divEditDlg).filter(__fnc_filterNotNestedHiddenClass);
 		if (_tbl.length > 0) _tbl = _tbl[0];
@@ -628,7 +788,7 @@ function __fncPopulateSpecialControls(dataRowObj, divEditDlg) {
 		if ('screen' in dataRowObj['json_others']) {
 			_arr = dataRowObj['json_others']["screen"];
 			if (typeof _arr == 'string') _arr = JSON.parse(_arr);
-			for (_i=0;_i<_arr.length;_i++) {
+			for (_i = 0; _i < _arr.length; _i++) {
 				var _row = _arr[_i];
 				_scInsertDetailRow(_tbl, _row);
 			}
@@ -640,7 +800,7 @@ function __fncPopulateSpecialControls(dataRowObj, divEditDlg) {
 		if ('others_price' in dataRowObj['json_others']) {
 			_arr = dataRowObj['json_others']["others_price"];
 			if (typeof _arr == 'string') _arr = JSON.parse(_arr);
-			for (_i=0;_i<_arr.length;_i++) {
+			for (_i = 0; _i < _arr.length; _i++) {
 				var _row = _arr[_i];
 				_opInsertDetailRow(_tbl, _row);
 			}
@@ -656,31 +816,31 @@ function __fncSubmitQuotation(form, index, arrToUpdate, fncSuccessCallBack) {
 	var _index = index || 0;
 	var _fncSuccessCallback = fncSuccessCallBack || false;
 	var _update = arrToUpdate || false;
-	if (! _update ) return false;
+	if (!_update) return false;
 
 	$("#dialog-modal").html("<p>" + MSG_DLG_HTML_COMMIT + "</p>");
 	$("#dialog-modal").dialog('option', 'title', MSG_DLG_TITLE_COMMIT);
-	$("#dialog-modal").dialog( "open" );
-	
+	$("#dialog-modal").dialog("open");
+
 	_str = JSON.stringify(_update);
 	$.ajax({
-		type:"POST",
-		url:"./" + $(form).attr("controller") + "/commit",
-		contentType:"application/json;charset=utf-8",
-		dataType:"json",
-		data:_str,
-		success: function(data, textStatus, jqXHR) {
+		type: "POST",
+		url: "./" + $(form).attr("controller") + "/commit",
+		contentType: "application/json;charset=utf-8",
+		dataType: "json",
+		data: _str,
+		success: function (data, textStatus, jqXHR) {
 			if (typeof _fncSuccessCallback == 'function') _fncSuccessCallback(data, textStatus, jqXHR);
 		}
-		, error: function(jqXHR, textStatus, errorThrown) {
+		, error: function (jqXHR, textStatus, errorThrown) {
 			doDisplayInfo(textStatus + ' : ' + errorThrown, "ErrorMessage", _index);
 			if (typeof opt_fncCallBack == 'function') opt_fncCallBack.apply(this, arguments);
-			$("#dialog-modal").dialog( "close" );
+			$("#dialog-modal").dialog("close");
 		}, statusCode: {
-			404: function() {
+			404: function () {
 				doDisplayInfo("Page not found", "ErrorMessage", _index);
 				if (typeof opt_fncCallback == 'function') opt_fncCallback.apply(this, arguments);
-				$("#dialog-modal").dialog( "close" );
+				$("#dialog-modal").dialog("close");
 			}
 		}
 	});
@@ -689,19 +849,19 @@ function __fncSubmitQuotation(form, index, arrToUpdate, fncSuccessCallBack) {
 var _current_row;
 var _blnDetailsChange = false;
 function _doUpdateTotalValue(index) {
-	if ((index >= 0)) { 
+	if ((index >= 0)) {
 		var _totalNet = 0;
 		var _totalDiscount = 0;
 		var _totalVAT = 0;
 		var _totalValue = 0;
 		var _arr = _arrSublistDataTable[index].fnGetData() || [];
-		for (_i=0;_i<_arr.length;_i++) {
-			if (('amount' in _arr[_i]) && (_arr[_i]['amount'] != '') && (! isNaN(_arr[_i]['amount']))) {
+		for (_i = 0; _i < _arr.length; _i++) {
+			if (('amount' in _arr[_i]) && (_arr[_i]['amount'] != '') && (!isNaN(_arr[_i]['amount']))) {
 				_totalNet += parseFloat(_arr[_i]['amount']);
 			}
 		}
 		var _percent = $('#txt-percent_discount').val() || 0;
-		if ((! isNaN(_percent)) && (_percent > 0) && (_percent < 100)) {
+		if ((!isNaN(_percent)) && (_percent > 0) && (_percent < 100)) {
 			_totalDiscount = (_totalNet * _percent / 100) * -1;
 		} else {
 			$('#txt-percent_discount').val('');
@@ -739,19 +899,19 @@ function customCommand(command, aData, tr, divEditDlg) {
 		var _arr_payment_log = aData['arr_payment_log'];
 		if ((typeof _arr_deposit_log == 'string') && (_arr_deposit_log.trim() != '')) _arr_deposit_log = JSON.parse(_arr_deposit_log);
 		if ((typeof _arr_payment_log == 'string') && (_arr_payment_log.trim() != '')) _arr_payment_log = JSON.parse(_arr_payment_log);
-		
+
 		var _grand_total = ('grand_total' in aData) ? aData['grand_total'] : false;
 		var _deposit_amount = ('deposit_amount' in aData) ? aData['deposit_amount'] : false;
-		
+
 		_openPaymentListDialog({
 			"status_rowid": _status_rowid
-			,"grand_total": _grand_total
-			,"deposit_amount": _deposit_amount
-			,"deposit":
+			, "grand_total": _grand_total
+			, "deposit_amount": _deposit_amount
+			, "deposit":
 				//{"constant": {"quotation_rowid": _rowid}, "arr_payment_list": _arr_deposit_log, "is_editable": ((_status_rowid < 70) || (_status_rowid == 150) || (_status_rowid == 151)), "is_approveable": ((_status_rowid < 70) || (_status_rowid == 150) || (_status_rowid == 151)) }
-				{"constant": {"quotation_rowid": _rowid}, "arr_payment_list": _arr_deposit_log, "is_editable": true, "is_approveable": true }
+				{ "constant": { "quotation_rowid": _rowid }, "arr_payment_list": _arr_deposit_log, "is_editable": true, "is_approveable": true }
 			, "after_deposit":
-				{"constant": {"quotation_rowid": _rowid}, "arr_payment_list": _arr_payment_log, "is_enable": ((_status_rowid >= 70)), "is_editable": true, "is_approveable": true }
+				{ "constant": { "quotation_rowid": _rowid }, "arr_payment_list": _arr_payment_log, "is_enable": ((_status_rowid >= 70)), "is_editable": true, "is_approveable": true }
 		});
 	} else if ((_cmd == 'produce') && ('rowid' in aData)) {
 		window.open("./quotation_produce_order/index/" + aData['rowid']);
@@ -771,7 +931,7 @@ function __fncDPUpdateTotalDeposit() {
 	if (_obj.total.amount > 0) {
 		var _dblTotalAmount = _cleanNumericValue($('#divMain #spn-grand_total').html());
 		var _dblLeftOver = _dblTotalAmount - _obj.total.amount;
-		
+
 		$('#divMain #spn-deposit_payment').html(formatNumber(_obj.total.amount, 2));
 		$('#divMain #spn-disp_left_amount').html(formatNumber(_dblLeftOver, 2));
 	}
@@ -783,7 +943,7 @@ function _doCreateNew(customer_rowid, customer_name) {
 	if ((window.opener == null) && (_cus_rowid > 0) && (window.history.length > 1)) {
 		//$('<a href="customer/index/' + _cus_rowid + '">Back</a>')
 		$('<a onclick="window.history.back();">Back</a>')
-			.button({icons:{primary: 'ui-icon-arrowthick-1-w'}})
+			.button({ icons: { primary: 'ui-icon-arrowthick-1-w' } })
 			.addClass('cls-navigator')
 			.insertBefore($('#frmSearch'));
 	}
@@ -793,32 +953,122 @@ function _doCreateNew(customer_rowid, customer_name) {
 	$('#aac-customer', _frm).val(_cus_name);
 	$('#hdn-customer_rowid', _frm).val(_cus_rowid);
 }
+function __doCommitChangeMultiDataTable(_dataToUpdateColumn) {
+	var _json = '['
+	var _json_obj = '';
+	$.each(_dataToUpdateColumn, function (index, el) {
+		var index = 0;
+		_json_obj = '';
+		for (var key in el) {
+			if (el.hasOwnProperty(key)) {
+				if (index < 1) {
+					_json_obj = _json_obj.concat('{');
+				}
+				var _value = el[key];
+				if (_value === '') _value = '';
+				_json_obj += '"' + key + '":"' + _value + '",'
+				if (index >= 4) {
+					_json_obj = _json_obj.substring(0, _json_obj.length - 1);
+					_json_obj = _json_obj.concat('}');
+					_json = _json.concat('', _json_obj);
+				}
+			}
+			index++;
+		}
+	});
+	_json += ']';
+	_json = _json.replaceAll("}{","},{");
+	var _str = _json;
+	console.log(_json)
+	$.ajax({
+		type: "POST",
+		url: "./Process_screening_order/update_data_by_id",
+		contentType: "application/json;charset=utf-8",
+		dataType: "json",
+		data: _str,
+		success: function (data, textStatus, jqXHR) {
+			if (data.success) {
+				_doDisplayToastMessage(MSG_ALERT_COMMIT_SUCCESS.replace(/v_XX_1/g, 'update data success !'), 3, false);
+				doSearch(false);
+				clearValue($('#sel-edit_column'));
+				clearValue($('#txa-edit_column'));
+			} else {
+				doDisplayInfo("UnknownError", "ErrorMessage", _index);
+			}
+			if (typeof fncOnSuccess == 'function') fncOnSuccess.apply(this);
+			$("#dialog-modal").dialog("close");
+		}
+		, error: function (jqXHR, textStatus, errorThrown) {
+			doDisplayInfo(textStatus + ' : ' + errorThrown, "ErrorMessage", _index);
+			$("#dialog-modal").dialog("close");
+		}, statusCode: {
+			404: function () {
+				doDisplayInfo("Page not found", "ErrorMessage", _index);
+				$("#dialog-modal").dialog("close");
+			}
+		}
+	});
+}
+function _updateRowAfterChangeData(_rowid, _column, _val) {
+	var currTblRow = '';
+	if (_rowid > 0) {
+		currTblRow = $("#tblSearchResult tbody tr").find('select[ps_rowid="' + _rowid + '"]').parents('tr');
+		currTblRow.find('td.' + _column).text(_val).css("background-color", "#32CD32");
+	}
+}
 
-function __doChangeQuotationStatus(rowid, status_rowid, order_rowid, type_id, strStatusRemark, fncOnSuccess) {
+function _doPrepareChangeDataColumn(_rowid, _column, _val) {
+	var objData = {
+		rowid: '',
+		width: '',
+		high: '',
+		color_qty: '',
+		block_emp: ''
+	};
+	if (_rowid > 0 && _column != '' && _val != '') {
+		if (!(_dataToUpdateColumn.hasOwnProperty(_rowid))) {
+			_dataToUpdateColumn[_rowid] = objData;
+			_dataToUpdateColumn[_rowid]['rowid'] = _rowid;
+		} else {
+			_dataToUpdateColumn[_rowid]['rowid'] = _rowid;
+		}
+		switch (_column) {
+			case 'width': _dataToUpdateColumn[_rowid][_column] = _val; break;
+			case 'high': _dataToUpdateColumn[_rowid][_column] = _val; break;
+			case 'color_qty': _dataToUpdateColumn[_rowid][_column] = _val; break;
+			case 'block_emp': _dataToUpdateColumn[_rowid][_column] = _val; break;
+		}
+		return true;
+	} else {
+		return false;
+	}
+};
+function __doChangeQuotationStatus(rowid, status_rowid, order_rowid, order_s_rowid, seq, strStatusRemark, fncOnSuccess) {
 	var _index = 0;
 	var _rowid = rowid || false;
 	var _status_rowid = status_rowid || false;
 	var _status_remark = strStatusRemark || false;
 	var _order_rowid = order_rowid || false;
-	var _type_id = type_id || false;
-	if (! (_rowid && _status_rowid)) {
+	var _order_s_rowid = order_s_rowid || false;
+	var _seq = seq || false;
+	if (!(_rowid && _status_rowid)) {
 		alert('Invalid parameters to change quotation status ( rowid = ' + rowid + ', status_rowid = ' + status_rowid + ' )');
 		return false;
 	}
-	
-	var _json = {"rowid": _rowid, "status_rowid": _status_rowid};
+
+	var _json = { "rowid": _rowid, "status_rowid": _status_rowid };
 	if (_status_remark) _json["status_remark"] = _status_remark;
 	if (_order_rowid) _json["order_rowid"] = _order_rowid;
-	if (_type_id) _json["type_id"] = _type_id;
-	console.log(_json)
+	if (_order_s_rowid) _json["order_s_rowid"] = _order_s_rowid;
+	if (_seq) _json["seq"] = _seq;
 	_str = JSON.stringify(_json);
 	$.ajax({
-		type:"POST",
-		url:"./Process_screening_order/change_status_by_id",
-		contentType:"application/json;charset=utf-8",
-		dataType:"json",
-		data:_str,
-		success: function(data, textStatus, jqXHR) {
+		type: "POST",
+		url: "./Process_screening_order/change_status_by_id",
+		contentType: "application/json;charset=utf-8",
+		dataType: "json",
+		data: _str,
+		success: function (data, textStatus, jqXHR) {
 			if (data.success) {
 				_doDisplayToastMessage(MSG_ALERT_COMMIT_SUCCESS.replace(/v_XX_1/g, 'quotation rowid#' + _rowid + ' status has changed to "' + status_rowid + '"'), 3, false);
 				doSearch(false);
@@ -826,15 +1076,15 @@ function __doChangeQuotationStatus(rowid, status_rowid, order_rowid, type_id, st
 				doDisplayInfo("UnknownError", "ErrorMessage", _index);
 			}
 			if (typeof fncOnSuccess == 'function') fncOnSuccess.apply(this);
-			$("#dialog-modal").dialog( "close" );			
+			$("#dialog-modal").dialog("close");
 		}
-		, error: function(jqXHR, textStatus, errorThrown) {
+		, error: function (jqXHR, textStatus, errorThrown) {
 			doDisplayInfo(textStatus + ' : ' + errorThrown, "ErrorMessage", _index);
-			$("#dialog-modal").dialog( "close" );
+			$("#dialog-modal").dialog("close");
 		}, statusCode: {
-			404: function() {
+			404: function () {
 				doDisplayInfo("Page not found", "ErrorMessage", _index);
-				$("#dialog-modal").dialog( "close" );
+				$("#dialog-modal").dialog("close");
 			}
 		}
 	});
@@ -875,7 +1125,7 @@ function __doInsertDeliveryOrder(rowid) {
 function fnc__DDT_Row_RenderPercentPayment(data, type, full) {
 	var _elPanel = $('<div>');
 	var _rdy = parseInt(full['is_deposit_ready'] || -1);
-	
+
 	var _spn = $('<span>');
 	if (_rdy >= 2) {
 		_spn.addClass("cls-percent-na").html("เครดิต");
@@ -897,34 +1147,37 @@ function fnc__DDT_Row_RenderPercentPayment(data, type, full) {
 }
 
 function fnc__DDT_Row_RenderAvailStatus(data, type, full) {
-	console.log(full);
 	var _elPanel = $('<div>');
 	var _qo_rowid = full['prod_id'] || -1;
 	var _qo_code = full['prod_id'] || false;
+	var _qo_status = full['status_rowid'] || false;
 	var _qo_order_rowid = full['order_rowid'] || -1;
-	var _qo_type_id = full['type_id'] || -1;
+	var _qo_order_s_rowid = full['order_s_rowid'] || -1;
+	var _qo_seq = full['seq'] || - 1;
 	var _currStatusName = full['disp_status'] || false;
-	// if (_qo_rowid < 1) return '';
+	// if 
+
 	var _elSel = $('<select>').attr('ps_rowid', _qo_rowid)
 		.attr('order_rowid', _qo_order_rowid)
-		.attr('type_id', _qo_type_id)
-		.addClass('cls-sel-change-status')
+		.attr('order_s_rowid', _qo_order_s_rowid)
+		.attr('seq', _qo_seq)
+		.addClass('cls-sel-change-status_prod')
 		.append($('<option>').html('--'))
 		.appendTo(_elPanel);
 	var _arrStt = [];
 	if ('arr_avail_status' in full) {
 		_arrStt = full['arr_avail_status'];
 		if (typeof _arrStt == 'string') _arrStt = JSON.parse(_arrStt);
-		if (_arrStt == '')_arrStt = ["s1"];
+		if (_arrStt == '' && _qo_status < 80) _arrStt = ["wbl"];
 	}
 	if (_qo_code) _elSel.attr("ps_code", _qo_code);
 	if (_currStatusName) _elSel.attr("curr_status_text", _currStatusName);
 	if (_arrStt.length > 0) {
 		if ($.isArray(_ARR_QO_STATUS)) {
-			$.each(_ARR_QO_STATUS, function(indx, obj) {
+			$.each(_ARR_QO_STATUS, function (indx, obj) {
 				if (('code' in obj) && ('rowid' in obj) && ('name' in obj)) {
 					var _code = obj['code'] || false;
-					if (! _code) return true;
+					if (!_code) return true;
 					_code = _code.toLowerCase();
 					if (_arrStt.indexOf(_code) >= 0) {
 						_elSel.append($('<option>').attr("code", obj["code"]).attr("name", obj["name"]).val(obj["rowid"]).html(obj["code"] + ': ' + obj["name"]));
@@ -943,18 +1196,17 @@ function fnc__DDT_Row_RenderAvailStatus(data, type, full) {
 
 function fnc__DDT_Row_RenderAvailAction(data, type, full) {
 	var _elPanel = $('<div>');
-	var _div = $('<div>').attr('qo_rowid', full['rowid']).addClass("cls-quotation-row-control-panel").appendTo(_elPanel);
+	var _div = $('<div>').attr('ps_rowid', full['rowid']).addClass("cls-quotation-row-control-panel").appendTo(_elPanel);
 	var _arrAct = [], _arrStt = [], _quotation_status_rowid = -1;
 	if ('arr_avail_action' in full) {
 		_arrAct = full['arr_avail_action'];
 		if (typeof _arrAct == 'string') _arrAct = JSON.parse(_arrAct);
 	}
-	if ('arr_avail_status' in full) {
-		_arrStt = full['arr_avail_status'];
+	if ('arr_avail_action' in full) {
+		_arrStt = full['arr_avail_action'];
 		if (typeof _arrStt == 'string') _arrStt = JSON.parse(_arrStt);
 	}
 	if ('status_rowid' in full) _quotation_status_rowid = (full['status_rowid'] || -1);
-	
 	if (_arrAct.indexOf('view') >= 0) {
 		_div.append($('<img class="list-row-button" command="view" src="./public/images/b_view.png" alt="view" title="ดูข้อมูล">'));
 
@@ -1036,7 +1288,7 @@ function fnc__DDT_Row_RenderDraftDetailOrder(data, type, full) {
 		return _elPanel.html();
 	} else {
 		return '- n/a -'
-	}	
+	}
 }
 
 function fnc__DDT_Row_RenderStatus(data, type, full) {
@@ -1048,7 +1300,7 @@ function fnc__DDT_Row_RenderStatus(data, type, full) {
 		.addClass('cls-manu-status')
 		.addClass('cls-ms-rowid-' + _status_rowid)
 		.appendTo(_elPanel)
-	;
+		;
 	if (_strRemark.length > 0) {
 		_div.addClass('cls-qs-with-remark').attr('title', _strRemark).attr('remark', _strRemark);
 	}
@@ -1057,15 +1309,15 @@ function fnc__DDT_Row_RenderStatus(data, type, full) {
 
 function __fncManageExpired(blnIsCheckValue) {
 	var _blnIsCheckValue = blnIsCheckValue || false;
-	if (! _blnIsCheckValue) {
+	if (!_blnIsCheckValue) {
 		$('.cls-is-expired').addClass('hidden');
 	} else {
-		$('input.cls-is-expired').each(function() {
+		$('input.cls-is-expired').each(function () {
 			var _elem = $(this);
 			if (_elem.length <= 0) return true;
 			if (getValue(_elem, false)) _elem.addClass('has-value');
 		});
-		$('option.cls-is-expired').each(function() {
+		$('option.cls-is-expired').each(function () {
 			var _opt = $(this);
 			if (_opt.length <= 0) return true;
 
@@ -1074,24 +1326,24 @@ function __fncManageExpired(blnIsCheckValue) {
 			var _cat_id = _opt.val();
 			var _tbl = $('table.tbl_size_cat#cat_id_' + _cat_id);
 			if (_tbl.length <= 0) return true;
-			
-			if ((! _opt.is(':selected')) && ($('input.cls-is-expired.has-value', _tbl).length <= 0)) {
+
+			if ((!_opt.is(':selected')) && ($('input.cls-is-expired.has-value', _tbl).length <= 0)) {
 				_tbl.addClass('hidden');
-				_opt.addClass('hidden');				
+				_opt.addClass('hidden');
 			} else {
 				_tbl.addClass('has-value');
-			}			
+			}
 		});
 		// cut
-		$('table.tbl_size_cat:not(.has-value)').each(function() {
+		$('table.tbl_size_cat:not(.has-value)').each(function () {
 			var _tbl = $(this);
-			$('tr th.cls-col-size-txt.cls-is-expired', _tbl).each(function() {
+			$('tr th.cls-col-size-txt.cls-is-expired', _tbl).each(function () {
 				var _indx = $(this).index();
 				var _tdPrc = $('tr td.cls-col-size-price.cls-is-expired:eq(' + _indx + ')', _tbl);
 				var _tdQty = $('tr td.cls-col-size-qty.cls-is-expired:eq(' + _indx + ')', _tbl)
 				if (
-					(! $('input.sp-price', _tdPrc).hasClass('has-value')) 
-					&& (! $('input.sq-qty', _tdQty).hasClass('has-value'))
+					(!$('input.sp-price', _tdPrc).hasClass('has-value'))
+					&& (!$('input.sq-qty', _tdQty).hasClass('has-value'))
 				) {
 					$(this).addClass('hidden');
 					$('tr th.cls-col-size-chest.cls-is-expired:eq(' + _indx + ')', _tbl).addClass('hidden');
@@ -1102,3 +1354,4 @@ function __fncManageExpired(blnIsCheckValue) {
 		});
 	}
 }
+
