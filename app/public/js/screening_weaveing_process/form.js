@@ -65,6 +65,7 @@ $(function () {
 			$(this).removeAttr('status_rowid').removeAttr('status_text');
 			$('#txa-edit_column').css("display","none");
 			$('#sel-edit_column').css("display","none");
+			$('.file-upload-wrapper').css("display","none");
 			$('#sel-edit_column option:selected').removeAttr("selected");
 			clearValue($('#txa-edit_column'));
 			doVldrInput(false, $('#txa-edit_column'));
@@ -74,14 +75,26 @@ $(function () {
 				var _rowid = $(this).attr('ps_rowid') || false;
 				var _column = $(this).attr('column') || false;
 				var _status_text = $(this).attr('column_disp') || false;
-				var _val = $('#sel-edit_column option:selected').attr('code') || false;
-				var disp_val = $('#sel-edit_column option:selected').attr('name') ||false;
-				console.log(_val)
-				console.log(disp_val)
-				if(!(_val)) {
-					_val = ' ' + getValue($('#txa-edit_column'), '');
-					_val = _val.trim();
+				var _input_txt_val = $('#txa-edit_column').val() || false;
+				var _input_sel_val = $('#sel-edit_column option:selected').attr('code') || false;
+				var _input_file_val = $(this).children('.file-upload-wrapper').find('.input-file-upload-file').val().replace(/.*(\/|\\)/, '') || false;
+				var disp_val = '';
+				var _val = '';
+				console.log(1+disp_val)
+				if((_input_sel_val)){
+					_val = _input_sel_val;
+					disp_val = false;
+					// disp_val = $('#sel-edit_column option:selected').attr('name') || false;
+				}else if((_input_txt_val)){
+					_val = _input_txt_val;
+					disp_val = false;
+				}else if((_input_file_val)){
+					_val = _input_file_val;
+					disp_val = false;
 				}
+				
+				console.log(2+_val)
+				_val = _val.trim();
 				doClearVldrErrorElement($('#sel-edit_column'));
 				doClearVldrErrorElement($('#txa-edit_column'));
 				if (_val == '') {
@@ -92,6 +105,7 @@ $(function () {
 						if (_doPrepareChangeDataColumn(_rowid, _column, _val, disp_val, function () {
 							clearValue($('#sel-edit_column'));
 							clearValue($('#txa-edit_column'));
+							clearValue($('.input-file-upload-file'));
 						})) {
 							$('.DTTT_button_commit_page').removeClass('DTTT_button_disabled');
 						}
@@ -101,6 +115,7 @@ $(function () {
 				return false;
 			}
 			, 'Cancel': function () {
+				$(this).children('.file-upload-wrapper').find('.input-file-upload-file').val('');
 				$(this).dialog('close');
 			}
 		}
@@ -134,6 +149,7 @@ $(function () {
 				if(($(this).text()) !== '0') ownTextVal = $(this).text();
 				$('#sel-edit_column').show().find('option').remove();
 				var _elSel = $('#sel-edit_column')
+				
 				_elSel.append($('<option>').html('--'))
 				if ($.isArray(_ARR_SCREEN_TYPE)) {
 					$.each(_ARR_SCREEN_TYPE, function(indx, obj) {
@@ -145,7 +161,7 @@ $(function () {
 						}
 					});
 				}
-				$('#txa-edit_column').val(ownTextVal);
+				_elSel.attr('disp_name',ownTextVal);
 				$('#div_edit_dialog').attr('ps_rowid', ps_rowid)
 					.attr('column', _MANU_TYPE+'_type')
 					.attr('column_disp', 'ประเภทงาน '+_MANU_TYPE)
@@ -1062,9 +1078,12 @@ function _doPrepareChangeDataColumn(_rowid, _column, _val, disp_val) {
 		console.log(_dataToUpdateColumn)
 	if (_rowid > 0) {
 		var disp_text = '';
-		if(disp_val.length > 0 ) _val = disp_val;
-		currTblRow = $("#tblSearchResult tbody tr").find('select[ps_rowid="' + _rowid + '"]').parents('tr');
-		currTblRow.find('td.' + _column).text(_val).css("background-color", "#32CD32");
+		if(disp_val || disp_val.length > 0){
+			if(disp_val.length > 0) _val = disp_val;
+			console.log(_val)
+			currTblRow = $("#tblSearchResult tbody tr").find('select[ps_rowid="' + _rowid + '"]').parents('tr');
+			currTblRow.find('td.' + _column).text(_val).css("background-color", "#32CD32");
+		}
 	}
 		return true;
 	} else {
