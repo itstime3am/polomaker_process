@@ -9,14 +9,18 @@ class Upload_temp_image extends CI_Controller {
 	public function index() {
 		$_arrFiles = array();
 		$_arrError = array();
+		if(isset($_POST)){
+			echo print_r($_POST);exit;
+		}
 		if (isset($_FILES['image']) && ($_FILES['image']['name']) && ($_FILES['image']['name'] != "")) {
-			$_upload_path_url = _url_temp_upload_path();
-			$_uploaddir_path = _file_temp_upload_path();
+			$_upload_path_url = _url_upload_path();
+			$_uploaddir_path = _file_upload_path();
+			$__file_name = gmdate('YmdHis');
 
 			//$_dat = new DateTime();
 			$_uplCnfg = array(
 				'upload_path' => $_uploaddir_path
-				, 'file_name' => gmdate('YmdHis') //$_dat->format('YmdHis')
+				, 'file_name' => $__file_name //$_dat->format('YmdHis')
 				, 'allowed_types' => 'jpg|jpeg|png|gif'
 				, 'max_size' => 5000
 				, 'max_width' => 4000
@@ -83,7 +87,8 @@ class Upload_temp_image extends CI_Controller {
 			it you set this without the if(IS_AJAX)...else... you get ERROR:TRUE (my experience anyway)
 			 so that this will still work if javascript is not enabled
 			*/
-			if (IS_AJAX) echo json_encode(array("files" => $_arrFiles));
+			echo json_encode(array("files" => $_arrFiles));
+			// if (IS_AJAX) echo json_encode(array("files" => $_arrFiles));
 		}
 	}
 }

@@ -1,6 +1,6 @@
 <?php if (!defined('BASEPATH')) exit('No direct script access allowed');
 
-class Mdl_screen_process extends MY_Model
+class Mdl_weave_process extends MY_Model
 {
 	function __construct()
 	{
@@ -22,17 +22,17 @@ class Mdl_screen_process extends MY_Model
 		-- WEAVE SQL
 		select  o.job_number, o.customer , CONCAT(o.type, ' [ ', o.category, ' ] ') as disp_order , o.standard_pattern as pattern
 		, d.position, o.fabric, o.sum_qty as qty, d.detail, d.size, d.job_hist, s.screen_type, s.name AS disp_type
-		, tmp.rowid  as prod_id, tmp.prod_status  as status_rowid, ss.name  as disp_status, tmp.screen_type as type_rowid, mst.name as disp_screen_type
-		, tmp.width , tmp.high, tmp.fabric_date , tmp.block_date , tmp.block_emp , tmp.block_number , tmp.color_qty
-		,d.order_rowid, d.order_screen_rowid as order_s_rowid, d.seq
+		, tmp.rowid  as prod_id, tmp.prod_status  as status_rowid, ss.name  as disp_status, tmp.weave_type as type_rowid, mst.name as disp_weave_type
+		, tmp.width , tmp.height, tmp.fabric_date , tmp.block_date , tmp.block_emp , tmp.block_number , tmp.stitch_number , tmp.color_silk_qty, tmp.prod_cost
+		,d.order_rowid, d.order_screen_rowid as order_s_rowid, d.seq, tmp.prod_cost
 		, ARRAY_TO_JSON(ARRAY(
-			SELECT UNNEST(fnc_manu_screen_avai_status(tmp.prod_status)) 
+			SELECT UNNEST(fnc_manu_weave_avai_status(tmp.prod_status)) 
 			INTERSECT 
 			SELECT UNNEST(uac.arr_avail_status)
 		)) AS arr_avail_status
 		, ARRAY_TO_JSON(ARRAY(
 			--SELECT UNNEST(fnc_quotation_avai_action(GREATEST(t.deliver_status_rowid, t.produce_status_rowid))) 
-			SELECT UNNEST(fnc_manu_screen_avai_action(tmp.prod_status)) 
+			SELECT UNNEST(fnc_manu_weave_avai_action(tmp.prod_status)) 
 			INTERSECT 
 			SELECT UNNEST(uac.arr_avail_action)
 		)) AS arr_avail_action
@@ -74,11 +74,11 @@ class Mdl_screen_process extends MY_Model
 				ON d.type_id = o.type_id
 				AND d.order_rowid = o.order_rowid
 			INNER JOIN pm_m_order_screen s on s.rowid = d.order_screen_rowid
-			LEFT JOIN pm_t_manu_screen_production tmp on tmp.order_screen_rowid = d.order_screen_rowid and  tmp.order_rowid = d.order_rowid and tmp.seq = d.seq
-			LEFT JOIN m_manu_screen_status ss ON ss.rowid = tmp.prod_status
-			LEFT join m_manu_screen_type mst on mst.rowid = tmp.screen_type
+			LEFT JOIN pm_t_manu_weave_production tmp on tmp.order_weave_rowid = d.order_screen_rowid and  tmp.order_rowid = d.order_rowid and tmp.seq = d.seq
+			LEFT JOIN m_manu_weave_status ss ON ss.rowid = tmp.prod_status
+			LEFT join m_manu_weave_type mst on mst.rowid = tmp.weave_type
 		WHERE o.ps_rowid = 10 
-		AND s.screen_type = 2
+		AND s.screen_type = 1
 		AND COALESCE(o.is_cancel, 0) < 1
 EOT;
 
@@ -88,24 +88,20 @@ EOT;
 	}
 
 	function update_data_by_id($_arrData)
-	{
-		// echo count($_arrData);exit;
-		for ($i = 0; $i < count($_arrData); $i++) {
-			$_rowid = $this->db->escape((int) $_arrData[$i]['rowid']);
-			$_width = $this->db->escape((int) $_arrData[$i]['width']);
-			$_high = $this->db->escape((int) $_arrData[$i]['high']);
-			$_color_qty = $this->db->escape((int) $_arrData[$i]['color_qty']);
-			$_block_emp = $_arrData[$i]['block_emp'];
-			if ($_rowid  > 0) {
-				if($_width > 0) $this->db->set('width', $_width);
-				if($_high > 0) $this->db->set('high', $_high);
-				if($_color_qty > 0) $this->db->set('color_qty', $_color_qty);
-				if($_block_emp != '') $this->db->set('block_emp', $_block_emp);
-				$this->db->set('update_by', $this->db->escape((int)$this->session->userdata('user_id')));
-				$this->db->where('rowid', $_rowid);
-				$this->db->update($this->_TABLE_NAME);
+	{	
+		for ( $i = 0 ; $i < count($_arrData) ; $i++){
+			if($_arrData[$i]['rowid'] > 0){	
+				foreach ($_arrData[$i] as $_col => $_val){
+						if( strlen($_val) > 0){
+							$this->db->set('"'. $_col .'"', $_val);
+						}
+					}
 			}
+			$this->db->set('update_by', $this->db->escape((int)$this->session->userdata('user_id')));
+			$this->db->where('rowid', $_arrData[$i]['rowid']);
+			$this->db->update($this->_TABLE_NAME);
 		}
+
 		$this->error_message = $this->db->error()['message'];
 		return true;
 	}
@@ -119,10 +115,14 @@ EOT;
 		if ($order_rowid && $order_s_rowid && $seq) {
 			$data = array(
 				'order_rowid' => $order_rowid,
-				'order_screen_rowid' =>  $order_s_rowid,
+				'order_weave_rowid' =>  $order_s_rowid,
 				'width' => '0',
-				'high' => '0',
-				'color_qty' => '0',
+				'height' => '0',
+				'block_number' => '0',
+				'stitch_number' => '0',
+				'color_silk_qty' => '0',
+				'prod_cost' => '0',
+				'is_cancel' => '0',
 				'seq' => $seq,
 				'create_by' => $this->db->escape((int)$this->session->userdata('user_id')),
 				'prod_status' => '10'
@@ -134,7 +134,6 @@ EOT;
 			$this->db->where('rowid', $_rowid);
 			$this->db->update($this->_TABLE_NAME);
 		}
-
 		$this->error_message = $this->db->error()['message'];
 		return true;
 	}

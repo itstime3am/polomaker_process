@@ -1218,6 +1218,33 @@ function jqObjDataContainer(obj) {
 	}
 }
 
+function doVldrInput(allow, obj, type){
+	if(allow){
+		$(obj).keypress(function(e) {
+				var a = [];
+				var k = e.which;
+				
+				for (i = 48; i < 58; i++){
+					a.push(i);
+				}
+
+				if(type == 'number'){
+					if (!(a.indexOf(k)>=0)){
+						e.preventDefault();
+						return e;
+					}
+				}else if(type == 'text'){
+					if ((a.indexOf(k)>=0)){
+						e.preventDefault();
+						return e;
+					}
+				}
+		});
+	}else{
+		$(obj).unbind('keypress');
+	}
+}
+
 function doSetVldrError(obj, data_field, type, msg, index) {
     var _elem = _toJQObj(obj);
 	if (_elem) {

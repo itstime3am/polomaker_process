@@ -3,7 +3,6 @@ var _DLG_STATUS_REMARK = false;
 var _DLG_EDIT_COLUMN = false;
 var _dataToUpdateColumn = [];
 $(function () {
-	console.log(_ARR_SCREEN_TYPE);
 	//	$('.cls-div-form-edit-dialog[index="0"]').dialog('option', 'height', 520);
 	//	$('.cls-div-form-edit-dialog[index="1"]').dialog('option', 'height', 500);
 	_DLG_STATUS_REMARK = $('#div_status_remark').dialog({
@@ -53,8 +52,8 @@ $(function () {
 		}
 	});
 
-	_DLG_EDIT_COLUMN = $('#div_edit_column').dialog({
-		height: 180
+	_DLG_EDIT_COLUMN = $('#div_edit_dialog').dialog({
+		height: 'auto'
 		, width: 780
 		, show: { effect: "puff", duration: 1 }
 		, hide: { effect: "fade", duration: 1 }
@@ -64,27 +63,36 @@ $(function () {
 		, autoOpen: false
 		, beforeClose: function (event, ui) {
 			$(this).removeAttr('status_rowid').removeAttr('status_text');
+			$('#txa-edit_column').css("display","none");
+			$('#sel-edit_column').css("display","none");
+			$('#sel-edit_column option:selected').removeAttr("selected");
+			clearValue($('#txa-edit_column'));
+			doVldrInput(false, $('#txa-edit_column'));
 		}
 		, buttons: {
 			'Commit': function () {
 				var _rowid = $(this).attr('ps_rowid') || false;
 				var _column = $(this).attr('column') || false;
 				var _status_text = $(this).attr('column_disp') || false;
-				var _remark = getValue($('#sel-edit_column'), '');
-				_remark += ' ' + getValue($('#txa-edit_column'), '');
-				_remark = _remark.trim();
+				var _val = $('#sel-edit_column option:selected').attr('code') || false;
+				var disp_val = $('#sel-edit_column option:selected').attr('name') ||false;
+				console.log(_val)
+				console.log(disp_val)
+				if(!(_val)) {
+					_val = ' ' + getValue($('#txa-edit_column'), '');
+					_val = _val.trim();
+				}
 				doClearVldrErrorElement($('#sel-edit_column'));
 				doClearVldrErrorElement($('#txa-edit_column'));
-				if (_remark == '') {
+				if (_val == '') {
 					doSetVldrError($('#sel-edit_column'), 'edit_column', 'required', 'กรุณาระบุข้อมูล', 1);
 					_doDisplayToastMessage('กรุณาระบุข้อมูล : \"' + _status_text + '\"', 3, false);
 				} else {
-					if (confirm('กรุณายืนยันการเปลี่ยนแปลงข้อมูล ' + _status_text + ' เป็น "' + _remark + '"')) {
-						if (_doPrepareChangeDataColumn(_rowid, _column, _remark, function () {
+					if (confirm('กรุณายืนยันการเปลี่ยนแปลงข้อมูล ' + _status_text + ' เป็น "' + _val + '"')) {
+						if (_doPrepareChangeDataColumn(_rowid, _column, _val, disp_val, function () {
 							clearValue($('#sel-edit_column'));
 							clearValue($('#txa-edit_column'));
 						})) {
-							_updateRowAfterChangeData(_rowid, _column, _remark)
 							$('.DTTT_button_commit_page').removeClass('DTTT_button_disabled');
 						}
 						$(this).dialog('close');
@@ -93,7 +101,6 @@ $(function () {
 				return false;
 			}
 			, 'Cancel': function () {
-				clearValue($('#txa-edit_column'));
 				$(this).dialog('close');
 			}
 		}
@@ -120,24 +127,12 @@ $(function () {
 			//do nothing
 		}
 	} else {
-		/*
-		var _elSel = $('<select>').attr('ps_rowid', _qo_rowid)
-		.attr('order_rowid', _qo_order_rowid)
-		.attr('order_s_rowid', _qo_order_s_rowid)
-		.attr('seq', _qo_seq)
-		.addClass('cls-sel-change-status_prod')
-		.append($('<option>').html('--'))
-		.appendTo(_elPanel);
-
-		*/
-
-		$('body').on('click', '#tblSearchResult tbody tr td.screen_type', function (e) {
+		$('body').on('click', '#tblSearchResult tbody tr td.'+ _MANU_TYPE +'_type', function (e) {
 			var ps_rowid = $(e.target).closest('tr').find(".cls-sel-change-status_prod").attr('ps_rowid');
 			if (ps_rowid > 0) {
 				var ownTextVal = '';
 				if(($(this).text()) !== '0') ownTextVal = $(this).text();
-				$('#sel-edit_column').show().find('option').remove()
-			;
+				$('#sel-edit_column').show().find('option').remove();
 				var _elSel = $('#sel-edit_column')
 				_elSel.append($('<option>').html('--'))
 				if ($.isArray(_ARR_SCREEN_TYPE)) {
@@ -151,77 +146,101 @@ $(function () {
 					});
 				}
 				$('#txa-edit_column').val(ownTextVal);
-				$('#div_edit_column').attr('ps_rowid', ps_rowid)
-					.attr('column', 'screen_type')
-					.attr('column_disp', 'ประเภทงานสกรีน')
-				var _column_disp = $('#div_edit_column').attr('column_disp') || -1;
+				$('#div_edit_dialog').attr('ps_rowid', ps_rowid)
+					.attr('column', _MANU_TYPE+'_type')
+					.attr('column_disp', 'ประเภทงาน '+_MANU_TYPE)
+				var _column_disp = $('#div_edit_dialog').attr('column_disp') || -1;
+				_DLG_EDIT_COLUMN.dialog('option', 'title', '( rowid ' + ps_rowid + ') ' + 'แก้ไข : ' + _column_disp).dialog("open");
+			}
+		});
+
+		$('body').on('click', '#tblSearchResult tbody tr td.img', function (e) {
+			var ps_rowid = $(e.target).closest('tr').find(".cls-sel-change-status_prod").attr('ps_rowid');
+			var _imgName = $(this).children('img').attr('name');
+			if (ps_rowid > 0) {
+				$('.file-upload-wrapper').show();
+				$('#div_edit_dialog').attr('ps_rowid', ps_rowid)
+					.attr('column', 'img')
+					.attr('column_disp', 'รูปภาพ')
+				var _column_disp = $('#div_edit_dialog').attr('column_disp') || -1;
 				_DLG_EDIT_COLUMN.dialog('option', 'title', '( rowid ' + ps_rowid + ') ' + 'แก้ไข : ' + _column_disp).dialog("open");
 			}
 		});
 
 		$('body').on('click', '#tblSearchResult tbody tr td.width', function (e) {
 			var ps_rowid = $(e.target).closest('tr').find(".cls-sel-change-status_prod").attr('ps_rowid');
+			var ps_column_text = $(this).text();
 			if (ps_rowid > 0) {
-				var ownTextVal = '';
-				if(($(this).text()) !== '0') ownTextVal = $(this).text();
-				$('#txa-edit_column').show();
-				$('#txa-edit_column').val(ownTextVal);
-				$('#div_edit_column').attr('ps_rowid', ps_rowid)
-					.attr('column', 'width')
-					.attr('column_disp', 'ความกว้าง')
-				var _column_disp = $('#div_edit_column').attr('column_disp') || -1;
-				_DLG_EDIT_COLUMN.dialog('option', 'title', '( rowid ' + ps_rowid + ') ' + 'แก้ไข : ' + _column_disp).dialog("open");
+				_doOpenDialogEditColumn(ps_rowid, ps_column_text, 'width', 'ความกว้าง')
 			}
 		});
 
-		$('body').on('click', '#tblSearchResult tbody tr td.high', function (e) {
+		$('body').on('click', '#tblSearchResult tbody tr td.height', function (e) {
 			var ps_rowid = $(e.target).closest('tr').find(".cls-sel-change-status_prod").attr('ps_rowid');
+			var ps_column_text = $(this).text();
 			if (ps_rowid > 0) {
-				var ownTextVal = '';
-				if(($(this).text()) !== '0') ownTextVal = $(this).text();
-				$('#txa-edit_column').show();
-				$('#txa-edit_column').val(ownTextVal);
-				$('#div_edit_column').attr('ps_rowid', ps_rowid)
-					.attr('column', 'high')
-					.attr('column_disp', 'ความสูง')
-				var _column_disp = $('#div_edit_column').attr('column_disp') || -1;
-				_DLG_EDIT_COLUMN.dialog('option', 'title', '( rowid ' + ps_rowid + ') ' + 'แก้ไข : ' + _column_disp).dialog("open");
+				_doOpenDialogEditColumn(ps_rowid, ps_column_text, 'height', 'ความสูง')
 			}
 		});
 
 		$('body').on('click', '#tblSearchResult tbody tr td.color_qty', function (e) {
 			var ps_rowid = $(e.target).closest('tr').find(".cls-sel-change-status_prod").attr('ps_rowid');
+			var ps_column_text = $(this).text();
 			if (ps_rowid > 0) {
-				var ownTextVal = '';
-				if(($(this).text()) !== '0') ownTextVal = $(this).text();
-				$('#txa-edit_column').show();
-				$('#txa-edit_column').val(ownTextVal);
-				$('#div_edit_column').attr('ps_rowid', ps_rowid)
-					.attr('column', 'color_qty')
-					.attr('column_disp', 'จำนวนสี')
-				var _column_disp = $('#div_edit_column').attr('column_disp') || -1;
-				_DLG_EDIT_COLUMN.dialog('option', 'title', '( rowid ' + ps_rowid + ') ' + 'แก้ไข : ' + _column_disp).dialog("open");
+				doVldrInput(true, $('#txa-edit_column'),'number');
+				_doOpenDialogEditColumn(ps_rowid, ps_column_text, 'color_qty', 'จำนวนสี')
 			}
 		});
 
 		$('body').on('click', '#tblSearchResult tbody tr td.block_emp', function (e) {
 			var ps_rowid = $(e.target).closest('tr').find(".cls-sel-change-status_prod").attr('ps_rowid');
+			var ps_column_text = $(this).text();
 			if (ps_rowid > 0) {
-				var ownTextVal = '';
-				if(($(this).text()) !== '0') ownTextVal = $(this).text();
-				$('#txa-edit_column').show();
-				$('#txa-edit_column').val(ownTextVal);
-				$('#div_edit_column').attr('ps_rowid', ps_rowid)
-					.attr('column', 'block_emp')
-					.attr('column_disp', 'ช่างตีบล็อคช')
-				var _column_disp = $('#div_edit_column').attr('column_disp') || -1;
-				_DLG_EDIT_COLUMN.dialog('option', 'title', '( rowid ' + ps_rowid + ') ' + 'แก้ไข : ' + _column_disp).dialog("open");
+				_doOpenDialogEditColumn(ps_rowid, ps_column_text, 'block_emp', 'ช่างตีบล็อค')
+			}
+		});
+
+		$('body').on('click', '#tblSearchResult tbody tr td.prod_cost', function (e) {
+			var ps_rowid = $(e.target).closest('tr').find(".cls-sel-change-status_prod").attr('ps_rowid');
+			var ps_column_text = $(this).text();
+			if (ps_rowid > 0) {
+				doVldrInput(true, $('#txa-edit_column'),'number');
+				_doOpenDialogEditColumn(ps_rowid, ps_column_text, 'prod_cost', 'ต้นทุน')
+			}
+		});
+
+		//weave
+
+		$('body').on('click', '#tblSearchResult tbody tr td.stitch_number', function (e) {
+			var ps_rowid = $(e.target).closest('tr').find(".cls-sel-change-status_prod").attr('ps_rowid');
+			var ps_column_text = $(this).text();
+			if (ps_rowid > 0) {
+				doVldrInput(true, $('#txa-edit_column'),'number');
+				_doOpenDialogEditColumn(ps_rowid, ps_column_text, 'stitch_number', 'ฝีเข็ม')
+			}
+		});
+
+		$('body').on('click', '#tblSearchResult tbody tr td.block_number', function (e) {
+			var ps_rowid = $(e.target).closest('tr').find(".cls-sel-change-status_prod").attr('ps_rowid');
+			var ps_column_text = $(this).text();
+			if (ps_rowid > 0) {
+				_doOpenDialogEditColumn(ps_rowid, ps_column_text, 'block_number', 'เลขที่บล็อค')
+			}
+		});
+
+		$('body').on('click', '#tblSearchResult tbody tr td.color_silk_qty', function (e) {
+			var ps_rowid = $(e.target).closest('tr').find(".cls-sel-change-status_prod").attr('ps_rowid');
+			var ps_column_text = $(this).text();
+			if (ps_rowid > 0) {
+				doVldrInput(true, $('#txa-edit_column'),'number');
+				_doOpenDialogEditColumn(ps_rowid, ps_column_text, 'color_silk_qty', 'จำนวนสีไหม')
 			}
 		});
 
 
-
 	}
+
+	$('.btn-input-file-upload').on('click', function () { $('.input-file-upload-file').val(''); $('.input-file-upload-file').click(); });
 	//-- Validation
 	//++ ChangeStatus
 	$('body').on('change', '#tblSearchResult .cls-sel-change-status_prod', function () {
@@ -240,7 +259,7 @@ $(function () {
 		if (_rowid < 0) _rowid = '0';
 		if ((_rowid >= 0) && (_status_rowid > 0)) {
 			// 100:CMP, 180:CNL, 200:CLO
-			if ((_status_rowid == 20)) {
+			if ((_status_rowid < 0 )) {
 				$('#div_status_remark').attr('ps_rowid', _rowid)
 					.attr('curr_status_text', _curr_status_text)
 					.attr('status_rowid', _status_rowid).attr('status_text', _status_text);
@@ -583,7 +602,7 @@ $(function () {
 			}
 			if (('po_deliver_date' in _arrToUpdate)) {
 				delete _arrToUpdate["po_deliver_date"];
-				_arrToUpdate['json_others']['po_deliver_date'] = $('#txt-po_deliver_date').datepicker("getDate").format("yyyymmdd");
+				_arrToUpdate['json_others']['po_deliver_date'] = $('#txt-po_deliver_dat e').datepicker("getDate").format("yyyymmdd");
 			}
 			if (('po_supplier_rowid' in _arrToUpdate)) {
 				_arrToUpdate['json_others']['po_supplier_rowid'] = _arrToUpdate["po_supplier_rowid"];//getValue($('.user-input[data="po_supplier_rowid"]'));
@@ -955,19 +974,25 @@ function _doCreateNew(customer_rowid, customer_name) {
 }
 function __doCommitChangeMultiDataTable(_dataToUpdateColumn) {
 	var _json = '['
-	var _json_obj = '';
-	$.each(_dataToUpdateColumn, function (index, el) {
-		var index = 0;
+	var _json_obj = ''
+
+	$.each(_dataToUpdateColumn, function (indexa, el) {
+		var index = 1;
+		var _index_key = 0;
+		for (var key in el) {
+			_index_key++
+		}
+
 		_json_obj = '';
 		for (var key in el) {
 			if (el.hasOwnProperty(key)) {
-				if (index < 1) {
+				if (index <= 1) {
 					_json_obj = _json_obj.concat('{');
 				}
 				var _value = el[key];
 				if (_value === '') _value = '';
 				_json_obj += '"' + key + '":"' + _value + '",'
-				if (index >= 4) {
+				if (index >= _index_key) {
 					_json_obj = _json_obj.substring(0, _json_obj.length - 1);
 					_json_obj = _json_obj.concat('}');
 					_json = _json.concat('', _json_obj);
@@ -979,10 +1004,10 @@ function __doCommitChangeMultiDataTable(_dataToUpdateColumn) {
 	_json += ']';
 	_json = _json.replaceAll("}{","},{");
 	var _str = _json;
-	console.log(_json)
+	console.log(_str)
 	$.ajax({
 		type: "POST",
-		url: "./Process_screening_order/update_data_by_id",
+		url: "./Process_"+_MANU_TYPE+"ing_order/update_data_by_id",
 		contentType: "application/json;charset=utf-8",
 		dataType: "json",
 		data: _str,
@@ -1009,22 +1034,21 @@ function __doCommitChangeMultiDataTable(_dataToUpdateColumn) {
 		}
 	});
 }
-function _updateRowAfterChangeData(_rowid, _column, _val) {
-	var currTblRow = '';
-	if (_rowid > 0) {
-		currTblRow = $("#tblSearchResult tbody tr").find('select[ps_rowid="' + _rowid + '"]').parents('tr');
-		currTblRow.find('td.' + _column).text(_val).css("background-color", "#32CD32");
-	}
+
+function _doOpenDialogEditColumn(ps_rowid, _ownTextVal, _column, _column_disp){
+	_ownTextVal = (_ownTextVal != '0'? _ownTextVal : _ownTextVal= '');
+	$('#txa-edit_column').show();
+	$('#txa-edit_column').val(_ownTextVal).attr('value', _ownTextVal);
+	$('#div_edit_dialog').attr('ps_rowid', ps_rowid)
+		.attr('column', _column)
+		.attr('column_disp', _column_disp)
+	var _column_disp = $('#div_edit_dialog').attr('column_disp') || -1;
+	_DLG_EDIT_COLUMN.dialog('option', 'title', '( rowid ' + ps_rowid + ') ' + 'แก้ไข : ' + _column_disp).dialog("open");
 }
 
-function _doPrepareChangeDataColumn(_rowid, _column, _val) {
-	var objData = {
-		rowid: '',
-		width: '',
-		high: '',
-		color_qty: '',
-		block_emp: ''
-	};
+function _doPrepareChangeDataColumn(_rowid, _column, _val, disp_val) {
+	var objData = {};
+
 	if (_rowid > 0 && _column != '' && _val != '') {
 		if (!(_dataToUpdateColumn.hasOwnProperty(_rowid))) {
 			_dataToUpdateColumn[_rowid] = objData;
@@ -1032,12 +1056,16 @@ function _doPrepareChangeDataColumn(_rowid, _column, _val) {
 		} else {
 			_dataToUpdateColumn[_rowid]['rowid'] = _rowid;
 		}
-		switch (_column) {
-			case 'width': _dataToUpdateColumn[_rowid][_column] = _val; break;
-			case 'high': _dataToUpdateColumn[_rowid][_column] = _val; break;
-			case 'color_qty': _dataToUpdateColumn[_rowid][_column] = _val; break;
-			case 'block_emp': _dataToUpdateColumn[_rowid][_column] = _val; break;
-		}
+		_dataToUpdateColumn[_rowid][_column] = _val
+
+		var currTblRow = '';
+		console.log(_dataToUpdateColumn)
+	if (_rowid > 0) {
+		var disp_text = '';
+		if(disp_val.length > 0 ) _val = disp_val;
+		currTblRow = $("#tblSearchResult tbody tr").find('select[ps_rowid="' + _rowid + '"]').parents('tr');
+		currTblRow.find('td.' + _column).text(_val).css("background-color", "#32CD32");
+	}
 		return true;
 	} else {
 		return false;
@@ -1064,7 +1092,7 @@ function __doChangeQuotationStatus(rowid, status_rowid, order_rowid, order_s_row
 	_str = JSON.stringify(_json);
 	$.ajax({
 		type: "POST",
-		url: "./Process_screening_order/change_status_by_id",
+		url: "./Process_"+_MANU_TYPE+"ing_order/change_status_by_id",
 		contentType: "application/json;charset=utf-8",
 		dataType: "json",
 		data: _str,
@@ -1304,6 +1332,30 @@ function fnc__DDT_Row_RenderStatus(data, type, full) {
 	if (_strRemark.length > 0) {
 		_div.addClass('cls-qs-with-remark').attr('title', _strRemark).attr('remark', _strRemark);
 	}
+	return _elPanel.html();
+}
+
+function fnc__DDT_Row_RenderEdit(data, type, full) {
+	var _arrAct = '';
+	var _srcImg = '';
+
+	if ('arr_avail_action' in full) {
+		_arrAct = full['arr_avail_action'];
+		if (typeof _arrAct == 'string') _arrAct = JSON.parse(_arrAct);
+	}
+	if ('img' in full) {
+		_srcImg = full['img'];
+		// if (typeof _srcImg == 'string') _srcImg = JSON.parse(_srcImg);
+	}
+
+	var _elPanel = $('<div>');
+	if (_arrAct.indexOf('edit') >= 0) {
+		_elPanel.append($('<img class="list-row-button" id="btn-upload-img" src="./public/images/b_edit.png" alt="edit" name="'+ _srcImg +'" title="แก้ไขข้อมูล">'));
+
+	}else{
+		_elPanel.append($('<img class="list-row-button">'));
+	}
+
 	return _elPanel.html();
 }
 

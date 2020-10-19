@@ -29,8 +29,8 @@ table.cls-tbl-edit td .frm-edit-row-value.display-upload input[type="file"] {dis
 table.cls-tbl-edit td .frm-edit-row-value.display-upload div.form-edit-row-title {display:block;margin:0;}
 table.cls-tbl-edit td .frm-edit-row-value.display-upload span.spn-image-select {display:block;margin:0;}
 
-div.display-upload.disp-upload-main {height:360px;width:460px;max-height:360px;max-width:460px;background-size:auto 460px;-o-background-size:auto 460px;-webkit-background-size:auto 460px;-moz-background-size:auto 460px;}
-div.display-upload.disp-upload-sub {height:200px;width:200px;max-height:200px;max-width:200px;background-size:auto 200px;-o-background-size:auto 200px;-webkit-background-size:auto 200px;-moz-background-size:auto 200px;}
+div.display-upload.disp-upload-main, img.disp-upload-main {height:360px;width:460px;max-height:360px;max-width:460px;background-size:auto 460px;-o-background-size:auto 460px;-webkit-background-size:auto 460px;-moz-background-size:auto 460px;}
+div.display-upload.disp-upload-sub, img.disp-upload-sub {height:200px;width:200px;max-height:200px;max-width:200px;background-size:auto 200px;-o-background-size:auto 200px;-webkit-background-size:auto 200px;-moz-background-size:auto 200px;}
 
 .hidden > * {display:none !important;}
 

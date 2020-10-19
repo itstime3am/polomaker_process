@@ -23,7 +23,7 @@ class Mdl_screen_process extends MY_Model
 		select  o.job_number, o.customer , CONCAT(o.type, ' [ ', o.category, ' ] ') as disp_order , o.standard_pattern as pattern
 		, d.position, o.fabric, o.sum_qty as qty, d.detail, d.size, d.job_hist, s.screen_type, s.name AS disp_type
 		, tmp.rowid  as prod_id, tmp.prod_status  as status_rowid, ss.name  as disp_status, tmp.screen_type as type_rowid, mst.name as disp_screen_type
-		, tmp.width , tmp.high, tmp.fabric_date , tmp.block_date , tmp.block_emp , tmp.block_number , tmp.color_qty
+		, tmp.width , tmp.height, tmp.fabric_date , tmp.block_date , tmp.block_emp , tmp.color_qty, tmp.prod_cost, tmp.img
 		,d.order_rowid, d.order_screen_rowid as order_s_rowid, d.seq
 		, ARRAY_TO_JSON(ARRAY(
 			SELECT UNNEST(fnc_manu_screen_avai_status(tmp.prod_status)) 
@@ -89,23 +89,19 @@ EOT;
 
 	function update_data_by_id($_arrData)
 	{
-		// echo count($_arrData);exit;
-		for ($i = 0; $i < count($_arrData); $i++) {
-			$_rowid = $this->db->escape((int) $_arrData[$i]['rowid']);
-			$_width = $this->db->escape((int) $_arrData[$i]['width']);
-			$_high = $this->db->escape((int) $_arrData[$i]['high']);
-			$_color_qty = $this->db->escape((int) $_arrData[$i]['color_qty']);
-			$_block_emp = $_arrData[$i]['block_emp'];
-			if ($_rowid  > 0) {
-				if($_width > 0) $this->db->set('width', $_width);
-				if($_high > 0) $this->db->set('high', $_high);
-				if($_color_qty > 0) $this->db->set('color_qty', $_color_qty);
-				if($_block_emp != '') $this->db->set('block_emp', $_block_emp);
-				$this->db->set('update_by', $this->db->escape((int)$this->session->userdata('user_id')));
-				$this->db->where('rowid', $_rowid);
-				$this->db->update($this->_TABLE_NAME);
+		for ( $i = 0 ; $i < count($_arrData) ; $i++){
+			if($_arrData[$i]['rowid'] > 0){	
+				foreach ($_arrData[$i] as $_col => $_val){
+						if( strlen($_val) > 0){
+							$this->db->set('"'. $_col .'"', $_val);
+						}
+					}
 			}
+			$this->db->set('update_by', $this->db->escape((int)$this->session->userdata('user_id')));
+			$this->db->where('rowid', $_arrData[$i]['rowid']);
+			$this->db->update($this->_TABLE_NAME);
 		}
+
 		$this->error_message = $this->db->error()['message'];
 		return true;
 	}
@@ -121,8 +117,10 @@ EOT;
 				'order_rowid' => $order_rowid,
 				'order_screen_rowid' =>  $order_s_rowid,
 				'width' => '0',
-				'high' => '0',
+				'height' => '0',
 				'color_qty' => '0',
+				'prod_cost' => '0',
+				'is_cancel' => '0',
 				'seq' => $seq,
 				'create_by' => $this->db->escape((int)$this->session->userdata('user_id')),
 				'prod_status' => '10'
