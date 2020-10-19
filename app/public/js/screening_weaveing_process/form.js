@@ -76,8 +76,8 @@ $(function () {
 				var _status_text = $(this).attr('column_disp') || false;
 				var _val = $('#sel-edit_column option:selected').attr('code') || false;
 				var disp_val = $('#sel-edit_column option:selected').attr('name') ||false;
-				console.log(_val)
-				console.log(disp_val)
+				// console.log(_val)
+				// console.log(disp_val)
 				if(!(_val)) {
 					_val = ' ' + getValue($('#txa-edit_column'), '');
 					_val = _val.trim();
