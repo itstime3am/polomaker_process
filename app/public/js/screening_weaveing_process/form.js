@@ -77,30 +77,32 @@ $(function () {
 				var _status_text = $(this).attr('column_disp') || false;
 				var _input_txt_val = $('#txa-edit_column').val() || false;
 				var _input_sel_val = $('#sel-edit_column option:selected').attr('code') || false;
-				var _input_file_val = $(this).children('.file-upload-wrapper').find('.input-file-upload-file').val().replace(/.*(\/|\\)/, '') || false;
+				var _input_file_val = $('#frm-upload-file .input-file-upload').attr('value') || false;
 				var disp_val = '';
 				var _val = '';
-				console.log(1+disp_val)
 				if((_input_sel_val)){
 					_val = _input_sel_val;
-					disp_val = false;
-					// disp_val = $('#sel-edit_column option:selected').attr('name') || false;
+					disp_val = $('#sel-edit_column option:selected').attr('name') || false;
 				}else if((_input_txt_val)){
 					_val = _input_txt_val;
-					disp_val = false;
+					disp_val = true;
 				}else if((_input_file_val)){
-					_val = _input_file_val;
+					_val = 'file';
 					disp_val = false;
 				}
-				
-				console.log(2+_val)
 				_val = _val.trim();
 				doClearVldrErrorElement($('#sel-edit_column'));
 				doClearVldrErrorElement($('#txa-edit_column'));
 				if (_val == '') {
 					doSetVldrError($('#sel-edit_column'), 'edit_column', 'required', 'กรุณาระบุข้อมูล', 1);
 					_doDisplayToastMessage('กรุณาระบุข้อมูล : \"' + _status_text + '\"', 3, false);
-				} else {
+				}else if(_val == 'file'){
+					if (confirm('กรุณายืนยันการอัพโหลดไฟล์ ' + _input_file_val)) {
+						var _frmUpload = $('#frm-upload-file');
+						_doUploadFileImg(_rowid, _frmUpload);
+						$(this).dialog('close');
+					}
+				}else {
 					if (confirm('กรุณายืนยันการเปลี่ยนแปลงข้อมูล ' + _status_text + ' เป็น "' + _val + '"')) {
 						if (_doPrepareChangeDataColumn(_rowid, _column, _val, disp_val, function () {
 							clearValue($('#sel-edit_column'));
@@ -137,12 +139,9 @@ $(function () {
 	});
 
 	//++edit data each cell
-	if (_ALLOW_EDIT === false) {
-		_doSetEditColumns = function () {
-			//do nothing
-		}
-	} else {
+
 		$('body').on('click', '#tblSearchResult tbody tr td.'+ _MANU_TYPE +'_type', function (e) {
+			if($('td.img').children('img').attr('alt') == "edit"){
 			var ps_rowid = $(e.target).closest('tr').find(".cls-sel-change-status_prod").attr('ps_rowid');
 			if (ps_rowid > 0) {
 				var ownTextVal = '';
@@ -168,99 +167,155 @@ $(function () {
 				var _column_disp = $('#div_edit_dialog').attr('column_disp') || -1;
 				_DLG_EDIT_COLUMN.dialog('option', 'title', '( rowid ' + ps_rowid + ') ' + 'แก้ไข : ' + _column_disp).dialog("open");
 			}
+		}
 		});
 
 		$('body').on('click', '#tblSearchResult tbody tr td.img', function (e) {
+			if($('td.img').children('img').attr('alt') == "edit"){
+				$('.btn-input-file-upload').show();
+			}else{
+				$("#btn-download-img").show();
+			}
 			var ps_rowid = $(e.target).closest('tr').find(".cls-sel-change-status_prod").attr('ps_rowid');
+			var _seq = $(e.target).closest('tr').find(".cls-sel-change-status_prod").attr('seq');
 			var _imgName = $(this).children('img').attr('name');
 			if (ps_rowid > 0) {
 				$('.file-upload-wrapper').show();
 				$('#div_edit_dialog').attr('ps_rowid', ps_rowid)
 					.attr('column', 'img')
 					.attr('column_disp', 'รูปภาพ')
+					.attr('name', _imgName)
+			$('#btn-download-img').attr('href', '../app/uploads/'+_imgName+'.jpg');
+			$('#btn-download-img').attr('download', _imgName+'-'+ps_rowid+'-'+_seq+'.jpg');
+			$('#div_disp_upload_view').css('background-image', 'url("../app/uploads/'+_imgName+'")');
+			$('#div_disp_upload_view').css('background-size', '100% 100%');
 				var _column_disp = $('#div_edit_dialog').attr('column_disp') || -1;
 				_DLG_EDIT_COLUMN.dialog('option', 'title', '( rowid ' + ps_rowid + ') ' + 'แก้ไข : ' + _column_disp).dialog("open");
 			}
 		});
 
+		$('body').on('click', '#tblSearchResult tbody tr td.cancel', function (e) {
+			if($('td.img').children('img').attr('alt') == "cancel"){
+				var ps_rowid = $(e.target).closest('tr').find(".cls-sel-change-status_prod").attr('ps_rowid');
+				if (confirm('กรุณายืนยันการยกเลิกข้อมูล row id : ' + ps_rowid)) {
+					var _json = '[{"rowid":"'+ps_rowid+'","is_cancel":"1"}]';
+					__doCommitChangeMultiDataTable('',_json);
+					_doDisplayToastMessage(MSG_ALERT_COMMIT_SUCCESS.replace(/v_XX_1/g, 'update data success !'), 3, false);
+					doSearch(false);
+				}
+			}
+
+		});
+
 		$('body').on('click', '#tblSearchResult tbody tr td.width', function (e) {
+			if($('td.img').children('img').attr('alt') == "edit"){
 			var ps_rowid = $(e.target).closest('tr').find(".cls-sel-change-status_prod").attr('ps_rowid');
 			var ps_column_text = $(this).text();
 			if (ps_rowid > 0) {
 				_doOpenDialogEditColumn(ps_rowid, ps_column_text, 'width', 'ความกว้าง')
 			}
+		}
 		});
 
 		$('body').on('click', '#tblSearchResult tbody tr td.height', function (e) {
+			if($('td.img').children('img').attr('alt') == "edit"){
 			var ps_rowid = $(e.target).closest('tr').find(".cls-sel-change-status_prod").attr('ps_rowid');
 			var ps_column_text = $(this).text();
 			if (ps_rowid > 0) {
 				_doOpenDialogEditColumn(ps_rowid, ps_column_text, 'height', 'ความสูง')
 			}
+		}
 		});
 
 		$('body').on('click', '#tblSearchResult tbody tr td.color_qty', function (e) {
+			if($('td.img').children('img').attr('alt') == "edit"){
 			var ps_rowid = $(e.target).closest('tr').find(".cls-sel-change-status_prod").attr('ps_rowid');
 			var ps_column_text = $(this).text();
 			if (ps_rowid > 0) {
 				doVldrInput(true, $('#txa-edit_column'),'number');
 				_doOpenDialogEditColumn(ps_rowid, ps_column_text, 'color_qty', 'จำนวนสี')
 			}
+		}
 		});
 
 		$('body').on('click', '#tblSearchResult tbody tr td.block_emp', function (e) {
+			if($('td.img').children('img').attr('alt') == "edit"){
 			var ps_rowid = $(e.target).closest('tr').find(".cls-sel-change-status_prod").attr('ps_rowid');
 			var ps_column_text = $(this).text();
 			if (ps_rowid > 0) {
 				_doOpenDialogEditColumn(ps_rowid, ps_column_text, 'block_emp', 'ช่างตีบล็อค')
 			}
+		}
 		});
 
 		$('body').on('click', '#tblSearchResult tbody tr td.prod_cost', function (e) {
+			if($('td.img').children('img').attr('alt') == "edit"){
 			var ps_rowid = $(e.target).closest('tr').find(".cls-sel-change-status_prod").attr('ps_rowid');
 			var ps_column_text = $(this).text();
 			if (ps_rowid > 0) {
 				doVldrInput(true, $('#txa-edit_column'),'number');
 				_doOpenDialogEditColumn(ps_rowid, ps_column_text, 'prod_cost', 'ต้นทุน')
 			}
+		}
 		});
 
 		//weave
 
 		$('body').on('click', '#tblSearchResult tbody tr td.stitch_number', function (e) {
+			if($('td.img').children('img').attr('alt') == "edit"){
 			var ps_rowid = $(e.target).closest('tr').find(".cls-sel-change-status_prod").attr('ps_rowid');
 			var ps_column_text = $(this).text();
 			if (ps_rowid > 0) {
 				doVldrInput(true, $('#txa-edit_column'),'number');
 				_doOpenDialogEditColumn(ps_rowid, ps_column_text, 'stitch_number', 'ฝีเข็ม')
 			}
+		}
 		});
 
 		$('body').on('click', '#tblSearchResult tbody tr td.block_number', function (e) {
+			if($('td.img').children('img').attr('alt') == "edit"){
 			var ps_rowid = $(e.target).closest('tr').find(".cls-sel-change-status_prod").attr('ps_rowid');
 			var ps_column_text = $(this).text();
 			if (ps_rowid > 0) {
 				_doOpenDialogEditColumn(ps_rowid, ps_column_text, 'block_number', 'เลขที่บล็อค')
 			}
+		}
 		});
 
 		$('body').on('click', '#tblSearchResult tbody tr td.color_silk_qty', function (e) {
+			if($('td.img').children('img').attr('alt') == "edit"){
 			var ps_rowid = $(e.target).closest('tr').find(".cls-sel-change-status_prod").attr('ps_rowid');
 			var ps_column_text = $(this).text();
 			if (ps_rowid > 0) {
 				doVldrInput(true, $('#txa-edit_column'),'number');
 				_doOpenDialogEditColumn(ps_rowid, ps_column_text, 'color_silk_qty', 'จำนวนสีไหม')
 			}
+		}
 		});
 
-
-	}
-
-	$('.btn-input-file-upload').on('click', function () { $('.input-file-upload-file').val(''); $('.input-file-upload-file').click(); });
+	//upload img - dialog
+	$('.btn-input-file-upload').on('click', function () { $('.input-file-upload').click(); });
+	
+	$('#div_edit_dialog input.input-file-upload').on('change', function () {
+		var _eleInput = $(this);
+		var _file = $(this)[0].files;
+		if (_file.length > 0) {
+			var _reader = new FileReader();
+			_reader.onload = function (e) {
+				// $('#div_disp_upload_view').siblings('span').text(file[0].name);
+				$('#div_disp_upload_view').removeAttr('style');
+				$('#div_disp_upload_view').css('background-image', 'url(' + e.target.result + ')');
+				$('#div_disp_upload_view').css('background-size', '100% 100%',);
+				_eleInput.attr('value', _file[0].name)
+			}
+			_reader.readAsDataURL($(this)[0].files[0]);
+		}
+	});
 	//-- Validation
 	//++ ChangeStatus
 	$('body').on('change', '#tblSearchResult .cls-sel-change-status_prod', function () {
 		var _rowid = $(this).attr('ps_rowid') || -1;
+		var _prod_id = $(this).attr('prod_id') || -1;
 		var _code = $(this).attr('ps_code') || false;
 		var _order_rowid = $(this).attr('order_rowid') || -1;
 		var _order_s_rowid = $(this).attr('order_s_rowid') || -1;
@@ -273,6 +328,7 @@ $(function () {
 		var _str = 'id:' + _rowid;
 		if (_code) _str = 'เลขที่ \"' + _code + '\"';
 		if (_rowid < 0) _rowid = '0';
+
 		if ((_rowid >= 0) && (_status_rowid > 0)) {
 			// 100:CMP, 180:CNL, 200:CLO
 			if ((_status_rowid < 0 )) {
@@ -283,9 +339,17 @@ $(function () {
 			} else {
 				if (confirm('กรุณายืนยันการเปลี่ยนสถานะของใบเสนอราคา ' + _str + ' เป็นสถานะ "' + _status_text + '"')) {
 					if (_rowid == 0) {
-						__doChangeQuotationStatus(_rowid, _status_rowid, _order_rowid, _order_s_rowid, _seq)
+						if($('td.img').children('img').attr('alt') == 'edit'){
+							__doChangeQuotationStatus(_rowid, _status_rowid, _order_rowid, _order_s_rowid, _seq)
+						}else{
+							_doDisplayToastMessage('ไม่มีสิทธิ์ในการเปลี่ยนแปลงข้อมูล', 3, false);
+						}
 					} else {
-						__doChangeQuotationStatus(_rowid, _status_rowid)
+						if($('td.img').children('img').attr('alt') == 'edit' || _prod_id == 30){
+							__doChangeQuotationStatus(_rowid, _status_rowid)
+						}else{
+							_doDisplayToastMessage('ไม่มีสิทธิ์ในการเปลี่ยนแปลงข้อมูล', 3, false);
+						}
 					}
 				};
 			}
@@ -988,7 +1052,7 @@ function _doCreateNew(customer_rowid, customer_name) {
 	$('#aac-customer', _frm).val(_cus_name);
 	$('#hdn-customer_rowid', _frm).val(_cus_rowid);
 }
-function __doCommitChangeMultiDataTable(_dataToUpdateColumn) {
+function __doCommitChangeMultiDataTable(_dataToUpdateColumn, _jsonData) {
 	var _json = '['
 	var _json_obj = ''
 
@@ -1020,7 +1084,7 @@ function __doCommitChangeMultiDataTable(_dataToUpdateColumn) {
 	_json += ']';
 	_json = _json.replaceAll("}{","},{");
 	var _str = _json;
-	console.log(_str)
+	if(_jsonData.length > 0 ) _str = _jsonData;
 	$.ajax({
 		type: "POST",
 		url: "./Process_"+_MANU_TYPE+"ing_order/update_data_by_id",
@@ -1062,6 +1126,32 @@ function _doOpenDialogEditColumn(ps_rowid, _ownTextVal, _column, _column_disp){
 	_DLG_EDIT_COLUMN.dialog('option', 'title', '( rowid ' + ps_rowid + ') ' + 'แก้ไข : ' + _column_disp).dialog("open");
 }
 
+function _doUploadFileImg(_rowid, _dataForm){
+	var _file_name = $('#div_edit_dialog').attr('name');
+	var data = new FormData(_dataForm[0]);   
+	if(_file_name != '') data.append('file_name',_file_name);
+	
+        $.ajax({
+            url: 'Upload_temp_image',
+            type: 'POST',
+            data: data,
+            processData: false,
+            contentType: false,
+            success: function(respon ) {
+				var resp = JSON.parse(respon)
+				var file_name = resp['files'][0]['name'].substring(0,resp['files'][0]['name'].indexOf("."));
+				var _json = '[{"rowid":"'+_rowid+'","img":"'+file_name+'"}]';
+				__doCommitChangeMultiDataTable('',_json);
+				_doDisplayToastMessage(MSG_ALERT_COMMIT_SUCCESS.replace(/v_XX_1/g, 'update data success !'), 3, false);
+				doSearch(false);
+				$("#dialog-modal").dialog("close");
+            },
+            error: function(response) {
+				doDisplayInfo("UnknownError", "ErrorMessage", 3);
+            }
+        });
+}
+
 function _doPrepareChangeDataColumn(_rowid, _column, _val, disp_val) {
 	var objData = {};
 
@@ -1075,12 +1165,10 @@ function _doPrepareChangeDataColumn(_rowid, _column, _val, disp_val) {
 		_dataToUpdateColumn[_rowid][_column] = _val
 
 		var currTblRow = '';
-		console.log(_dataToUpdateColumn)
 	if (_rowid > 0) {
 		var disp_text = '';
 		if(disp_val || disp_val.length > 0){
 			if(disp_val.length > 0) _val = disp_val;
-			console.log(_val)
 			currTblRow = $("#tblSearchResult tbody tr").find('select[ps_rowid="' + _rowid + '"]').parents('tr');
 			currTblRow.find('td.' + _column).text(_val).css("background-color", "#32CD32");
 		}
@@ -1117,7 +1205,7 @@ function __doChangeQuotationStatus(rowid, status_rowid, order_rowid, order_s_row
 		data: _str,
 		success: function (data, textStatus, jqXHR) {
 			if (data.success) {
-				_doDisplayToastMessage(MSG_ALERT_COMMIT_SUCCESS.replace(/v_XX_1/g, 'quotation rowid#' + _rowid + ' status has changed to "' + status_rowid + '"'), 3, false);
+				_doDisplayToastMessage(MSG_ALERT_COMMIT_SUCCESS.replace(/v_XX_1/g, 'rowid#' + _rowid + ' status has changed to "' + status_rowid + '"'), 3, false);
 				doSearch(false);
 			} else {
 				doDisplayInfo("UnknownError", "ErrorMessage", _index);
@@ -1136,39 +1224,7 @@ function __doChangeQuotationStatus(rowid, status_rowid, order_rowid, order_s_row
 		}
 	});
 }
-/*
-function __doInsertDeliveryOrder(rowid) {
-	var _index = 0;
-	var _rowid = rowid || false;
-	var _json = {"rowid": _rowid};
-	$.ajax({
-		type:"POST",
-		url:"./quotation/insert_delivery_order",
-		contentType:"application/json;charset=utf-8",
-		dataType:"json",
-		data: JSON.stringify(_json),
-		success: function(data, textStatus, jqXHR) {
-			if (data.success) {
-				_doDisplayToastMessage(MSG_ALERT_COMMIT_SUCCESS.replace(/v_XX_1/g, 'quotation rowid#' + _rowid + ' successfully created delivery order'), 3, false);
-				doSearch(false);
-			} else {
-				doDisplayInfo("UnknownError", "ErrorMessage", _index);
-			}
-			if (typeof fncOnSuccess == 'function') fncOnSuccess.apply(this);
-			$("#dialog-modal").dialog( "close" );			
-		}
-		, error: function(jqXHR, textStatus, errorThrown) {
-			doDisplayInfo(textStatus + ' : ' + errorThrown, "ErrorMessage", _index);
-			$("#dialog-modal").dialog( "close" );
-		}, statusCode: {
-			404: function() {
-				doDisplayInfo("Page not found", "ErrorMessage", _index);
-				$("#dialog-modal").dialog( "close" );
-			}
-		}
-	});
-}
-*/
+
 function fnc__DDT_Row_RenderPercentPayment(data, type, full) {
 	var _elPanel = $('<div>');
 	var _rdy = parseInt(full['is_deposit_ready'] || -1);
@@ -1192,7 +1248,6 @@ function fnc__DDT_Row_RenderPercentPayment(data, type, full) {
 	_elPanel.append(_spn);
 	return _elPanel.html();
 }
-
 function fnc__DDT_Row_RenderAvailStatus(data, type, full) {
 	var _elPanel = $('<div>');
 	var _qo_rowid = full['prod_id'] || -1;
@@ -1202,12 +1257,12 @@ function fnc__DDT_Row_RenderAvailStatus(data, type, full) {
 	var _qo_order_s_rowid = full['order_s_rowid'] || -1;
 	var _qo_seq = full['seq'] || - 1;
 	var _currStatusName = full['disp_status'] || false;
-	// if 
 
 	var _elSel = $('<select>').attr('ps_rowid', _qo_rowid)
 		.attr('order_rowid', _qo_order_rowid)
 		.attr('order_s_rowid', _qo_order_s_rowid)
 		.attr('seq', _qo_seq)
+		.attr('prod_id',_qo_status )
 		.addClass('cls-sel-change-status_prod')
 		.append($('<option>').html('--'))
 		.appendTo(_elPanel);
@@ -1215,7 +1270,8 @@ function fnc__DDT_Row_RenderAvailStatus(data, type, full) {
 	if ('arr_avail_status' in full) {
 		_arrStt = full['arr_avail_status'];
 		if (typeof _arrStt == 'string') _arrStt = JSON.parse(_arrStt);
-		if (_arrStt == '' && _qo_status < 80) _arrStt = ["wbl"];
+		if (_arrStt == '' && _qo_status < 80 && _qo_status != 30) _arrStt = ["wbl"];
+		
 	}
 	if (_qo_code) _elSel.attr("ps_code", _qo_code);
 	if (_currStatusName) _elSel.attr("curr_status_text", _currStatusName);
@@ -1239,6 +1295,9 @@ function fnc__DDT_Row_RenderAvailStatus(data, type, full) {
 	} else {
 		return '';
 	}
+
+	i++;
+	
 }
 
 function fnc__DDT_Row_RenderAvailAction(data, type, full) {
@@ -1354,7 +1413,28 @@ function fnc__DDT_Row_RenderStatus(data, type, full) {
 	return _elPanel.html();
 }
 
+function fnc__DDT_Row_RenderCancel(data, type, full) {
+	var _arrAct = '';
+	var _ps_rowid = full['prod_id'] || -1;
+
+	if ('arr_avail_action' in full) {
+		_arrAct = full['arr_avail_action'];
+		if (typeof _arrAct == 'string') _arrAct = JSON.parse(_arrAct);
+	}
+
+	var _elPanel = $('<div>');
+
+	if (_arrAct.indexOf('cancel') >= 0) {
+		_elPanel.append($('<img class="list-row-button edit" id="btn-upload-img" src="./public/images/b_delete.png" alt="cancel" ps_rowid="'+ _ps_rowid +'" title="แก้ไขข้อมูล">'));
+	}else{
+		_elPanel.append($('<img class="list-row-button">'));
+	}
+
+	return _elPanel.html();
+}
+
 function fnc__DDT_Row_RenderEdit(data, type, full) {
+	var _ALLOW_EDIT = false;
 	var _arrAct = '';
 	var _srcImg = '';
 
@@ -1362,16 +1442,19 @@ function fnc__DDT_Row_RenderEdit(data, type, full) {
 		_arrAct = full['arr_avail_action'];
 		if (typeof _arrAct == 'string') _arrAct = JSON.parse(_arrAct);
 	}
+
 	if ('img' in full) {
 		_srcImg = full['img'];
-		// if (typeof _srcImg == 'string') _srcImg = JSON.parse(_srcImg);
 	}
 
 	var _elPanel = $('<div>');
-	if (_arrAct.indexOf('edit') >= 0) {
-		_elPanel.append($('<img class="list-row-button" id="btn-upload-img" src="./public/images/b_edit.png" alt="edit" name="'+ _srcImg +'" title="แก้ไขข้อมูล">'));
 
-	}else{
+	if (_arrAct.indexOf('edit') >= 0) {
+		_elPanel.append($('<img class="list-row-button edit" id="btn-upload-img" src="./public/images/b_edit.png" alt="edit" name="'+ _srcImg +'" title="แก้ไขข้อมูล">'));
+	}else if (_arrAct.indexOf('view') >= 0) {
+		_elPanel.append($('<img class="list-row-button edit" id="btn-upload-img" src="./public/images/b_edit.png" alt="view" name="'+ _srcImg +'" title="แก้ไขข้อมูล">'));
+	}
+	else{
 		_elPanel.append($('<img class="list-row-button">'));
 	}
 

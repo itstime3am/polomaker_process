@@ -4,8 +4,8 @@ class JConfig {
 	public $offline_message = 'This site is down for maintenance.<br />Please check back again soon.';
 	public $display_offline_message = '1';
 	public $offline_image = '';
-	public $sitename = 'Polomaker - Phase II';
-	public $editor = 'arkeditor';
+	public $sitename = 'Polomaker - Weave_Screen_Process';
+	public $editor = 'codemirror';
 	public $captcha = '0';
 	public $list_limit = '15';
 	public $access = '1';
@@ -21,7 +21,7 @@ class JConfig {
 	public $live_site = '';
 	public $secret = '8Kbhbvnz8Upp2UXd';
 	public $gzip = '0';
-	public $error_reporting = 'development';
+	public $error_reporting = 'none';
 	public $helpurl = 'https://help.joomla.org/proxy?keyref=Help{major}{minor}:{keyref}&lang={langcode}';
 	public $ftp_host = '';
 	public $ftp_port = '';

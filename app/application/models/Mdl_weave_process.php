@@ -23,8 +23,8 @@ class Mdl_weave_process extends MY_Model
 		select  o.job_number, o.customer , CONCAT(o.type, ' [ ', o.category, ' ] ') as disp_order , o.standard_pattern as pattern
 		, d.position, o.fabric, o.sum_qty as qty, d.detail, d.size, d.job_hist, s.screen_type, s.name AS disp_type
 		, tmp.rowid  as prod_id, tmp.prod_status  as status_rowid, ss.name  as disp_status, tmp.weave_type as type_rowid, mst.name as disp_weave_type
-		, tmp.width , tmp.height, tmp.fabric_date , tmp.block_date , tmp.block_emp , tmp.block_number , tmp.stitch_number , tmp.color_silk_qty, tmp.prod_cost
-		,d.order_rowid, d.order_screen_rowid as order_s_rowid, d.seq, tmp.prod_cost
+		, tmp.width , tmp.height, tmp.fabric_date , tmp.block_date , tmp.block_emp , tmp.block_number , tmp.stitch_number , tmp.color_silk_qty, tmp.prod_cost, tmp.img
+		,d.order_rowid, d.order_screen_rowid as order_s_rowid, d.seq, tmp.prod_cost, tmp.is_cancel as is_cancel
 		, ARRAY_TO_JSON(ARRAY(
 			SELECT UNNEST(fnc_manu_weave_avai_status(tmp.prod_status)) 
 			INTERSECT 
@@ -32,12 +32,12 @@ class Mdl_weave_process extends MY_Model
 		)) AS arr_avail_status
 		, ARRAY_TO_JSON(ARRAY(
 			--SELECT UNNEST(fnc_quotation_avai_action(GREATEST(t.deliver_status_rowid, t.produce_status_rowid))) 
-			SELECT UNNEST(fnc_manu_weave_avai_action(tmp.prod_status)) 
+			SELECT UNNEST(fnc_manu_weave_avai_action()) 
 			INTERSECT 
 			SELECT UNNEST(uac.arr_avail_action)
 		)) AS arr_avail_action
 		FROM v_order_report o 
-			INNER JOIN fnc_listmanu_screen_accright_byuser(984) uac ON True 
+			INNER JOIN fnc_listmanu_weave_accright_byuser(990) uac ON True 
 			INNER JOIN (
 				SELECT 1 AS type_id, order_rowid, order_screen_rowid, position, detail, size, job_hist, price, seq
 				FROM pm_t_order_screen_polo 

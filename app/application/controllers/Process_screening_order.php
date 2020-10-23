@@ -91,7 +91,7 @@ SCRPT
 		$this->_setController("disp_order", "ประเภทสินค้า", NULL, array("selectable"=>TRUE,"default"=>TRUE,"class"=>"center","order"=>6));
 		$this->_setController("pattern", "แบบเสื้อ", NULL, array("selectable"=>TRUE,"default"=>TRUE,"order"=>7));
 		$this->_setController("position", "ตำแหน่ง", NULL, array("selectable"=>TRUE,"default"=>TRUE,"class"=>"center position","order"=>8));
-		$this->_setController("disp_screen_type", "ประเภท", NULL, array("selectable"=>TRUE,"default"=>TRUE,"class"=>"edit center screen_type","order"=>9));
+		$this->_setController("disp_type", "ประเภท", NULL, array("selectable"=>TRUE,"default"=>TRUE,"class"=>"edit center screen_type","order"=>9));
 		// $this->_setController("detail", "รายละเอียด", NULL, array("selectable"=>TRUE,"default"=>TRUE,"class"=>"center","order"=>9));
 		$this->_setController("width", "กว้าง", NULL, array("selectable"=>TRUE,"default"=>TRUE,"class"=>"edit center width","width"=>"60","order"=>11));
 		$this->_setController("height", "สูง", NULL, array("selectable"=>TRUE,"default"=>TRUE,"class"=>"edit center height","width"=>"60","order"=>12));
@@ -122,8 +122,7 @@ SCRPT
 				"column" => <<<CCLMS
 { "sTitle":"สถานะ","width":"100","sClass":"center","mData":'rowid',"mRender":function(data,type,full) { return fnc__DDT_Row_RenderStatus(data, type, full); }, "bSortable": true }
 CCLMS
-				, "order" => 3
-			),
+				, "order" => 3),
 			array(
 			"column" => <<<CCLMS
 { "sTitle":"แก้ไขสถานะ","width":"180","sClass":"center","mData":'rowid',"mRender":function(data,type,full) { return fnc__DDT_Row_RenderAvailStatus(data, type, full); }, "bSortable": false }
@@ -134,7 +133,13 @@ CCLMS
 { "sTitle":"แก้ไข","width":"180","sClass":"center edit img","mData":"rowid","mRender":function(data,type,full) { return fnc__DDT_Row_RenderEdit(data, type, full); } , "bSortable": false}
 CCLMS
 				, "order" => 0)
-			);
+// 			array(
+// 				"column" => <<<CCLMS
+// { "sTitle":"ยกเลิก","width":"100","sClass":"center cancel","mData":'rowid',"mRender":function(data,type,full) { return fnc__DDT_Row_RenderCancel(data, type, full); }, "bSortable": true }
+// CCLMS
+// 				, "order" => -1
+// 			)
+		);
 
 		$pass['left_panel'] = $this->add_view('_public/_search_panel', $this->_arrSearchParams(), TRUE);
 
@@ -158,7 +163,7 @@ CCLMS
 		_tableToolButtons.push({
 			"text": "บันทึกข้อมูล"
 			, "className": "DTTT_button_commit_page DTTT_button_disabled"
-			, "action": function () {__doCommitChangeMultiDataTable(_dataToUpdateColumn)}
+			, "action": function () {__doCommitChangeMultiDataTable(_dataToUpdateColumn,'')}
 		});
 	}
 	</script>
@@ -192,14 +197,14 @@ SCR;
 		
 		<div class="file-upload-wrapper" style="display:none;justify-content:center;">
         <div class="frm-edit-row" style="display:flex;align-items:center;margin-top:20px;flex-direction:column;">
-            <img role="img" class="display-upload disp-upload-main" id="div_disp_upload_view">
-
-            </img><br>
+            <div role="img" class="display-upload disp-upload-main" id="div_disp_upload_view"></div><br>
             <!-- <span style="text-align: center;margin-bottom: 10px;">123</span> -->
-            <button class="btn-input-file-upload" style="width: 20%;">Upload File</button>
-            <form action="upload_temp_image.php"  method="post" enctype="multipart/form-data">
-            <input type="file" name="image" class="input-file-upload-file" style="display:none;">
-            <button type="submit" id="btn-submit" style="display:none;"></button>
+			<button class="btn-input-file-upload" style="width: 20%;display:none;">Upload File</button>
+			<a id="btn-download-img" style="display:none;"><button>Download</button></a>
+            <form action="upload_temp_image.php" id="frm-upload-file"  method="post" enctype="multipart/form-data">
+			<input type="file" name="image" class="input-file-upload" style="display:none;">
+			<input type="text" name="file_name" class="input-text" style="display:none;">
+			<button type="submit" id="btn-submit" style="display:none;"></button>
             </form>
         </div>
     	</div>

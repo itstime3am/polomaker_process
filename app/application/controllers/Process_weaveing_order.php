@@ -7,6 +7,7 @@ class Process_weaveing_order extends MY_Ctrl_crud {
 	}
 
 	public function index() {
+
 		$this->add_css(array(
 			'public/css/jquery/ui/1.11.4/cupertino/jquery-ui.min.css',
 			'public/css/jquery/dataTable/1.10.11/dataTables.jqueryui.min.css',
@@ -112,8 +113,9 @@ SCRPT
 		$this->_setController("rowid", "", NULL);
 		$this->_setController("disp_status", "", NULL);
 		$this->_setController("prod_id", "", NULL);
+		$this->_setController("img", "", NULL);
 		$this->_setController("status_rowid", "", NULL);
-		$this->_setController("arr_avail_status", "", array());
+		$this->_setController("arr_avail_status", "", NULL);
 		$this->_setController("arr_avail_action", "", array());
 		/*-- dummy field, use it value to show span on panel (just add to array keep value) */
 
@@ -129,6 +131,11 @@ CCLMS
 { "sTitle":"แก้ไขสถานะ","width":"180","sClass":"center","mData":'rowid',"mRender":function(data,type,full) { return fnc__DDT_Row_RenderAvailStatus(data, type, full); }, "bSortable": false }
 CCLMS
 			, "order" => 4),
+			array(
+				"column" => <<<CCLMS
+{ "sTitle":"แก้ไข","width":"180","sClass":"center edit img","mData":"rowid","mRender":function(data,type,full) { return fnc__DDT_Row_RenderEdit(data, type, full); } , "bSortable": false}
+CCLMS
+				, "order" => 0)
 			);
 
 		$pass['left_panel'] = $this->add_view('_public/_search_panel', $this->_arrSearchParams(), TRUE);
@@ -153,7 +160,7 @@ CCLMS
 		_tableToolButtons.push({
 			"text": "บันทึกข้อมูล"
 			, "className": "DTTT_button_commit_page DTTT_button_disabled"
-			, "action": function () {__doCommitChangeMultiDataTable(_dataToUpdateColumn)}
+			, "action": function () {__doCommitChangeMultiDataTable(_dataToUpdateColumn,'')}
 		});
 	}
 	</script>
@@ -177,18 +184,27 @@ SCR;
 
 	function _getEditTemplate() {
 		return <<<TMP
-		<div id="div_edit_dialog">
-	<span class="cls-label" style="font-weight:bold;"></span>
+	<div id="div_edit_dialog">
+		<span class="cls-label" style="font-weight:bold;"></span>
 		<div class="edit-file-wrapper" style="display:flex;justify-content: center;">
 			<textarea id="txa-edit_column" style="width:96%;display:none" class="user-input" rows="3" placeholder=""></textarea>
 			<select id="sel-edit_column" style="width:50%;display:none" class="user-input" rows="3" placeholder=""></select>
 		</div>
-		<div class="file-upload-wrapper" >
-			<div clas="view-img" style="width:200px;height:200px;">
-
-			</div>
-		</div>
-</div>
+		
+		<div class="file-upload-wrapper" style="display:none;justify-content:center;">
+        <div class="frm-edit-row" style="display:flex;align-items:center;margin-top:20px;flex-direction:column;">
+            <div role="img" class="display-upload disp-upload-main" id="div_disp_upload_view"></div><br>
+            <!-- <span style="text-align: center;margin-bottom: 10px;">123</span> -->
+			<button class="btn-input-file-upload" style="width: 20%;display:none;">Upload File</button>
+			<a id="btn-download-img" style="display:none;"><button>Download</button></a>
+            <form action="upload_temp_image.php" id="frm-upload-file"  method="post" enctype="multipart/form-data">
+			<input type="file" name="image" class="input-file-upload" style="display:none;">
+			<input type="text" name="file_name" class="input-text" style="display:none;">
+			<button type="submit" id="btn-submit" style="display:none;"></button>
+            </form>
+        </div>
+    	</div>
+	</div>
 TMP;
 
 	}

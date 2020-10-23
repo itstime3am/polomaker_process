@@ -26,32 +26,16 @@ class MY_Controller extends CI_Controller {
 		$this->load->helper('joomla_auth_helper');
 
 		$this->_AC_NAME = '';
-		if (substr($this->page_name, 0, 6) == 'order_') {
-			$this->_AC_NAME = 'order';
-		} else if (substr($this->page_name, -8) == '_pattern') {
-			$this->_AC_NAME = 'pattern';
-		} else if (substr($this->page_name, 0, 9) == 'customer_') {
-			$this->_AC_NAME = 'customer';
-		} else if (substr($this->page_name, 0, 7) == 'master_') {
-			$this->_AC_NAME = 'master';
-		} else if (strpos($this->page_name, 'quotation_') !== FALSE) {
-			$this->_AC_NAME = 'quotation';
-		} else if ($this->page_name == 'report_status_and_deliver') {
-			$this->_AC_NAME = 'report_deliver';
-		} else if (strpos($this->page_name, 'report_account') !== FALSE) {
-			$this->_AC_NAME = 'report_account';
-		} else if (strpos($this->page_name, 'approved_delivery') !== FALSE) {
-			$this->_AC_NAME = 'shipping';
-		} else if (($this->page_name == 'delivery') && ($this->page_method == 'get_pdf')) {
-			$this->_AC_NAME = 'shipping';
-		} else if (substr($this->page_name, 0, 9) == 'delivery_') {
-			$this->_AC_NAME = 'delivery';
-		} else if ($this->page_name == 'notify') {
-			$this->_AC_NAME = 'home';
-			$this->page_name = 'home';
-		} else {
-			$this->_AC_NAME = $this->page_name;
-		}
+		// if (substr($this->page_name, 0, 6) == 'order_') {
+		// 	$this->_AC_NAME = 'order';
+		// } else if (substr($this->page_name, -8) == '_pattern') {
+		// 	$this->_AC_NAME = 'pattern';
+		// } else if (substr($this->page_name, 0, 9) == 'customer_') {
+		// 	$this->_AC_NAME = 'customer';
+		// } else {
+		// 	$this->_AC_NAME = $this->page_name;
+		// }
+		
 		_checkSessionAuth($this->page_name, $this->_AC);
 		if (($this->_blnCheckRight() === FALSE) && ($this->page_name != 'home')) exit(str_replace('v_XX_1', '', $this->_AC->_MSG_ACCESS_NOT_ALLOWED));
 		
