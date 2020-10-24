@@ -37,7 +37,7 @@ class Mdl_weave_process extends MY_Model
 			SELECT UNNEST(uac.arr_avail_action)
 		)) AS arr_avail_action
 		FROM v_order_report o 
-			INNER JOIN fnc_listmanu_weave_accright_byuser(990) uac ON True 
+			INNER JOIN fnc_listmanu_weave_accright_byuser(984) uac ON True 
 			INNER JOIN (
 				SELECT 1 AS type_id, order_rowid, order_screen_rowid, position, detail, size, job_hist, price, seq
 				FROM pm_t_order_screen_polo 

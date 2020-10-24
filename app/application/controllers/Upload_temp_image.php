@@ -15,10 +15,13 @@ class Upload_temp_image extends CI_Controller {
 		if (isset($_FILES['image']) && ($_FILES['image']['name']) && ($_FILES['image']['name'] != "")) {
 			$_upload_path_url = _url_upload_path();
 			$_uploaddir_path = _file_upload_path();
+			if(isset($_POST['type'])){ $_uploaddir_path .= "manu_" . $_POST['type'];};
 			if(isset($_POST['file_name']) && $_POST['file_name'] != ""){
 				$__file_name = $_POST['file_name'];
 			}else{
-				$__file_name = gmdate('YmdHis');
+				if(isset($_POST['ps_rowid']) && isset($_POST['ps_seq'])){
+					$__file_name = gmdate('YmdHis')."-".$_POST['ps_rowid']."-".$_POST['ps_seq'];
+				}
 			}
 
 			//$_dat = new DateTime();

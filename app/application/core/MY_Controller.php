@@ -26,15 +26,15 @@ class MY_Controller extends CI_Controller {
 		$this->load->helper('joomla_auth_helper');
 
 		$this->_AC_NAME = '';
-		// if (substr($this->page_name, 0, 6) == 'order_') {
-		// 	$this->_AC_NAME = 'order';
-		// } else if (substr($this->page_name, -8) == '_pattern') {
-		// 	$this->_AC_NAME = 'pattern';
-		// } else if (substr($this->page_name, 0, 9) == 'customer_') {
-		// 	$this->_AC_NAME = 'customer';
-		// } else {
-		// 	$this->_AC_NAME = $this->page_name;
-		// }
+		if (substr($this->page_name, 0, 6) == 'order_') {
+			$this->_AC_NAME = 'order';
+		} else if (substr($this->page_name, -8) == '_pattern') {
+			$this->_AC_NAME = 'pattern';
+		} else if (substr($this->page_name, 0, 9) == 'customer_') {
+			$this->_AC_NAME = 'customer';
+		} else {
+			$this->_AC_NAME = $this->page_name;
+		}
 		
 		_checkSessionAuth($this->page_name, $this->_AC);
 		if (($this->_blnCheckRight() === FALSE) && ($this->page_name != 'home')) exit(str_replace('v_XX_1', '', $this->_AC->_MSG_ACCESS_NOT_ALLOWED));

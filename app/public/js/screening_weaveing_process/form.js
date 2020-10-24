@@ -181,11 +181,12 @@ $(function () {
 			var _imgName = $(this).children('img').attr('name');
 			if (ps_rowid > 0) {
 				$('.file-upload-wrapper').show();
+				$('#btn-download-img').show();
 				$('#div_edit_dialog').attr('ps_rowid', ps_rowid)
 					.attr('column', 'img')
 					.attr('column_disp', 'รูปภาพ')
 					.attr('name', _imgName)
-			$('#btn-download-img').attr('href', '../app/uploads/'+_imgName+'.jpg');
+			$('#btn-download-img').attr('href', '../app/uploads/manu_'+_MANU_TYPE+'/'+_imgName+'.jpg');
 			$('#btn-download-img').attr('download', _imgName+'-'+ps_rowid+'-'+_seq+'.jpg');
 			$('#div_disp_upload_view').css('background-image', 'url("../app/uploads/'+_imgName+'")');
 			$('#div_disp_upload_view').css('background-size', '100% 100%');
@@ -1128,8 +1129,17 @@ function _doOpenDialogEditColumn(ps_rowid, _ownTextVal, _column, _column_disp){
 
 function _doUploadFileImg(_rowid, _dataForm){
 	var _file_name = $('#div_edit_dialog').attr('name');
-	var data = new FormData(_dataForm[0]);   
-	if(_file_name != '') data.append('file_name',_file_name);
+	var _ps_rowid = $('select.cls-sel-change-status_prod').attr('ps_rowid');
+	var _ps_seq = $('select.cls-sel-change-status_prod').attr('seq');
+	
+	var data = new FormData(_dataForm[0]);
+	data.append('type', _MANU_TYPE);   
+	if(_file_name != ''){
+		data.append('file_name',_file_name);
+	}else{
+		data.append('ps_rowid',_ps_rowid);
+		data.append('ps_seq',_ps_seq);
+	}
 	
         $.ajax({
             url: 'Upload_temp_image',

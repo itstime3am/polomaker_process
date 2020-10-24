@@ -91,7 +91,7 @@ SCRPT
 		$this->_setController("disp_order", "ประเภทสินค้า", NULL, array("selectable"=>TRUE,"default"=>TRUE,"class"=>"center","order"=>6));
 		$this->_setController("pattern", "แบบเสื้อ", NULL, array("selectable"=>TRUE,"default"=>TRUE,"order"=>7));
 		$this->_setController("position", "ตำแหน่ง", NULL, array("selectable"=>TRUE,"default"=>TRUE,"class"=>"center position","order"=>8));
-		$this->_setController("disp_type", "ประเภท", NULL, array("selectable"=>TRUE,"default"=>TRUE,"class"=>"edit center screen_type","order"=>9));
+		$this->_setController("disp_screen_type", "ประเภท", NULL, array("selectable"=>TRUE,"default"=>TRUE,"class"=>"edit center screen_type","order"=>9));
 		// $this->_setController("detail", "รายละเอียด", NULL, array("selectable"=>TRUE,"default"=>TRUE,"class"=>"center","order"=>9));
 		$this->_setController("width", "กว้าง", NULL, array("selectable"=>TRUE,"default"=>TRUE,"class"=>"edit center width","width"=>"60","order"=>11));
 		$this->_setController("height", "สูง", NULL, array("selectable"=>TRUE,"default"=>TRUE,"class"=>"edit center height","width"=>"60","order"=>12));
