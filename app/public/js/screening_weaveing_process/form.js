@@ -186,8 +186,8 @@ $(function () {
 					.attr('column', 'img')
 					.attr('column_disp', 'รูปภาพ')
 					.attr('name', _imgName)
-			$('#btn-download-img').attr('href', '../app/uploads/manu_'+_MANU_TYPE+'/'+_imgName+'.jpg');
-			$('#btn-download-img').attr('download', _imgName+'.jpg');
+			$('#btn-download-img').attr('href', '../app/uploads/manu_'+_MANU_TYPE+'/'+_imgName);
+			$('#btn-download-img').attr('download', _imgName);
 			$('#div_disp_upload_view').css('background-image', 'url("../app/uploads/manu_'+_MANU_TYPE+'/'+_imgName);
 			$('#div_disp_upload_view').css('background-size', '100% 100%');
 				var _column_disp = $('#div_edit_dialog').attr('column_disp') || -1;
