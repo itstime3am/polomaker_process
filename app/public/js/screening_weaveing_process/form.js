@@ -188,7 +188,7 @@ $(function () {
 					.attr('name', _imgName)
 			$('#btn-download-img').attr('href', '../app/uploads/manu_'+_MANU_TYPE+'/'+_imgName+'.jpg');
 			$('#btn-download-img').attr('download', _imgName+'.jpg');
-			$('#div_disp_upload_view').css('background-image', 'url("../app/uploads/manu_'+_MANU_TYPE+'/'+_imgName+'.jpg")');
+			$('#div_disp_upload_view').css('background-image', 'url("../app/uploads/manu_'+_MANU_TYPE+'/'+_imgName);
 			$('#div_disp_upload_view').css('background-size', '100% 100%');
 				var _column_disp = $('#div_edit_dialog').attr('column_disp') || -1;
 				_DLG_EDIT_COLUMN.dialog('option', 'title', '( rowid ' + ps_rowid + ') ' + 'แก้ไข : ' + _column_disp).dialog("open");
@@ -1149,7 +1149,7 @@ function _doUploadFileImg(_rowid, _dataForm){
             contentType: false,
             success: function(respon ) {
 				var resp = JSON.parse(respon)
-				var file_name = resp['files'][0]['name'].substring(0,resp['files'][0]['name'].indexOf("."));
+				var file_name = resp['files'][0]['name'];
 				var _json = '[{"rowid":"'+_rowid+'","img":"'+file_name+'"}]';
 				__doCommitChangeMultiDataTable('',_json);
 				_doDisplayToastMessage(MSG_ALERT_COMMIT_SUCCESS.replace(/v_XX_1/g, 'update data success !'), 3, false);
