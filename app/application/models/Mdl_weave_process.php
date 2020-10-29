@@ -17,7 +17,7 @@ class Mdl_weave_process extends MY_Model
 
 	function search($arrObj = array())
 	{
-
+		$_userid = $this->session->userdata('user_id');
 		$_sql = <<<EOT
 		-- WEAVE SQL
 		select  o.job_number, o.customer , CONCAT(o.type, ' [ ', o.category, ' ] ') as disp_order , o.standard_pattern as pattern
@@ -37,7 +37,7 @@ class Mdl_weave_process extends MY_Model
 			SELECT UNNEST(uac.arr_avail_action)
 		)) AS arr_avail_action
 		FROM v_order_report o 
-			INNER JOIN fnc_listmanu_weave_accright_byuser(984) uac ON True 
+			INNER JOIN fnc_listmanu_weave_accright_byuser($_userid) uac ON True 
 			INNER JOIN (
 				SELECT 1 AS type_id, order_rowid, order_screen_rowid, position, detail, size, job_hist, price, seq
 				FROM pm_t_order_screen_polo 
