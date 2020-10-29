@@ -91,7 +91,7 @@ SCRPT
 		$this->_setController("disp_order", "ประเภทสินค้า", NULL, array("selectable"=>TRUE,"default"=>TRUE,"class"=>"center","order"=>6));
 		$this->_setController("pattern", "แบบเสื้อ", NULL, array("selectable"=>TRUE,"default"=>TRUE,"order"=>7));
 		$this->_setController("position", "ตำแหน่ง", NULL, array("selectable"=>TRUE,"default"=>TRUE,"class"=>"center position","order"=>8));
-		$this->_setController("disp_screen_type", "ประเภท", NULL, array("selectable"=>TRUE,"default"=>TRUE,"class"=>"edit center screen_type","order"=>9));
+		$this->_setController("disp_screen_type", "ประเภทงาน", NULL, array("selectable"=>TRUE,"default"=>TRUE,"class"=>"edit center screen_type","order"=>9));
 		// $this->_setController("detail", "รายละเอียด", NULL, array("selectable"=>TRUE,"default"=>TRUE,"class"=>"center","order"=>9));
 		$this->_setController("width", "กว้าง", NULL, array("selectable"=>TRUE,"default"=>TRUE,"class"=>"edit center width","width"=>"60","order"=>11));
 		$this->_setController("height", "สูง", NULL, array("selectable"=>TRUE,"default"=>TRUE,"class"=>"edit center height","width"=>"60","order"=>12));
@@ -100,7 +100,7 @@ SCRPT
 		$this->_setController("block_date", "วันที่ตีบล็อค", NULL, array("selectable"=>TRUE,"default"=>TRUE,"class"=>"center","order"=>15));
 		$this->_setController("block_emp", "ช่างตีบล็อค", NULL, array("selectable"=>TRUE,"default"=>TRUE,"class"=>"edit center block_emp","order"=>17));
 		$this->_setController("color_qty", "จำนวนสี", NULL, array("selectable"=>TRUE,"default"=>TRUE,"class"=>"edit center color_qty","order"=>18));
-		$this->_setController("prod_cost", "ต้นทุน", NULL, array("selectable"=>TRUE,"default"=>TRUE,"class"=>"edit center prod_cost","order"=>19));
+		$this->_setController("prod_cost", "ต้นทุน", NULL, array("selectable"=>TRUE,"default"=>TRUE,"class"=>"edit center default_number prod_cost","order"=>19));
 		//-- set special attribute
 
 		/*++ dummy field, use it value to show span on panel (just add to array keep value) */
