@@ -87,8 +87,8 @@ defined('EXIT__AUTO_MAX')      OR define('EXIT__AUTO_MAX', 125); // highest auto
 /*++ Joomla 3.9.2 Vars */
 define('_JEXEC', 1 );
 define( 'DS','/' );
-define('JPATH_BASE', $_SERVER['DOCUMENT_ROOT'].DS.'polomaker_phase2');
-define('JOOMLA_URL', $_SERVER['SERVER_NAME'].DS.'polomaker_phase2');
+define('JPATH_BASE', $_SERVER['DOCUMENT_ROOT'].DS.'polomaker_screen_process');
+define('JOOMLA_URL', $_SERVER['SERVER_NAME'].DS.'polomaker_screen_process');
 /*-- Joomla 3.9.2 Vars */
 
 /* ++ Path to upload and Excel */

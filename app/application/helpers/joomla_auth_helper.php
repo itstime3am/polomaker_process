@@ -1,6 +1,7 @@
 <?php
 if(!defined('BASEPATH')) exit('No direct script access allowed');
 
+// echo (JPATH_BASE.DS.'includes'.DS.'defines.php');exit; 	
 require_once ( JPATH_BASE.DS.'includes'.DS.'defines.php' );
 require_once ( JPATH_BASE.DS.'includes'.DS.'framework.php' );
 /**
@@ -40,7 +41,7 @@ function _checkSessionAuth($pageName = '', &$clsAccessControl = NULL) {
 //print_r(implode(",", array_unique(JAccess::getAuthorisedViewLevels($_user->id))));exit;
 //echo "USER ID = " . $_user->id . "\n<br>";
 //var_dump($CI->session->userdata);exit;
-
+// var_dump($_user);exit;
 /* ++ TEST */
 $_user = (object) array( "id"=>1, "username"=>"test", "name"=>"Test", "email"=> "test@test.com", "groups"=>array() );
 /* -- TEST */
