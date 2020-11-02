@@ -1086,6 +1086,7 @@ function __doCommitChangeMultiDataTable(_dataToUpdateColumn, _jsonData) {
 	_json = _json.replaceAll("}{","},{");
 	var _str = _json;
 	if(_jsonData.length > 0 ) _str = _jsonData;
+	console.log(_str);
 	$.ajax({
 		type: "POST",
 		url: "./Process_"+_MANU_TYPE+"ing_order/update_data_by_id",
@@ -1135,6 +1136,8 @@ function _doUploadFileImg(_rowid, _dataForm){
 	var data = new FormData(_dataForm[0]);
 	data.append('type', _MANU_TYPE);   
 	if(_file_name != ''){
+		data.append('ps_rowid',_ps_rowid);
+		data.append('ps_seq',_ps_seq);
 		data.append('file_name',_file_name);
 	}else{
 		data.append('ps_rowid',_ps_rowid);

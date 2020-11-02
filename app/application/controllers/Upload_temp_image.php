@@ -4,6 +4,8 @@ class Upload_temp_image extends CI_Controller {
 	public function __construct() {
 		parent::__construct();
 		$this->load->helper(array('form', 'url', 'file', 'upload_helper'));
+		$this->load->model('Mdl_screen_process');
+		$this->load->model('Mdl_weave_process');
 		hlpr_doTempUploadPathCleanUp();
 	}
 	public function index() {
@@ -18,9 +20,20 @@ class Upload_temp_image extends CI_Controller {
 			if(isset($_POST['type'])){ $_uploaddir_path .= "manu_" . $_POST['type'];};
 			if(isset($_POST['file_name']) && $_POST['file_name'] != ""){
 				$__file_name = $_POST['file_name'];
+				$arrdata = '';
+				if( $_POST['type'] == "screen"){
+					$arrdata = $this->Mdl_screen_process->is_file_exits($_POST['ps_rowid'], $__file_name );
+				}else{
+					$arrdata = $this->Mdl_weave_process->is_file_exits($_POST['ps_rowid'], $__file_name );
+				}
+				if($arrdata > 0){
+					unlink($_uploaddir_path.'/'.$__file_name);
+					$index = (int)substr($__file_name,strpos($__file_name,'(')+1,(strpos($__file_name,'(')-5)-strpos($__file_name,'('));
+					$__file_name = gmdate('YmdHis')."-".$_POST['ps_rowid']."-".$_POST['ps_seq']."(".($index+1).")";
+				}
 			}else{
 				if(isset($_POST['ps_rowid']) && isset($_POST['ps_seq'])){
-					$__file_name = gmdate('YmdHis')."-".$_POST['ps_rowid']."-".$_POST['ps_seq'];
+					$__file_name = gmdate('YmdHis')."-".$_POST['ps_rowid']."-".$_POST['ps_seq']."(1)";
 				}
 			}
 
@@ -28,7 +41,7 @@ class Upload_temp_image extends CI_Controller {
 			$_uplCnfg = array(
 				'upload_path' => $_uploaddir_path
 				, 'file_name' => $__file_name //$_dat->format('YmdHis')
-				, 'allowed_types' => 'jpg|jpeg|png|gif'
+				, 'allowed_types' => 'jpg|jpeg'
 				, 'max_size' => 5000
 				, 'max_width' => 4000
 				, 'max_height' => 4000

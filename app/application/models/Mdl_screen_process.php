@@ -88,6 +88,21 @@ EOT;
 		return $this->arr_execute($_sql);
 	}
 
+	function is_file_exits($rowid, $file_name){
+		$_sql =<<<EOT
+		SELECT img FROM pm_t_manu_screen_production WHERE rowid = '$rowid' AND img = '$file_name'
+EOT;
+		$arrData = $this->arr_execute($_sql);
+
+		if(is_array($arrData)){
+			if(count($arrData) > 0 ){
+				return true;
+			}else{
+				return false;
+			}
+	}
+}
+
 	function update_data_by_id($_arrData)
 	{
 		for ( $i = 0 ; $i < count($_arrData) ; $i++){

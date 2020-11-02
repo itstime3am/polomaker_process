@@ -42,7 +42,7 @@ function _checkSessionAuth($pageName = '', &$clsAccessControl = NULL) {
 //echo "USER ID = " . $_user->id . "\n<br>";
 //var_dump($CI->session->userdata);exit;
 // var_dump($_user);exit;
-/* ++ TEST */
+/* ++ TEST 
 $_user = (object) array( "id"=>1, "username"=>"test", "name"=>"Test", "email"=> "test@test.com", "groups"=>array() );
 /* -- TEST */
 	if ((! isset($_user->id)) || empty($_user->id)) {
