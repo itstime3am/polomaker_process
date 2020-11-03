@@ -74,6 +74,8 @@ $(function () {
 			'Commit': function () {
 				var _rowid = $(this).attr('ps_rowid') || false;
 				var _column = $(this).attr('column') || false;
+				var _seq = $(this).attr('seq') || false;
+				var _job_number = $(this).attr('job_number') || false;
 				var _status_text = $(this).attr('column_disp') || false;
 				var _input_txt_val = $('#txa-edit_column').val() || false;
 				var _input_sel_val = $('#sel-edit_column option:selected').attr('code') || false;
@@ -99,7 +101,7 @@ $(function () {
 				}else if(_val == 'file'){
 					if (confirm('กรุณายืนยันการอัพโหลดไฟล์ ' + _input_file_val)) {
 						var _frmUpload = $('#frm-upload-file');
-						_doUploadFileImg(_rowid, _frmUpload);
+						_doUploadFileImg(_rowid, _seq, _job_number,_frmUpload);
 						$(this).dialog('close');
 					}
 				}else {
@@ -143,6 +145,7 @@ $(function () {
 		$('body').on('click', '#tblSearchResult tbody tr td.'+ _MANU_TYPE +'_type', function (e) {
 			if($('td.img').children('img').attr('alt') == "edit"){
 			var ps_rowid = $(e.target).closest('tr').find(".cls-sel-change-status_prod").attr('ps_rowid');
+			var ps_seq = $(e.target).closest('tr').find(".cls-sel-change-status_prod").attr('seq');
 			if (ps_rowid > 0) {
 				var ownTextVal = '';
 				if(($(this).text()) !== '0') ownTextVal = $(this).text();
@@ -162,6 +165,7 @@ $(function () {
 				}
 				_elSel.attr('disp_name',ownTextVal);
 				$('#div_edit_dialog').attr('ps_rowid', ps_rowid)
+					.attr('seq', ps_seq)
 					.attr('column', _MANU_TYPE+'_type')
 					.attr('column_disp', 'ประเภทงาน '+_MANU_TYPE)
 				var _column_disp = $('#div_edit_dialog').attr('column_disp') || -1;
@@ -178,11 +182,14 @@ $(function () {
 			}
 			var ps_rowid = $(e.target).closest('tr').find(".cls-sel-change-status_prod").attr('ps_rowid');
 			var _seq = $(e.target).closest('tr').find(".cls-sel-change-status_prod").attr('seq');
+			var _job_number = $(e.target).closest('tr').find(".cls-sel-change-status_prod").attr('job_number');
 			var _imgName = $(this).children('img').attr('name');
 			if (ps_rowid > 0) {
 				$('.file-upload-wrapper').show();
 				$('#btn-download-img').show();
 				$('#div_edit_dialog').attr('ps_rowid', ps_rowid)
+					.attr('job_number', _job_number)
+					.attr('seq', _seq)
 					.attr('column', 'img')
 					.attr('column_disp', 'รูปภาพ')
 					.attr('name', _imgName)
@@ -1086,7 +1093,7 @@ function __doCommitChangeMultiDataTable(_dataToUpdateColumn, _jsonData) {
 	_json = _json.replaceAll("}{","},{");
 	var _str = _json;
 	if(_jsonData.length > 0 ) _str = _jsonData;
-	console.log(_str);
+	// console.log(_str);
 	$.ajax({
 		type: "POST",
 		url: "./Process_"+_MANU_TYPE+"ing_order/update_data_by_id",
@@ -1128,20 +1135,20 @@ function _doOpenDialogEditColumn(ps_rowid, _ownTextVal, _column, _column_disp){
 	_DLG_EDIT_COLUMN.dialog('option', 'title', '( rowid ' + ps_rowid + ') ' + 'แก้ไข : ' + _column_disp).dialog("open");
 }
 
-function _doUploadFileImg(_rowid, _dataForm){
+function _doUploadFileImg(_rowid, _seq, _job_number,  _dataForm){
 	var _file_name = $('#div_edit_dialog').attr('name');
-	var _ps_rowid = $('select.cls-sel-change-status_prod').attr('ps_rowid');
-	var _ps_seq = $('select.cls-sel-change-status_prod').attr('seq');
 	
 	var data = new FormData(_dataForm[0]);
 	data.append('type', _MANU_TYPE);   
 	if(_file_name != ''){
-		data.append('ps_rowid',_ps_rowid);
-		data.append('ps_seq',_ps_seq);
+		data.append('ps_rowid',_rowid);
+		data.append('ps_seq',_seq);
+		data.append('job_number',_job_number);
 		data.append('file_name',_file_name);
 	}else{
-		data.append('ps_rowid',_ps_rowid);
-		data.append('ps_seq',_ps_seq);
+		data.append('ps_rowid',_rowid);
+		data.append('ps_seq',_seq);
+		data.append('job_number',_job_number);
 	}
 	
         $.ajax({
@@ -1264,6 +1271,7 @@ function fnc__DDT_Row_RenderPercentPayment(data, type, full) {
 function fnc__DDT_Row_RenderAvailStatus(data, type, full) {
 	var _elPanel = $('<div>');
 	var _qo_rowid = full['prod_id'] || -1;
+	var _qo_job_number = full['job_number'] || -1;
 	var _qo_code = full['prod_id'] || false;
 	var _qo_status = full['status_rowid'] || false;
 	var _qo_order_rowid = full['order_rowid'] || -1;
@@ -1275,7 +1283,8 @@ function fnc__DDT_Row_RenderAvailStatus(data, type, full) {
 		.attr('order_rowid', _qo_order_rowid)
 		.attr('order_s_rowid', _qo_order_s_rowid)
 		.attr('seq', _qo_seq)
-		.attr('prod_id',_qo_status )
+		.attr('prod_id', _qo_job_number = _qo_job_number.substring(5,10))
+		.attr('job_number', _qo_job_number)
 		.addClass('cls-sel-change-status_prod')
 		.append($('<option>').html('--'))
 		.appendTo(_elPanel);

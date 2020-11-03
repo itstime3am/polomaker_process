@@ -29,11 +29,11 @@ class Upload_temp_image extends CI_Controller {
 				if($arrdata > 0){
 					unlink($_uploaddir_path.'/'.$__file_name);
 					$index = (int)substr($__file_name,strpos($__file_name,'(')+1,(strpos($__file_name,'(')-5)-strpos($__file_name,'('));
-					$__file_name = gmdate('YmdHis')."-".$_POST['ps_rowid']."-".$_POST['ps_seq']."(".($index+1).")";
+					$__file_name = gmdate('YmdHis')."-".$_POST['ps_rowid']."-".$_POST['job_number']."-".$_POST['ps_seq']."(".($index+1).")";
 				}
 			}else{
 				if(isset($_POST['ps_rowid']) && isset($_POST['ps_seq'])){
-					$__file_name = gmdate('YmdHis')."-".$_POST['ps_rowid']."-".$_POST['ps_seq']."(1)";
+					$__file_name = gmdate('YmdHis')."-".$_POST['ps_rowid']."-".$_POST['job_number']."-".$_POST['ps_seq']."(1)";
 				}
 			}
 
