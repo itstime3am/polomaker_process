@@ -114,7 +114,9 @@ SCRPT
 		$this->_setController("disp_status", "", NULL);
 		$this->_setController("prod_id", "", NULL);
 		$this->_setController("img", "", NULL);
+		$this->_setController("status_remark", "", NULL);
 		$this->_setController("status_rowid", "", NULL);
+		$this->_setController("status_remark", "", NULL);
 		$this->_setController("arr_avail_status", "", NULL);
 		$this->_setController("arr_avail_action", "", array());
 		/*-- dummy field, use it value to show span on panel (just add to array keep value) */

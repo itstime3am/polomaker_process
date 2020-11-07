@@ -63,7 +63,9 @@ $(function () {
 		, autoOpen: false
 		, beforeClose: function (event, ui) {
 			$(this).removeAttr('status_rowid').removeAttr('status_text');
+			$(this).removeAttr('status_rowid').removeAttr('remark');
 			$('#txa-edit_column').css("display","none");
+			$('#txa-edit_column').attr("readonly",false)
 			$('#sel-edit_column').css("display","none");
 			$('.file-upload-wrapper').css("display","none");
 			$('#sel-edit_column option:selected').removeAttr("selected");
@@ -80,6 +82,7 @@ $(function () {
 				var _input_txt_val = $('#txa-edit_column').val() || false;
 				var _input_sel_val = $('#sel-edit_column option:selected').attr('code') || false;
 				var _input_file_val = $('#frm-upload-file .input-file-upload').attr('value') || false;
+				var _remark = $(this).attr('remark') || false;
 				var disp_val = '';
 				var _val = '';
 				if((_input_sel_val)){
@@ -95,27 +98,30 @@ $(function () {
 				_val = _val.trim();
 				doClearVldrErrorElement($('#sel-edit_column'));
 				doClearVldrErrorElement($('#txa-edit_column'));
-				if (_val == '') {
-					doSetVldrError($('#sel-edit_column'), 'edit_column', 'required', 'กรุณาระบุข้อมูล', 1);
-					_doDisplayToastMessage('กรุณาระบุข้อมูล : \"' + _status_text + '\"', 3, false);
-				}else if(_val == 'file'){
-					if (confirm('กรุณายืนยันการอัพโหลดไฟล์ ' + _input_file_val)) {
-						var _frmUpload = $('#frm-upload-file');
-						_doUploadFileImg(_rowid, _seq, _job_number,_frmUpload);
-						$(this).dialog('close');
-					}
-				}else {
-					if (confirm('กรุณายืนยันการเปลี่ยนแปลงข้อมูล ' + _status_text + ' เป็น "' + _val + '"')) {
-						if (_doPrepareChangeDataColumn(_rowid, _column, _val, disp_val, function () {
-							clearValue($('#sel-edit_column'));
-							clearValue($('#txa-edit_column'));
-							clearValue($('.input-file-upload-file'));
-						})) {
-							$('.DTTT_button_commit_page').removeClass('DTTT_button_disabled');
+				if(!_remark){
+					if (_val == '') {
+						doSetVldrError($('#sel-edit_column'), 'edit_column', 'required', 'กรุณาระบุข้อมูล', 1);
+						_doDisplayToastMessage('กรุณาระบุข้อมูล : \"' + _status_text + '\"', 3, false);
+					}else if(_val == 'file'){
+						if (confirm('กรุณายืนยันการอัพโหลดไฟล์ ' + _input_file_val)) {
+							var _frmUpload = $('#frm-upload-file');
+							_doUploadFileImg(_rowid, _seq, _job_number,_frmUpload);
+							$(this).dialog('close');
 						}
-						$(this).dialog('close');
+					}else {
+						if (confirm('กรุณายืนยันการเปลี่ยนแปลงข้อมูล ' + _status_text + ' เป็น "' + _val + '"')) {
+							if (_doPrepareChangeDataColumn(_rowid, _column, _val, disp_val, function () {
+								clearValue($('#sel-edit_column'));
+								clearValue($('#txa-edit_column'));
+								clearValue($('.input-file-upload-file'));
+							})) {
+								$('.DTTT_button_commit_page').removeClass('DTTT_button_disabled');
+							}
+							$(this).dialog('close');
+						}
 					}
 				}
+				$(this).dialog('close');
 				return false;
 			}
 			, 'Cancel': function () {
@@ -244,6 +250,15 @@ $(function () {
 				_doOpenDialogEditColumn(ps_rowid, ps_column_text, 'color_qty', 'จำนวนสี')
 			}
 		}
+		});
+
+		$('body').on('click', '.cls-qs-with-remark', function (e) {
+			var _re_mark = $(this).attr('remark');
+			//----
+			$('#txa-edit_column').show();
+			$('#txa-edit_column').val(_re_mark).attr('readonly',true);
+			$('#div_edit_dialog').attr('remark', _re_mark)
+			_DLG_EDIT_COLUMN.dialog('option', 'title', 'test').dialog("open");
 		});
 
 		$('body').on('click', '#tblSearchResult tbody tr td.block_emp', function (e) {
@@ -1268,6 +1283,7 @@ function fnc__DDT_Row_RenderPercentPayment(data, type, full) {
 	_elPanel.append(_spn);
 	return _elPanel.html();
 }
+
 function fnc__DDT_Row_RenderAvailStatus(data, type, full) {
 	var _elPanel = $('<div>');
 	var _qo_rowid = full['prod_id'] || -1;
@@ -1421,7 +1437,7 @@ function fnc__DDT_Row_RenderDraftDetailOrder(data, type, full) {
 
 function fnc__DDT_Row_RenderStatus(data, type, full) {
 	var _dispText = (full['disp_status'] || 'สร้าง').trim();
-	var _status_rowid = full['prods_rowid'] || 0;
+	var _status_rowid = full['status_rowid'] || 0;
 	var _strRemark = (full['status_remark'] || '').trim();
 	var _elPanel = $('<div>');
 	var _div = $('<div>').html(_dispText)
@@ -1429,7 +1445,7 @@ function fnc__DDT_Row_RenderStatus(data, type, full) {
 		.addClass('cls-ms-rowid-' + _status_rowid)
 		.appendTo(_elPanel)
 		;
-	if (_strRemark.length > 0) {
+	if (_strRemark.length > 0 && _status_rowid == 110 ||  _status_rowid == 120) {
 		_div.addClass('cls-qs-with-remark').attr('title', _strRemark).attr('remark', _strRemark);
 	}
 	return _elPanel.html();

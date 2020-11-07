@@ -113,6 +113,7 @@ SCRPT
 		$this->_setController("status_rowid", "", NULL);
 		$this->_setController("prod_cost", "", NULL);
 		$this->_setController("img", "", NULL);
+		$this->_setController("status_remark", "", NULL);
 		$this->_setController("arr_avail_status", "", array());
 		$this->_setController("arr_avail_action", "", array());
 		/*-- dummy field, use it value to show span on panel (just add to array keep value) */
@@ -132,7 +133,7 @@ CCLMS
 				"column" => <<<CCLMS
 { "sTitle":"แก้ไข","width":"180","sClass":"center edit img","mData":"rowid","mRender":function(data,type,full) { return fnc__DDT_Row_RenderEdit(data, type, full); } , "bSortable": false}
 CCLMS
-				, "order" => 0)
+				, "order" => 20)
 // 			array(
 // 				"column" => <<<CCLMS
 // { "sTitle":"ยกเลิก","width":"100","sClass":"center cancel","mData":'rowid',"mRender":function(data,type,full) { return fnc__DDT_Row_RenderCancel(data, type, full); }, "bSortable": true }
