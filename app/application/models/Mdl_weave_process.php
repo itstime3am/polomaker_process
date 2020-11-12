@@ -20,7 +20,8 @@ class Mdl_weave_process extends MY_Model
 		$_userid = $this->session->userdata('user_id');
 		$_sql = <<<EOT
 		-- WEAVE SQL
-		select  o.job_number, o.customer , CONCAT(o.type, ' [ ', o.category, ' ] ') as disp_order , o.standard_pattern as pattern
+		select  DISTINCT ON (o.job_number, d.seq, o.order_date)
+		o.job_number, o.customer , CONCAT(o.type, ' [ ', o.category, ' ] ') as disp_order , o.standard_pattern as pattern
 		, d.position, o.fabric, o.sum_qty as qty, d.detail, d.size, d.job_hist, s.screen_type, s.name AS disp_type
 		, tmp.rowid  as prod_id, tmp.prod_status  as status_rowid, ss.name  as disp_status, tmp.weave_type as type_rowid, mst.name as disp_weave_type
 		, tmp.width , tmp.height, tmp.fabric_date , tmp.block_date , tmp.block_emp , tmp.block_number , tmp.stitch_number , tmp.color_silk_qty, tmp.prod_cost, tmp.img
@@ -82,7 +83,7 @@ class Mdl_weave_process extends MY_Model
 		AND COALESCE(o.is_cancel, 0) < 1
 EOT;
 
-		$_sql .= "\n ORDER BY o.order_date DESC, d.order_rowid, d.seq ";
+		$_sql .= "\n ORDER BY o.order_date DESC";
 
 		return $this->arr_execute($_sql);
 	}
