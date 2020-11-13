@@ -41,7 +41,7 @@ class Upload_temp_image extends CI_Controller {
 			$_uplCnfg = array(
 				'upload_path' => $_uploaddir_path
 				, 'file_name' => $__file_name //$_dat->format('YmdHis')
-				, 'allowed_types' => 'jpg|jpeg'
+				, 'allowed_types' => 'jpg|jpeg|png'
 				, 'max_size' => 5000
 				, 'max_width' => 4000
 				, 'max_height' => 4000

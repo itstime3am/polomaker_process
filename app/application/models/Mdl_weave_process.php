@@ -78,12 +78,13 @@ class Mdl_weave_process extends MY_Model
 			LEFT JOIN pm_t_manu_weave_production tmp on tmp.order_weave_rowid = d.order_screen_rowid and  tmp.order_rowid = d.order_rowid and tmp.seq = d.seq
 			LEFT JOIN m_manu_weave_status ss ON ss.rowid = tmp.prod_status
 			LEFT join m_manu_weave_type mst on mst.rowid = tmp.weave_type
-		WHERE o.ps_rowid >= 10 
+		WHERE o.ps_rowid >= 30
+		AND o.ps_rowid != 60 
 		AND s.screen_type = 1
 		AND COALESCE(o.is_cancel, 0) < 1
 EOT;
 
-		$_sql .= "\n ORDER BY o.order_date DESC";
+		$_sql .= "\n ORDER BY o.order_date DESC LIMIT 1000";
 
 		return $this->arr_execute($_sql);
 	}

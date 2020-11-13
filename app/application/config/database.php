@@ -5,9 +5,9 @@ $query_builder = TRUE;
 
 $db['default'] = array(
 	'dsn'	=> '',
-	'hostname' => 'localhost',
+	'hostname' => '122.155.180.96',
 	'username' => 'postgres',
-	'password' => 'admin',
+	'password' => 'buff1275',
 	'dbdriver' => 'postgre',
 	'database' => 'polomaker_data',
 	'dbprefix' => '',
@@ -27,9 +27,9 @@ $db['default'] = array(
 
 $db['joomla'] = array(
 	'dsn'	=> '',
-	'hostname' => 'localhost',
+	'hostname' => '122.155.180.96',
 	'username' => 'postgres',
-	'password' => 'admin',
+	'password' => 'buff1275',
 	'dbdriver' => 'postgre',
 	'database' => 'polomaker_manu_joomla',
 	'dbprefix' => 'jo392_', // 'public.jo392_'

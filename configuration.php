@@ -13,9 +13,9 @@ class JConfig {
 	public $debug_lang = '0';
 	public $debug_lang_const = '1';
 	public $dbtype = 'postgresql';
-	public $host = 'localhost';
+	public $host = '122.155.180.96';
 	public $user = 'postgres';
-	public $password = 'admin';
+	public $password = 'buff1275';
 	public $db = 'polomaker_manu_joomla';
 	public $dbprefix = 'jo392_';
 	public $live_site = '';
