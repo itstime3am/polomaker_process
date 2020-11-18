@@ -2,9 +2,11 @@ var _QO_YEAR = (new Date()).getFullYear();
 var _DLG_STATUS_REMARK = false;
 var _DLG_EDIT_COLUMN = false;
 var _dataToUpdateColumn = [];
+var _onload_time = new Date().toLocaleString('th-TH',{hour12:false})
 $(function () {
 	//	$('.cls-div-form-edit-dialog[index="0"]').dialog('option', 'height', 520);
 	//	$('.cls-div-form-edit-dialog[index="1"]').dialog('option', 'height', 500);
+
 	_DLG_STATUS_REMARK = $('#div_status_remark').dialog({
 		height: 180
 		, width: 780
@@ -1010,6 +1012,17 @@ function _doUpdateTotalValue(index) {
 	}
 }
 
+
+function datePostFormat (localStringDate){
+	var year = parseInt(localStringDate.substring(6,11));
+
+	if(year > new Date().getFullYear()){
+		localStringDate = localStringDate.replace(year, year -= 543);
+	}
+	
+	return localStringDate;
+}
+
 function customCommand(command, aData, tr, divEditDlg) {
 	var _cmd = (command + '').toLowerCase();
 	if ((_cmd == 'pdf') && ('rowid' in aData)) {
@@ -1097,6 +1110,7 @@ function __doCommitChangeMultiDataTable(_dataToUpdateColumn, _jsonData) {
 				_json_obj += '"' + key + '":"' + _value + '",'
 				if (index >= _index_key) {
 					_json_obj = _json_obj.substring(0, _json_obj.length - 1);
+					// _json_obj = _json_obj.concat(',"timestamp":"'+datePostFormat(_onload_time)+'"}');
 					_json_obj = _json_obj.concat('}');
 					_json = _json.concat('', _json_obj);
 				}
@@ -1165,6 +1179,8 @@ function _doUploadFileImg(_rowid, _seq, _job_number,  _dataForm){
 		data.append('ps_seq',_seq);
 		data.append('job_number',_job_number);
 	}
+
+	// data.append('timestamp', datePostFormat(_onload_time));
 	
         $.ajax({
             url: 'Upload_temp_image',
@@ -1488,9 +1504,9 @@ function fnc__DDT_Row_RenderEdit(data, type, full) {
 	var _elPanel = $('<div>');
 
 	if (_arrAct.indexOf('edit') >= 0) {
-		_elPanel.append($('<img class="list-row-button edit" id="btn-upload-img" src="./public/images/b_edit.png" alt="edit" name="'+ _srcImg +'" title="แก้ไขข้อมูล">'));
+		_elPanel.append($('<img class="list-row-button edit" id="btn-upload-img" src="./public/images/b_upload-img.png" alt="edit" name="'+ _srcImg +'" title="อัพโหลดรูปภาพ">'));
 	}else if (_arrAct.indexOf('view') >= 0) {
-		_elPanel.append($('<img class="list-row-button edit" id="btn-upload-img" src="./public/images/b_edit.png" alt="view" name="'+ _srcImg +'" title="แก้ไขข้อมูล">'));
+		_elPanel.append($('<img class="list-row-button edit" id="btn-upload-img" src="./public/images/b_upload-img.png" alt="view" name="'+ _srcImg +'" title="อัพโหลดรูปภาพ">'));
 	}
 	else{
 		_elPanel.append($('<img class="list-row-button">'));

@@ -79,11 +79,17 @@ class Mdl_weave_process extends MY_Model
 			LEFT JOIN m_manu_weave_status ss ON ss.rowid = tmp.prod_status
 			LEFT join m_manu_weave_type mst on mst.rowid = tmp.weave_type
 		WHERE o.ps_rowid >= 30
-		AND o.ps_rowid != 60 
+		AND o.ps_rowid != 60
 		AND s.screen_type = 1
 		AND COALESCE(o.is_cancel, 0) < 1
 EOT;
-
+		$_arrSpecSearch = array(
+			'job_number' => array("type"=>"txt", 'dbcol'=>'o.job_number')
+			, 'date_from' => array('type'=>'dat', 'dbcol'=>'o.order_date', 'operand'=>'>=')
+			, 'date_to' => array('type'=>'dat', 'dbcol'=>'o.order_date', 'operand'=>'<=')
+		);
+		
+		$_sql .= $this->_getSearchConditionSQL($arrObj, $_arrSpecSearch);
 		$_sql .= "\n ORDER BY o.order_date DESC LIMIT 1000";
 
 		return $this->arr_execute($_sql);

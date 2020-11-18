@@ -135,9 +135,9 @@ CCLMS
 			, "order" => 4),
 			array(
 				"column" => <<<CCLMS
-{ "sTitle":"แก้ไข","width":"180","sClass":"center edit img","mData":"rowid","mRender":function(data,type,full) { return fnc__DDT_Row_RenderEdit(data, type, full); } , "bSortable": false}
+{ "sTitle":"อัพโหลดรูป","width":"180","sClass":"center edit img","mData":"rowid","mRender":function(data,type,full) { return fnc__DDT_Row_RenderEdit(data, type, full); } , "bSortable": false}
 CCLMS
-				, "order" => 0)
+				, "order" => 20)
 			);
 
 		$pass['left_panel'] = $this->add_view('_public/_search_panel', $this->_arrSearchParams(), TRUE);
@@ -394,10 +394,16 @@ TMP;
 		return array(
 			'controls' => array(
 				array(
+					"type" => "txt",
+					"label" => $this->_getDisplayLabel('เลขที่งาน'),
+					"name" => "job_number"
+				),
+				array(
 					"type" => "dpk"
 					,"label" => "จากวันที่"
 					,"name" => "date_from"
-					//,"value" => $_frm->format('d/m/Y')
+					// ,"value" => $_frm->format('d/m/Y')
+					,"value" => '18/11/2020'
 				),
 				array(
 					"type" => "dpk"
@@ -405,12 +411,12 @@ TMP;
 					,"name" => "date_to"
 					//,"value" => $_to->format('d/m/Y')
 				),
-				array(
-					"type" => "chk",
-					"label" => "แสดงเฉพาะ active",
-					"name" => "is_active_status",
-					"value" => TRUE
-				),
+				// array(
+				// 	"type" => "chk",
+				// 	"label" => "แสดงเฉพาะ active",
+				// 	"name" => "is_active_status",
+				// 	"value" => TRUE
+				// ),
 				array(
 					"type" => "info",
 					"value" => "&nbsp;"
