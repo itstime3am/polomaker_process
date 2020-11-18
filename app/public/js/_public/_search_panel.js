@@ -2,7 +2,7 @@ var _blnDataChanged = false;
 var _objDataTable;
 //var _arrayQueriedData;
 var _currentDataString; //use in re-query after change data
-
+var _onload_time;
 $(function() {
 	$("#btnSearch").button().click(function() {
 		doSearch(true);
@@ -26,6 +26,7 @@ $(function() {
 });
 
 function doSearch(blnChangeSearchCriteria, opt_fncCallBack) {
+	_onload_time = new Date().toLocaleString('th-TH',{hour12:false});
 	var _index = $('#divDisplayQueryResult').attr('index') || 0;
 	//if (_aoColumns.length == 0) return;
 	
@@ -114,4 +115,14 @@ function doSearch(blnChangeSearchCriteria, opt_fncCallBack) {
 		}
 	});
 	return false;
+}
+
+function datePostFormat (localStringDate){
+	var year = parseInt(localStringDate.substring(6,11));
+
+	if(year > new Date().getFullYear()){
+		localStringDate = localStringDate.replace(year, year -= 543);
+	}
+	
+	return localStringDate;
 }

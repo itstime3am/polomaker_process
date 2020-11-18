@@ -406,7 +406,7 @@ TMP;
 					,"label" => "จากวันที่"
 					,"name" => "date_from"
 					// ,"value" => $_frm->format('d/m/Y')
-					,"value" => '18/11/2020'
+					,"value" => '1/10/2020'
 				),
 				array(
 					"type" => "dpk"
@@ -521,8 +521,11 @@ TMP;
 			$_remark = FALSE;
 			// if (isset($_arrData['status_remark']) && (!(empty($_arrData['status_remark'])))) $_remark = $_arrData['status_remark'];
 			if ($strError == '') {
-			$this->m->update_data_by_id($_arrData);
-			$strError = $this->m->error_message;
+				if($this->m->update_data_by_id($_arrData)){
+					$strError = $this->m->error_message;
+				}else{
+					$strError = "refresh";
+				}
 			}
 		} else {
 			$strError = 'Invalid parameters passed ( None )';
@@ -539,7 +542,7 @@ TMP;
 		header('content-type: application/json; charset=utf-8');
 		echo isset($_GET['callback'])? "{" . $_GET['callback']. "}(".$json.")":$json;
 	}
-	
+
 	function change_status_by_id() {
 		$blnSuccess = FALSE;
 		$strError = '';
@@ -550,20 +553,30 @@ TMP;
 		if (isset($_arrData) && ($_arrData != FALSE)) {
 			if (! isset($_arrData['rowid'])) $strError .= '"rowid" not found,';
 			if (! isset($_arrData['status_rowid'])) $strError .= '"status_rowid" not found,';
+			if (! isset($_arrData['timestamp'])) $strError .= '"timestamp" not found,';
 			$_remark = FALSE;
 			if (isset($_arrData['status_remark']) && (!(empty($_arrData['status_remark'])))) $_remark = $_arrData['status_remark'];
 			if ($strError == '') {
 				if (isset($_arrData['order_rowid']) && isset($_arrData['order_s_rowid']) && isset($_arrData['seq'])){
-					$this->m->change_status_by_id($_arrData['rowid'], $_arrData['status_rowid'], $_remark, $_arrData['order_rowid'], $_arrData['order_s_rowid'], $_arrData['seq']);
-					$strError = $this->m->error_message;
+					//create new
+					if($this->m->change_status_by_id($_arrData['rowid'], $_arrData['status_rowid'], $_remark, $_arrData['order_rowid'], $_arrData['order_s_rowid'], $_arrData['seq'], $_arrData['timestamp'])){
+						$strError = $this->m->error_message;
+					}else{
+						$strError = "refresh";
+					}
 				}else{
-					$this->m->change_status_by_id($_arrData['rowid'], $_arrData['status_rowid'],  $_remark, '', '', '');
-					$strError = $this->m->error_message;
+					//update by id
+					if($this->m->change_status_by_id($_arrData['rowid'], $_arrData['status_rowid'],  $_remark, '', '', '',$_arrData['timestamp'])){
+						$strError = $this->m->error_message;
+					}else{
+						$strError = "refresh";
+					}
 				}
 			}
 		} else {
 			$strError = 'Invalid parameters passed ( None )';
 		}
+
 		if ($strError == '') {
 			$blnSuccess = TRUE;
 		}

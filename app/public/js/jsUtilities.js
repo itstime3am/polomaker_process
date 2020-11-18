@@ -1775,14 +1775,20 @@ function _doDisplayToastMessage(msg, optIntBlinkLoop, optIsGetObjPresist) {
 		var _divMsg = $('<div>').html(_msg).addClass('cls-div-toast-message').css('position', 'fixed').css('z-index', 100000).appendTo('body');
 		_divMsg.css("top", ((_win.height() - _divMsg.outerHeight()) / 10) + _win.scrollTop() + "px");
 		_divMsg.css("left", ((_win.width() - _divMsg.outerWidth()) / 2) + _win.scrollLeft() + "px");
-		_divMsg.show().fadeOut(_intDelayHide).fadeIn(500);
-		for (var _l = 0;_l < _intLoop;_l++) {
-			_divMsg.fadeOut(_intDelayHide).fadeIn(500);
+		_divMsg.css('font-size','17px')
+		if(msg.indexOf("สำเร็จ") > 0){
+			_divMsg.css('color','green');
+		}else if(msg.indexOf("ล้มเหลว") > 0){
+			_divMsg.css('color', 'red');
 		}
+		_divMsg.show().fadeOut(5000);	
+		// for (var _l = 0;_l < _intLoop;_l++) {
+		// 	_divMsg.fadeOut(_intDelayHide).fadeIn(1000);
+		// }
 		if (_isPresist) {
 			return _divMsg;
 		} else {
-			_divMsg.fadeOut(_intDelayHide, function() { _divMsg.remove(); });
+			_divMsg.fadeOut(5000, function() { _divMsg.remove(); });
 		}
 	}
 }

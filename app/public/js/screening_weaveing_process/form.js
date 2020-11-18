@@ -2,7 +2,7 @@ var _QO_YEAR = (new Date()).getFullYear();
 var _DLG_STATUS_REMARK = false;
 var _DLG_EDIT_COLUMN = false;
 var _dataToUpdateColumn = [];
-var _onload_time = new Date().toLocaleString('th-TH',{hour12:false})
+
 $(function () {
 	//	$('.cls-div-form-edit-dialog[index="0"]').dialog('option', 'height', 520);
 	//	$('.cls-div-form-edit-dialog[index="1"]').dialog('option', 'height', 500);
@@ -216,7 +216,7 @@ $(function () {
 				if (confirm('กรุณายืนยันการยกเลิกข้อมูล row id : ' + ps_rowid)) {
 					var _json = '[{"rowid":"'+ps_rowid+'","is_cancel":"1"}]';
 					__doCommitChangeMultiDataTable('',_json);
-					_doDisplayToastMessage(MSG_ALERT_COMMIT_SUCCESS.replace(/v_XX_1/g, 'update data success !'), 3, false);
+					_doDisplayToastMessage(MSG_ALERT_COMMIT_SUCCESS.replace(/v_XX_1/g, ''), 3, false);
 					doSearch(false);
 				}
 			}
@@ -1012,17 +1012,6 @@ function _doUpdateTotalValue(index) {
 	}
 }
 
-
-function datePostFormat (localStringDate){
-	var year = parseInt(localStringDate.substring(6,11));
-
-	if(year > new Date().getFullYear()){
-		localStringDate = localStringDate.replace(year, year -= 543);
-	}
-	
-	return localStringDate;
-}
-
 function customCommand(command, aData, tr, divEditDlg) {
 	var _cmd = (command + '').toLowerCase();
 	if ((_cmd == 'pdf') && ('rowid' in aData)) {
@@ -1110,8 +1099,8 @@ function __doCommitChangeMultiDataTable(_dataToUpdateColumn, _jsonData) {
 				_json_obj += '"' + key + '":"' + _value + '",'
 				if (index >= _index_key) {
 					_json_obj = _json_obj.substring(0, _json_obj.length - 1);
-					// _json_obj = _json_obj.concat(',"timestamp":"'+datePostFormat(_onload_time)+'"}');
-					_json_obj = _json_obj.concat('}');
+					_json_obj = _json_obj.concat(',"timestamp":"'+datePostFormat(_onload_time)+'"}');
+					// _json_obj = _json_obj.concat('}');
 					_json = _json.concat('', _json_obj);
 				}
 			}
@@ -1122,7 +1111,6 @@ function __doCommitChangeMultiDataTable(_dataToUpdateColumn, _jsonData) {
 	_json = _json.replaceAll("}{","},{");
 	var _str = _json;
 	if(_jsonData.length > 0 ) _str = _jsonData;
-	// console.log(_str);
 	$.ajax({
 		type: "POST",
 		url: "./Process_"+_MANU_TYPE+"ing_order/update_data_by_id",
@@ -1131,14 +1119,17 @@ function __doCommitChangeMultiDataTable(_dataToUpdateColumn, _jsonData) {
 		data: _str,
 		success: function (data, textStatus, jqXHR) {
 			if (data.success) {
-				_doDisplayToastMessage(MSG_ALERT_COMMIT_SUCCESS.replace(/v_XX_1/g, 'update data success !'), 3, false);
+				_doDisplayToastMessage(MSG_ALERT_COMMIT_SUCCESS.replace(/v_XX_1/g, ''), 3, false);
 				doSearch(false);
 				clearValue($('#sel-edit_column'));
 				clearValue($('#txa-edit_column'));
 			} else {
-				doDisplayInfo("UnknownError", "ErrorMessage", _index);
+				if(data.error == 'refresh'){
+					_doDisplayToastMessage(MSG_ALERT_COMMIT_FAILED.replace(/v_XX_1/g, 'ข้อมูลนี้ได้ถูกอัพเดทไปก่อนหน้านี้แล้ว     <br>กรุณารีโหลดหน้าเพจใหม่ !'), 3, false);
+					doSearch(false);
+				}
 			}
-			if (typeof fncOnSuccess == 'function') fncOnSuccess.apply(this);
+			// if (typeof fncOnSuccess == 'function') fncOnSuccess.apply(this);
 			$("#dialog-modal").dialog("close");
 		}
 		, error: function (jqXHR, textStatus, errorThrown) {
@@ -1180,7 +1171,7 @@ function _doUploadFileImg(_rowid, _seq, _job_number,  _dataForm){
 		data.append('job_number',_job_number);
 	}
 
-	// data.append('timestamp', datePostFormat(_onload_time));
+	data.append('timestamp', datePostFormat(_onload_time));
 	
         $.ajax({
             url: 'Upload_temp_image',
@@ -1188,14 +1179,27 @@ function _doUploadFileImg(_rowid, _seq, _job_number,  _dataForm){
             data: data,
             processData: false,
             contentType: false,
-            success: function(respon ) {
-				var resp = JSON.parse(respon)
-				var file_name = resp['files'][0]['name'];
-				var _json = '[{"rowid":"'+_rowid+'","img":"'+file_name+'"}]';
+            success: function(data ) {
+				if(data.success){
+					var file_name = data.files[0]['name'];
+					var _json = '[{"rowid":"'+_rowid+'","img":"'+file_name+'"}]';
 				__doCommitChangeMultiDataTable('',_json);
-				_doDisplayToastMessage(MSG_ALERT_COMMIT_SUCCESS.replace(/v_XX_1/g, 'update data success !'), 3, false);
+				_doDisplayToastMessage(MSG_ALERT_COMMIT_SUCCESS.replace(/v_XX_1/g, ''), 3, false);
 				doSearch(false);
 				$("#dialog-modal").dialog("close");
+				}else{
+					if(data.error == 'refresh'){
+						_doDisplayToastMessage(MSG_ALERT_COMMIT_FAILED.replace(/v_XX_1/g, 'ข้อมูลนี้ได้ถูกอัพเดทไปก่อนหน้านี้แล้ว     <br>กรุณารีโหลดหน้าเพจใหม่ !'), 3, false);
+						doSearch(false);
+						$("#dialog-modal").dialog("close");
+					}else{
+						_doDisplayToastMessage(MSG_ALERT_COMMIT_FAILED.replace(/v_XX_1/g, data.error), 3, false);
+						doSearch(false);
+						$("#dialog-modal").dialog("close");
+					}
+					doDisplayInfo("UnknownError", "ErrorMessage", _index);
+				}
+				
             },
             error: function(response) {
 				doDisplayInfo("UnknownError", "ErrorMessage", 3);
@@ -1247,6 +1251,7 @@ function __doChangeQuotationStatus(rowid, status_rowid, order_rowid, order_s_row
 	if (_order_rowid) _json["order_rowid"] = _order_rowid;
 	if (_order_s_rowid) _json["order_s_rowid"] = _order_s_rowid;
 	if (_seq) _json["seq"] = _seq;
+	_json["timestamp"] = datePostFormat(_onload_time);
 	_str = JSON.stringify(_json);
 	$.ajax({
 		type: "POST",
@@ -1259,6 +1264,10 @@ function __doChangeQuotationStatus(rowid, status_rowid, order_rowid, order_s_row
 				_doDisplayToastMessage(MSG_ALERT_COMMIT_SUCCESS.replace(/v_XX_1/g, 'rowid#' + _rowid + ' status has changed to "' + status_rowid + '"'), 3, false);
 				doSearch(false);
 			} else {
+				if(data.error == 'refresh'){
+					_doDisplayToastMessage(MSG_ALERT_COMMIT_FAILED.replace(/v_XX_1/g, 'ข้อมูลนี้ได้ถูกอัพเดทไปก่อนหน้านี้แล้ว <br>กรุณารีโหลดหน้าเพจใหม่ !'), 3, false);
+					doSearch(false);
+				}
 				doDisplayInfo("UnknownError", "ErrorMessage", _index);
 			}
 			if (typeof fncOnSuccess == 'function') fncOnSuccess.apply(this);

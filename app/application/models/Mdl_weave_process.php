@@ -112,12 +112,23 @@ EOT;
 
 	function update_data_by_id($_arrData)
 	{	
+		$_rowid =  $_arrData[0]['rowid'];
+		$_timestamp = $_arrData[0]['timestamp'];
+
+		if($_timestamp && $_rowid){
+			if(!$this->_checkUpdateTime($_rowid, $_timestamp)){
+				return false;
+			};
+		}
+
 		for ( $i = 0 ; $i < count($_arrData) ; $i++){
 			if($_arrData[$i]['rowid'] > 0){	
 				foreach ($_arrData[$i] as $_col => $_val){
 						if( strlen($_val) > 0){
-							$this->db->set('"'. $_col .'"', $_val);
-						}
+							if($_col != 'timestamp'){
+								$this->db->set('"'. $_col .'"', $_val);
+							}
+						}	
 					}
 			}
 			$this->db->set('update_by', $this->db->escape((int)$this->session->userdata('user_id')));
@@ -129,13 +140,16 @@ EOT;
 		return true;
 	}
 
-	function change_status_by_id($rowid, $status_rowid, $status_remark = FALSE, $order_rowid, $order_s_rowid, $seq)
+	function change_status_by_id($rowid, $status_rowid, $status_remark = FALSE, $order_rowid, $order_s_rowid, $seq, $_timestamp)
 	{
 		$_rowid = $this->db->escape((int) $rowid);
 		$status_rowid = $this->db->escape((int) $status_rowid);
 		if ($status_remark) $this->db->set('status_remark', $status_remark);
 
 		if ($order_rowid && $order_s_rowid && $seq) {
+			if(!$this->_checkIsExits($order_rowid,  $seq)){
+				return false;
+			}
 			$data = array(
 				'order_rowid' => $order_rowid,
 				'order_weave_rowid' =>  $order_s_rowid,
@@ -152,6 +166,14 @@ EOT;
 			);
 			$this->db->insert($this->_TABLE_NAME, $data);
 		} else {
+
+			if($_timestamp && $rowid){
+				$_rowid =  $rowid;
+				if(!$this->_checkUpdateTime($_rowid, $_timestamp)){
+					return false;
+				};
+			}
+
 			$this->db->set('prod_status', $status_rowid);
 			$this->db->set('update_by', $this->db->escape((int)$this->session->userdata('user_id')));
 			$this->db->where('rowid', $_rowid);
@@ -159,5 +181,34 @@ EOT;
 		}
 		$this->error_message = $this->db->error()['message'];
 		return true;
+	}
+
+	
+	function _checkUpdateTime($_rowid, $_timestamp){
+				$_timestamp = str_replace('/','-',$_timestamp);
+				$_date = strtotime($_timestamp);
+				$_sql_date = date('Y-m-d H:i:s', $_date);
+	
+				$_sql = "SELECT COUNT(rowid) FROM pm_t_manu_weave_production WHERE rowid = $_rowid";
+				if($_timestamp){
+					$_sql .= "AND update_date > '$_sql_date'";
+				}
+				$arrData_count = $this->arr_execute($_sql);
+				if( $arrData_count[0]['count'] < 1 ){ 
+					return true;
+				}else{
+					return false;
+				}
+	}
+
+	function _checkIsExits($_order_rowid, $_seq){
+
+		$_sql = "SELECT COUNT(rowid) FROM pm_t_manu_weave_production WHERE order_rowid = $_order_rowid AND seq = $_seq";
+		$arrData_count = $this->arr_execute($_sql);
+		if( $arrData_count[0]['count'] < 1 ){ 
+			return true;
+		}else{
+			return false;
+		}
 	}
 }
