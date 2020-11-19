@@ -33,7 +33,7 @@ class Mdl_weave_process extends MY_Model
 		)) AS arr_avail_status
 		, ARRAY_TO_JSON(ARRAY(
 			--SELECT UNNEST(fnc_quotation_avai_action(GREATEST(t.deliver_status_rowid, t.produce_status_rowid))) 
-			SELECT UNNEST(fnc_manu_weave_avai_action()) 
+			SELECT UNNEST(fnc_manu_weave_avai_action(tmp.prod_status)) 
 			INTERSECT 
 			SELECT UNNEST(uac.arr_avail_action)
 		)) AS arr_avail_action
