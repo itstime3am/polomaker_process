@@ -414,12 +414,12 @@ TMP;
 					,"name" => "date_to"
 					//,"value" => $_to->format('d/m/Y')
 				),
-				// array(
-				// 	"type" => "chk",
-				// 	"label" => "แสดงเฉพาะ active",
-				// 	"name" => "is_active_status",
-				// 	"value" => TRUE
-				// ),
+				array(
+					"type" => "chk",
+					"label" => "แสดงเฉพาะมีการตอบกลับจากSale",
+					"name" => "is_reply_status",
+					"value" => FALSE
+				),
 				array(
 					"type" => "info",
 					"value" => "&nbsp;"

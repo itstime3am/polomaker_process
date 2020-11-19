@@ -83,6 +83,12 @@ class Mdl_weave_process extends MY_Model
 		AND s.screen_type = 1
 		AND COALESCE(o.is_cancel, 0) < 1
 EOT;
+
+		if (isset($arrObj['is_reply_status']) && ($arrObj['is_reply_status'])) {
+			$_sql .= "\n AND tmp.prod_status = 40 OR tmp.prod_status = 110 \n";
+			unset($arrObj['is_reply_status']);
+		}
+
 		$_arrSpecSearch = array(
 			'job_number' => array("type"=>"txt", 'dbcol'=>'o.job_number')
 			, 'date_from' => array('type'=>'dat', 'dbcol'=>'o.order_date', 'operand'=>'>=')

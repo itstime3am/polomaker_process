@@ -1473,6 +1473,13 @@ function fnc__DDT_Row_RenderStatus(data, type, full) {
 	if (_strRemark.length > 0 && _status_rowid == 110 ||  _status_rowid == 120) {
 		_div.addClass('cls-qs-with-remark').attr('title', _strRemark).attr('remark', _strRemark);
 	}
+
+	if(_status_rowid == 40){
+		_div.css('background-color','#75EE2E');
+	}else if(_status_rowid == 110){
+		_div.css('background-color','#FF8064');
+	}
+
 	return _elPanel.html();
 }
 

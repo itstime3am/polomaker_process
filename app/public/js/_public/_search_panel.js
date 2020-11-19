@@ -25,8 +25,7 @@ $(function() {
 	}
 });
 
-function doSearch(blnChangeSearchCriteria, opt_fncCallBack) {
-	_onload_time = new Date().toLocaleString('th-TH',{hour12:false});
+function doSearch(blnChangeSearchCriteria, opt_fncCallBack) {	  
 	var _index = $('#divDisplayQueryResult').attr('index') || 0;
 	//if (_aoColumns.length == 0) return;
 	
@@ -99,7 +98,13 @@ function doSearch(blnChangeSearchCriteria, opt_fncCallBack) {
 					doPopulateTable(_arrayData, _blnChangeSearchCriteria);
 				}
 			}
-			$("#dialog-modal").dialog( "close" );				
+			$("#dialog-modal").dialog( "close" );	
+			
+			setTimeout(
+				function() 
+				{
+				  _onload_time = new Date().toLocaleString('th-TH',{hour12:false});
+				}, 1000);			
 		},
 		error: function(jqXHR, textStatus, errorThrown) {
 			$("#dialog-modal").dialog( "close" );
