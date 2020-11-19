@@ -134,12 +134,6 @@ CCLMS
 { "sTitle":"อัพโหลดรูป","width":"180","sClass":"center edit img","mData":"rowid","mRender":function(data,type,full) { return fnc__DDT_Row_RenderEdit(data, type, full); } , "bSortable": false}
 CCLMS
 				, "order" => 20)
-// 			array(
-// 				"column" => <<<CCLMS
-// { "sTitle":"ยกเลิก","width":"100","sClass":"center cancel","mData":'rowid',"mRender":function(data,type,full) { return fnc__DDT_Row_RenderCancel(data, type, full); }, "bSortable": true }
-// CCLMS
-// 				, "order" => -1
-// 			)
 		);
 
 		$pass['left_panel'] = $this->add_view('_public/_search_panel', $this->_arrSearchParams(), TRUE);
@@ -213,103 +207,7 @@ SCR;
 TMP;
 
 	}
-/*
-	function _getEditTemplate() {
-		$this->_arrControlLayout = array();
-		$this->_arrControlLayout = array_merge($this->_arrControlLayout, 
-			array(
-				array('qo_number', 'customer_rowid', 'branch_jug_id')
-				, array('start_date', 'day_limit', 'is_disp_notice')
-				, array('payment_condition_rowid', 'days_credit', 'return <div class="table-title div-sum-title">ราคารวมสุทธิ</div><div class="div-sum-value"><span id="spn-sum_amount" class="user-input input-double input-format-number spn-sum-value"></span>บาท</div>')
-				, array('promotion', 'percent_discount', 'return <div class="table-title div-sum-title">ส่วนลด</div><div class="div-sum-value"><span id="spn-sum_discount" class="user-input input-double input-format-number spn-sum-value"></span>บาท</div>')
-				, array('', 'is_vat', 'return <div class="table-title div-sum-title">VAT</div><div class="div-sum-value"><span id="spn-sum_vat" class="user-input input-double input-format-number spn-sum-value"></span>บาท</div>')
-				, array('', '', 'return <div class="table-title div-sum-title">ยอดรวมทั้งสิ้น</div><div class="div-sum-value"><span id="spn-grand_total" class="user-input input-double input-format-number spn-sum-value"></span>บาท</div>')
-				, array('', 'return <div class="table-title frm-edit-row-title">เงินมัดจำ</div><div class="table-value frm-edit-row-value"><input type="text" id="txt-deposit_percent" class="user-input input-double input-format-number" style="width:6em;" data="deposit_percent" placeholder="เปอร์เซ็นต์"> % ( <input type="text" id="txt-deposit_amount" class="user-input input-double input-format-number" style="width:12em;" data="deposit_amount" placeholder="ยอดเงิน"> บาท )</div>', 'return <div class="table-title div-sum-title" from_qs="40"><button id="btnDepositPaymentDialog" class="cls-button">รายการชำระเงิน</button> ชำระแล้ว</div><div class="div-sum-value" from_qs="40"><span id="spn-deposit_payment" class="user-input input-double input-format-number spn-sum-value"></span>บาท</div>')
-				, array('', '', 'return <div class="table-title div-sum-title" from_qs="40">คงเหลือ</div><div class="div-sum-value" from_qs="40"><span id="spn-disp_left_amount" class="user-input input-double input-format-number spn-sum-value" from_qs="110" to_qs="120"></span>บาท</div>')
-				, array('return <span id="spn-status_remark" style="color:red;font-weight:600;" class="user-input data-container data-constant" data="status_remark"></span>')
-				, array('remark')
-				, array('arr_payment_log')
-			)
-		);
-		//++ details panel form parts
-		$this->_selOptions["list_title"] = $this->mt->list_all('quotation_detail_title', 'sort_index');
-		array_unshift($this->_selOptions["list_title"], array('rowid'=>'', 'name'=>' '));
 
-		$this->load->helper('crud_controller_helper');
-		// $subListControls = hlpr_prepareControlsDefault('Mdl_quotation_detail', $this->_selOptions);
-		hlpr_setController($subListControls, "quotation_rowid", "", array("type"=>"hdn", "value"=>"-1"));
-		hlpr_setController($subListControls, "title", "หัวข้อ", NULL, array("selectable"=>TRUE,"order"=>0));
-		hlpr_setController($subListControls, "description", "คำอธิบาย", NULL);
-		hlpr_setController($subListControls, "qty", "จำนวน/รายการ", NULL, array("selectable"=>TRUE,"class"=>"default_int","order"=>2));
-		hlpr_setController($subListControls, "price", "ราคาต่อหน่วย", NULL, array("selectable"=>TRUE,"class"=>"default_number","order"=>3));
-		hlpr_setController($subListControls, "amount", "ราคารวม", NULL, array("selectable"=>TRUE,"class"=>"default_number","order"=>4));		
-		hlpr_setController($subListControls, "abbr_description", "คำอธิบาย", array(), array("selectable"=>TRUE,"order"=>1));
-
-		$_main = $this->add_view(
-			'_public/_form', 
-			array(
-				'index' => 0
-				, 'crud_controller' => 'quotation'
-				, 'controls' => $this->_arrGetEditControls()
-				, 'layout' => $this->_arrControlLayout
-				//, 'sublist' => 
-			), TRUE);
-
-		$_listSupplier = $this->mt->list_where("order_supplier", "is_cancel < 1", "sort_index", "m_");
-		$_detail = $this->add_view(
-			'_public/_sublist'
-			, array(
-				'index' => 1
-				, 'master_cols'=>'rowid'
-				, 'map_cols'=>'quotation_rowid'
-				, 'list_insertable' => $this->_blnCheckRight('edit', 'quotation')
-				, 'list_editable' => $this->_blnCheckRight('edit', 'quotation')
-				, 'list_deleteable' => $this->_blnCheckRight('edit', 'quotation')
-				, 'dataview_fields' => $subListControls
-				, 'edit_template' => $this->load->view('quotation/detail', array(
-					'index' => 1
-					, 'crud_controller' => 'quotation_detail'
-					, 'listDetailTitle' => $this->_selOptions["list_title"]
-					, 'listSupplier' => $_listSupplier
-					, 'polo_panel' => hlpr_get_OrderPolo_ViewParams()
-					, 'tshirt_panel' => hlpr_get_OrderTshirt_ViewParams()
-					, 'other_panel' => hlpr_get_OrderOther_ViewParams()
-					, 'premade_polo_panel' => hlpr_get_OrderPremadePolo_ViewParams()
-					, 'premade_tshirt_panel' => hlpr_get_OrderPremadeTshirt_ViewParams()
-					, 'premade_cap_panel' => hlpr_get_OrderPremadeCap_ViewParams()
-					, 'premade_jacket_panel' => hlpr_get_OrderPremadeJacket_ViewParams()
-					, 'premade_other_panel' => hlpr_get_OrderPremadeOther_ViewParams()					
-				), TRUE)
-			), TRUE);
-
-		$_depPaymentDlg = $this->add_view(
-			'_public/_list_payment_dialog'
-			, array(
-				'index' => 3
-				, 'access'=> array(
-					"deposit"=>array("editable"=>($this->_blnCheckRight('edit', 'quotation')), "approveable" => ($this->_blnCheckRight('stt>acs', 'quotation')))
-					,"payment"=>array("editable"=>($this->_blnCheckRight('edit', 'quotation')), "approveable" => ($this->_blnCheckRight('stt>acs', 'quotation')))
-				)
-			), TRUE);
-
-		return <<<TMP
-<div id="tabs" class="cls-tab-container">
-	<ul><li><a href="#divMain">หน้าหลัก</a></li><li><a href="#divDetail">รายละเอียด</a></li></ul>
-	<div id="divMain">
-		{$_main}
-	</div>
-	<div id="divDetail">
-		{$_detail}
-	</div>
-	{$_depPaymentDlg}
-</div>
-<div id="div_status_remark">
-	<span class="cls-label" style="font-weight:bold;">สาเหตุ</span>
-	<textarea id="txa-status_remark" style="width:96%;" class="user-input" rows="3" placeholder="สาเหตุ หรือ ข้อมูลเพิ่มเติม"></textarea>
-</div>
-TMP;
-	}
-*/
 	function commit() {
 		$_blnSuccess = FALSE;
 		$_strError = '';
@@ -346,34 +244,7 @@ TMP;
 				}
 			}
 			if ($_rowid <= 0) $_strError .= 'Invalid rowid';
-/*			if ($_strError == '') {
-//var_dump($_arr['details']);exit;
-				if (array_key_exists('details', $_arr) && (is_array($_arr['details'])) && (count($_arr['details']) > 0)) {
-					//$this->db->delete('pm_t_quotation_detail', array('quotation_rowid'=>$_rowid));
-					$_dataSet = array();
-					foreach ($_arr['details'] as $_row) {
-						array_push($_dataSet, array(
-							"quotation_rowid"=>$_rowid
-							,"title"=>$_row['title']
-							,"description"=>$_row['description']
-							,"qty"=>(float)$_row['qty']
-							,"price"=>(float)$_row['price']
-							,"create_by"=>(int) $this->session->userdata('user_id')
-						));
-					}
-					//$this->load->model('Mdl_quotation_detail', 'md');
-					$this->db->insert_batch('pm_t_quotation_detail', $_dataSet);
-					$_strError .= $this->db->error()['message'];
-				}
-			}
-*/
-//echo $this->db->last_query();exit;
-			/*
-			if (($this->db->trans_status() === FALSE) || ($_strError != "")) {
-				$_strError .= "::DB Transaction rollback";
-				$this->db->trans_rollback();
-			}
-			*/
+
 			if ($_strError == "") {
 				$_blnSuccess = TRUE;
 				$_strMessage = $_aff_rows;
@@ -406,7 +277,7 @@ TMP;
 					,"label" => "จากวันที่"
 					,"name" => "date_from"
 					// ,"value" => $_frm->format('d/m/Y')
-					,"value" => '1/10/2020'
+					,"value" => '18/11/2020'
 				),
 				array(
 					"type" => "dpk"
@@ -447,28 +318,7 @@ TMP;
 			
 			$this->load->library('mpdf8');
 			$pass['title'] = 'ใบเสนอราคา';
-/*
-			$html = '';
-			if (array_key_exists('details', $pass['data']) && is_array($pass['data']['details'])) {
-				$_temp = new ArrayObject($pass);
-				$_arrDetails = $pass['data']['details'];
-				$_arrSubDtls = [];
-				for ($_i = 0;$_i<count($_arrDetails);$_i++) {
-					array_push($_arrSubDtls, $_arrDetails[$_i]);
-					if (($_i > 17) && (($_i % 18) == 0)) {
-						$_pass = new ArrayObject($_temp);
-						$_pass["data"]['details'] = $_arrSubDtls;
-						$html .= $this->load->view('quotation/pdf/quotation', $_pass, TRUE) . "\n<pagebreak>\n";
-						$_arrSubDtls = [];
-					}
-				}
-				if (count($_arrSubDtls) > 0) {
-					$_pass = new ArrayObject($_temp);
-					$_pass["data"]['details'] = $_arrSubDtls;
-					$html .= $this->load->view('quotation/pdf/quotation', $_pass, TRUE);
-				}
-			}
-*/
+
 			$html = $this->load->view('quotation/pdf/quotation', $pass, TRUE);
 //echo $html;exit;
 			if ($_status_rowid >= 40) {

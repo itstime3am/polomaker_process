@@ -118,6 +118,7 @@ EOT;
 
 	function update_data_by_id($_arrData)
 	{	
+		$_user_id = $this->db->escape((int)$this->session->userdata('user_id'));
 		$_rowid =  $_arrData[0]['rowid'];
 		$_timestamp = $_arrData[0]['timestamp'];
 
@@ -137,19 +138,25 @@ EOT;
 						}	
 					}
 			}
-			$this->db->set('update_by', $this->db->escape((int)$this->session->userdata('user_id')));
+			$this->db->set('update_by', $_user_id);
 			$this->db->where('rowid', $_arrData[$i]['rowid']);
 			$this->db->update($this->_TABLE_NAME);
 		}
 
 		$this->error_message = $this->db->error()['message'];
-		return true;
+		if($this->error_message == ''){
+			$this->save_log($_user_id, 'UPDATE', $_arrData);
+			return true;
+		}else{
+			return false;
+		}
 	}
 
 	function change_status_by_id($rowid, $status_rowid, $status_remark = FALSE, $order_rowid, $order_s_rowid, $seq, $_timestamp)
 	{
 		$_rowid = $this->db->escape((int) $rowid);
 		$status_rowid = $this->db->escape((int) $status_rowid);
+		$_userid = $this->db->escape((int)$this->session->userdata('user_id'));
 		if ($status_remark) $this->db->set('status_remark', $status_remark);
 
 		if ($order_rowid && $order_s_rowid && $seq) {
@@ -167,10 +174,13 @@ EOT;
 				'prod_cost' => '0',
 				'is_cancel' => '0',
 				'seq' => $seq,
-				'create_by' => $this->db->escape((int)$this->session->userdata('user_id')),
+				'create_by' => $_userid,
 				'prod_status' => '10'
 			);
 			$this->db->insert($this->_TABLE_NAME, $data);
+
+			$data['timestamp'] = $_timestamp;
+			$this->save_log($_userid,'INSERT', $data);
 		} else {
 
 			if($_timestamp && $rowid){
@@ -184,6 +194,13 @@ EOT;
 			$this->db->set('update_by', $this->db->escape((int)$this->session->userdata('user_id')));
 			$this->db->where('rowid', $_rowid);
 			$this->db->update($this->_TABLE_NAME);
+			$data = array(
+				'rowid' => $rowid,
+				'prod_status' => $status_rowid,
+				'update_by' => $_userid
+			);
+
+			$this->save_log($_userid,'UPDATE', $data);
 		}
 		$this->error_message = $this->db->error()['message'];
 		return true;
@@ -217,4 +234,16 @@ EOT;
 			return false;
 		}
 	}
+
+	
+	function save_log($_userid, $_action, $_arrData){
+		$_data_json = json_encode( $_arrData, JSON_UNESCAPED_UNICODE );
+		$_sql_log =<<<EOT
+				INSERT INTO public.pm_t_manu_weave_production_log 
+				( create_by, "action", "data")
+				VALUES( $_userid, '$_action', '$_data_json');
+EOT;
+		$this->db->query($_sql_log);
+	}
+
 }
