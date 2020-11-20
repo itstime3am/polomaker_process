@@ -2,7 +2,6 @@ var _QO_YEAR = (new Date()).getFullYear();
 var _DLG_STATUS_REMARK = false;
 var _DLG_EDIT_COLUMN = false;
 var _dataToUpdateColumn = [];
-var _ALLOW_EDIT = false;
 $(function () {
 	//	$('.cls-div-form-edit-dialog[index="0"]').dialog('option', 'height', 520);
 	//	$('.cls-div-form-edit-dialog[index="1"]').dialog('option', 'height', 500);
@@ -149,7 +148,6 @@ $(function () {
 	});
 
 	//++edit data each cell
-if(_ALLOW_EDIT){
 		$('body').on('click', '#tblSearchResult tbody tr td.'+ _MANU_TYPE +'_type', function (e) {
 			if($('td.img').children('img').attr('alt') == "edit"){
 			var ps_rowid = $(e.target).closest('tr').find(".cls-sel-change-status_prod").attr('ps_rowid');
@@ -317,7 +315,6 @@ if(_ALLOW_EDIT){
 			}
 		}
 		});
-	}
 	//upload img - dialog
 	$('.btn-input-file-upload').on('click', function () { $('.input-file-upload').click(); });
 	
@@ -1519,7 +1516,6 @@ function fnc__DDT_Row_RenderEdit(data, type, full) {
 	var _elPanel = $('<div>');
 
 	if (_arrAct.indexOf('edit') >= 0) {
-		_ALLOW_EDIT = true;
 		_elPanel.append($('<img class="list-row-button edit" id="btn-upload-img" src="./public/images/b_upload-img.png" alt="edit" name="'+ _srcImg +'" title="อัพโหลดรูปภาพ">'));
 	}else if (_arrAct.indexOf('view') >= 0) {
 		_elPanel.append($('<img class="list-row-button edit" id="btn-upload-img" src="./public/images/b_upload-img.png" alt="view" name="'+ _srcImg +'" title="อัพโหลดรูปภาพ">'));
