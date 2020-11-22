@@ -10,7 +10,7 @@ class Upload_temp_image extends CI_Controller {
 	}
 	public function index() {
 		$_arrFiles = array();
-		$_arrError = array();
+		$_arrError = '';
 		$blnSuccess = FALSE;
 		$strError='';
 		$old_path ='';
@@ -57,7 +57,7 @@ class Upload_temp_image extends CI_Controller {
 				$_uplCnfg = array(
 					'upload_path' => $_uploaddir_path
 					, 'file_name' => $__file_name //$_dat->format('YmdHis')
-					, 'allowed_types' => 'jpg|jpeg|png'
+					, 'allowed_types' => 'jpg|jpeg|png|gif'
 					, 'max_size' => 5000
 					, 'max_width' => 4000
 					, 'max_height' => 4000
@@ -67,10 +67,10 @@ class Upload_temp_image extends CI_Controller {
 				$this->load->library('upload');
 				$this->upload->initialize($_uplCnfg);
 				if ( ! $this->upload->do_upload('image')) {
-					$_arrError[] = $this->upload->display_errors();
+					$_arrError = $this->upload->display_errors();
 				} else {
 					try {
-
+						// echo $old_path;exit;
 						if($old_path != ''){
 							unlink($old_path);
 						}
@@ -106,25 +106,41 @@ class Upload_temp_image extends CI_Controller {
 						if ($_result !== FALSE) {
 							$_arrFiles[] = $info;
 						} else {
-							$_arrError[] = $this->image_lib->display_errors();
+							$_arrError = $this->image_lib->display_errors();
 						}
 					} catch (Exception $e) {
-						$_arrError[] = $this->image_lib->display_errors();
+						$_arrError = $this->image_lib->display_errors();
 					}
 				}
 			}
 		}
-		if (count($_arrError) > 0) {
-			$this->output
-				->set_content_type('application/json')
-				->set_output(json_encode(array('error' => join("<br>\n, ", $_arrError))));
+
+		if ($_arrError != '') {
+			// $this->output
+			// 	->set_content_type('application/json')
+			// 	->set_output(json_encode(array('error' => join("<br>\n, ", $_arrError))));
+			$json = json_encode(
+				array(
+					'success' => false,
+					'error' => $_arrError,
+				)
+			);
+			header('content-type: application/json; charset=utf-8');
+			echo isset($_GET['callback'])? "{" . $_GET['callback']. "}(".$json.")":$json;
 		} 
 		else if (!isset($_FILES['image'])) {
-			$this->output
-				->set_content_type('application/json')
-				->set_output(json_encode(array('error' => "No file uploaded")));
-		} 
-		else {
+			$json = json_encode(
+				array(
+					'success' => false,
+					'error' => 'No file uploaded',
+					)
+			);
+			header('content-type: application/json; charset=utf-8');
+			echo isset($_GET['callback'])? "{" . $_GET['callback']. "}(".$json.")":$json;
+			// $this->output
+			// 	->set_content_type('application/json')
+			// 	->set_output(json_encode(array('error' => "No file uploaded")));
+		}else {
 			/*
 			this has to be the only data returned or you will get an error.
 			if you don't give this a json array it will give you a Empty file upload result error
