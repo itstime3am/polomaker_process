@@ -113,6 +113,7 @@ SCRPT
 		$this->_setController("status_rowid", "", NULL);
 		$this->_setController("prod_cost", "", NULL);
 		$this->_setController("img", "", NULL);
+		$this->_setController("eg_remark", "", NULL);
 		$this->_setController("status_remark", "", NULL);
 		$this->_setController("arr_avail_status", "", array());
 		$this->_setController("arr_avail_action", "", array());
@@ -193,12 +194,13 @@ SCR;
 		<div class="file-upload-wrapper" style="display:none;justify-content:center;">
         <div class="frm-edit-row" style="display:flex;align-items:center;margin-top:20px;flex-direction:column;">
             <div role="img" class="display-upload disp-upload-main" id="div_disp_upload_view"></div><br>
-            <!-- <span style="text-align: center;margin-bottom: 10px;">123</span> -->
-			<button class="btn-input-file-upload" style="width: 20%;display:none;">Upload File</button>
-			<a id="btn-download-img" style="display:none;"><button>Download</button></a>
+			<!-- <span style="text-align: center;margin-bottom: 5px;">123</span> -->
+			<textarea id="txa-eg_remark" style="width:50%;display:none;" class="user-input" rows="3" placeholder="หมายเหตุ"></textarea>
+			<button class="btn-input-file-upload" style="width: 20%;display:none; margin-top: 5px;">Upload File</button>
+			<a id="btn-download-img" style="display:none; margin-top: 5px;"><button>Download</button></a>
             <form action="upload_temp_image.php" id="frm-upload-file"  method="post" enctype="multipart/form-data">
-			<input type="file" name="image" class="input-file-upload" style="display:none;">
-			<input type="text" name="file_name" class="input-text" style="display:none;">
+			<input type="file" name="image" class="input-file-upload" style="display:none; margin-top: 10px;">
+			<input type="text" name="file_name" class="input-text" style="display:none; margin-top: 10px;">
 			<button type="submit" id="btn-submit" style="display:none;"></button>
             </form>
         </div>

@@ -112,6 +112,7 @@ $(function () {
 						if (confirm('กรุณายืนยันการอัพโหลดไฟล์ ' + _input_file_val)) {
 							var _frmUpload = $('#frm-upload-file');
 							_doUploadFileImg(_rowid, _seq, _job_number,_frmUpload);
+							$('#_eg_remark').val('');
 							$(this).dialog('close');
 						}
 					}else {
@@ -194,7 +195,10 @@ $(function () {
 			var _seq = $(e.target).closest('tr').find(".cls-sel-change-status_prod").attr('seq');
 			var _job_number = $(e.target).closest('tr').find(".cls-sel-change-status_prod").attr('job_number');
 			var _imgName = $(this).children('img').attr('name');
+			var _eg_remark = $(this).children('img').attr('eg_remark');
 			if (ps_rowid > 0) {
+				$('#txa-eg_remark').show();
+				$('#txa-eg_remark').val(_eg_remark);
 				$('.file-upload-wrapper').show();
 				$('#btn-download-img').show();
 				$('#div_edit_dialog').attr('ps_rowid', ps_rowid)
@@ -1160,7 +1164,8 @@ function _doOpenDialogEditColumn(ps_rowid, _ownTextVal, _column, _column_disp){
 
 function _doUploadFileImg(_rowid, _seq, _job_number,  _dataForm){
 	var _file_name = $('#div_edit_dialog').attr('name');
-	
+	var _eg_remark = $('#txa-eg_remark').val();
+	console.log(_eg_remark);
 	var data = new FormData(_dataForm[0]);
 	data.append('type', _MANU_TYPE);   
 	if(_file_name != ''){
@@ -1185,7 +1190,7 @@ function _doUploadFileImg(_rowid, _seq, _job_number,  _dataForm){
             success: function(data ) {
 				if(data.success){
 					var file_name = data.files[0]['name'];
-					var _json = '[{"rowid":"'+_rowid+'","img":"'+file_name+'"}]';
+					var _json = '[{"rowid":"'+_rowid+'","img":"'+file_name+'","eg_remark":"'+_eg_remark+'"}]';
 				__doCommitChangeMultiDataTable('',_json);
 				_doDisplayToastMessage(MSG_ALERT_COMMIT_SUCCESS.replace(/v_XX_1/g, ''), 3, false);
 				doSearch(false);
@@ -1509,6 +1514,7 @@ function fnc__DDT_Row_RenderCancel(data, type, full) {
 function fnc__DDT_Row_RenderEdit(data, type, full) {
 	var _arrAct = '';
 	var _srcImg = '';
+	var _eg_remark = '';
 
 	if ('arr_avail_action' in full) {
 		_arrAct = full['arr_avail_action'];
@@ -1519,12 +1525,16 @@ function fnc__DDT_Row_RenderEdit(data, type, full) {
 		_srcImg = full['img'];
 	}
 
+	if ('eg_remark' in full) {
+		_eg_remark = full['eg_remark'];
+	}
+
 	var _elPanel = $('<div>');
 
 	if (_arrAct.indexOf('edit') >= 0) {
-		_elPanel.append($('<img class="list-row-button edit" id="btn-upload-img" src="./public/images/b_upload-img.png" alt="edit" name="'+ _srcImg +'" title="อัพโหลดรูปภาพ">'));
+		_elPanel.append($('<img class="list-row-button edit" eg_remark="'+ _eg_remark +'" id="btn-upload-img" src="./public/images/b_upload-img.png" alt="edit" name="'+ _srcImg +'" title="อัพโหลดรูปภาพ">'));
 	}else if (_arrAct.indexOf('view') >= 0) {
-		_elPanel.append($('<img class="list-row-button edit" id="btn-upload-img" src="./public/images/b_upload-img.png" alt="view" name="'+ _srcImg +'" title="อัพโหลดรูปภาพ">'));
+		_elPanel.append($('<img class="list-row-button edit" eg_remark="'+ _eg_remark +'" id="btn-upload-img" src="./public/images/b_upload-img.png" alt="view" name="'+ _srcImg +'" title="อัพโหลดรูปภาพ">'));
 	}
 	else{
 		_elPanel.append($('<img class="list-row-button">'));
