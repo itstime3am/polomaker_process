@@ -68,8 +68,13 @@ $(function () {
 			$('#txa-edit_column').css("display","none");
 			$('#txa-edit_column').attr("readonly",false)
 			$('#sel-edit_column').css("display","none");
+			$('.disp-upload-main').removeAttr('style');
 			$('.file-upload-wrapper').css("display","none");
+			$('.input-file-upload').removeAttr('value');
 			$('#sel-edit_column option:selected').removeAttr("selected");
+			$('#btn-download-img').removeAttr("download")
+			$('#btn-download-img').removeAttr("href")
+			$('input.input-file-upload').val('');
 			clearValue($('#txa-edit_column'));
 			doVldrInput(false, $('#txa-edit_column'));
 		}
@@ -126,7 +131,6 @@ $(function () {
 				return false;
 			}
 			, 'Cancel': function () {
-				$(this).children('.file-upload-wrapper').find('.input-file-upload-file').val('');
 				$(this).dialog('close');
 			}
 		}
@@ -199,10 +203,12 @@ $(function () {
 					.attr('column', 'img')
 					.attr('column_disp', 'รูปภาพ')
 					.attr('name', _imgName)
-			$('#btn-download-img').attr('href', '../app/uploads/manu_'+_MANU_TYPE+'/'+_imgName);
-			$('#btn-download-img').attr('download', _imgName);
-			$('#div_disp_upload_view').css('background-image', 'url("../app/uploads/manu_'+_MANU_TYPE+'/'+_imgName);
-			$('#div_disp_upload_view').css('background-size', '100% 100%');
+				if(_imgName.length > 0) {
+					$('#btn-download-img').attr('href', '../app/uploads/manu_'+_MANU_TYPE+'/'+_imgName);
+					$('#btn-download-img').attr('download', _imgName);
+					$('#div_disp_upload_view').css('background-image', 'url("../app/uploads/manu_'+_MANU_TYPE+'/'+_imgName);
+					$('#div_disp_upload_view').css('background-size', '100% 100%');
+				}
 				var _column_disp = $('#div_edit_dialog').attr('column_disp') || -1;
 				_DLG_EDIT_COLUMN.dialog('option', 'title', '( rowid ' + ps_rowid + ') ' + 'แก้ไข : ' + _column_disp).dialog("open");
 			}

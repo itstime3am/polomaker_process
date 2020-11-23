@@ -46,9 +46,23 @@ class Upload_temp_image extends CI_Controller {
 					$__file_name = gmdate('YmdHis')."-".$_POST['ps_rowid']."-".$_POST['job_number']."-".$_POST['ps_seq']."(".($index+1).")";
 				}
 			}else{
-				
-				if(isset($_POST['ps_rowid']) && isset($_POST['ps_seq'])){
-					$__file_name = gmdate('YmdHis')."-".$_POST['ps_rowid']."-".$_POST['job_number']."-".$_POST['ps_seq']."(1)";
+				if( $_POST['type'] == "screen" && $_POST['timestamp']){
+					if($this->Mdl_screen_process->_checkUpdateTime($_POST['ps_rowid'], $_POST['timestamp'])){
+						if(isset($_POST['ps_rowid']) && isset($_POST['ps_seq'])){
+							$__file_name = gmdate('YmdHis')."-".$_POST['ps_rowid']."-".$_POST['job_number']."-".$_POST['ps_seq']."(1)";
+						}
+					}else{
+						$strError = "refresh";
+					}
+					
+				}else{
+					if($this->Mdl_weave_process->_checkUpdateTime($_POST['ps_rowid'], $_POST['timestamp'])){
+						if(isset($_POST['ps_rowid']) && isset($_POST['ps_seq'])){
+							$__file_name = gmdate('YmdHis')."-".$_POST['ps_rowid']."-".$_POST['job_number']."-".$_POST['ps_seq']."(1)";
+						}
+					}else{
+						$strError = "refresh";
+					}		
 				}
 			}
 			if($strError == ''){

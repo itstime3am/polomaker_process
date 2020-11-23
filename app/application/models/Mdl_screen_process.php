@@ -225,7 +225,7 @@ EOT;
 
 	function _checkIsExits($_order_rowid, $_seq){
 
-		$_sql = "SELECT COUNT(rowid) FROM pm_t_manu_weave_production WHERE order_rowid = $_order_rowid AND seq = $_seq";
+		$_sql = "SELECT COUNT(rowid) FROM pm_t_manu_screen_production WHERE order_rowid = $_order_rowid AND seq = $_seq";
 		$arrData_count = $this->arr_execute($_sql);
 		if( $arrData_count[0]['count'] < 1 ){ 
 			return true;
