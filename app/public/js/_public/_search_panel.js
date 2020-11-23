@@ -104,7 +104,7 @@ function doSearch(blnChangeSearchCriteria, opt_fncCallBack) {
 				function() 
 				{
 				  _onload_time = new Date().toLocaleString('th-TH',{hour12:false});
-				}, 1000);			
+				}, 200);			
 		},
 		error: function(jqXHR, textStatus, errorThrown) {
 			$("#dialog-modal").dialog( "close" );
