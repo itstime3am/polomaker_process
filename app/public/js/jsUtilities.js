@@ -1228,7 +1228,10 @@ function doVldrInput(allow, obj, type){
 					a.push(i);
 				}
 
+
+
 				if(type == 'number'){
+					a.push(46); // add .
 					if (!(a.indexOf(k)>=0)){
 						e.preventDefault();
 						return e;
