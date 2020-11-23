@@ -154,7 +154,7 @@ $(function () {
 
 	//++edit data each cell
 		$('body').on('click', '#tblSearchResult tbody tr td.'+ _MANU_TYPE +'_type', function (e) {
-			if($('td.img').children('img').attr('alt') == "edit"){
+			if($(this).siblings('td.img').children('img').attr('alt') == "edit"){
 			var ps_rowid = $(e.target).closest('tr').find(".cls-sel-change-status_prod").attr('ps_rowid');
 			var ps_seq = $(e.target).closest('tr').find(".cls-sel-change-status_prod").attr('seq');
 			if (ps_rowid > 0) {
@@ -186,7 +186,7 @@ $(function () {
 		});
 
 		$('body').on('click', '#tblSearchResult tbody tr td.img', function (e) {
-			if($('td.img').children('img').attr('alt') == "edit"){
+			if($(this).children('img').attr('alt') == "edit"){
 				$('.btn-input-file-upload').show();
 			}else{
 				$("#btn-download-img").show();
@@ -232,7 +232,7 @@ $(function () {
 		});
 
 		$('body').on('click', '#tblSearchResult tbody tr td.width', function (e) {
-			if($('td.img').children('img').attr('alt') == "edit"){
+			if($(this).siblings('td.img').children('img').attr('alt') == "edit"){
 			var ps_rowid = $(e.target).closest('tr').find(".cls-sel-change-status_prod").attr('ps_rowid');
 			var ps_column_text = $(this).text();
 			if (ps_rowid > 0) {
@@ -242,7 +242,7 @@ $(function () {
 		});
 
 		$('body').on('click', '#tblSearchResult tbody tr td.height', function (e) {
-			if($('td.img').children('img').attr('alt') == "edit"){
+			if($(this).siblings('td.img').children('img').attr('alt') == "edit"){
 			var ps_rowid = $(e.target).closest('tr').find(".cls-sel-change-status_prod").attr('ps_rowid');
 			var ps_column_text = $(this).text();
 			if (ps_rowid > 0) {
@@ -252,7 +252,7 @@ $(function () {
 		});
 
 		$('body').on('click', '#tblSearchResult tbody tr td.color_qty', function (e) {
-			if($('td.img').children('img').attr('alt') == "edit"){
+			if($(this).siblings('td.img').children('img').attr('alt') == "edit"){
 			var ps_rowid = $(e.target).closest('tr').find(".cls-sel-change-status_prod").attr('ps_rowid');
 			var ps_column_text = $(this).text();
 			if (ps_rowid > 0) {
@@ -272,7 +272,7 @@ $(function () {
 		});
 
 		$('body').on('click', '#tblSearchResult tbody tr td.block_emp', function (e) {
-			if($('td.img').children('img').attr('alt') == "edit"){
+			if($(this).siblings('td.img').children('img').attr('alt') == "edit"){
 			var ps_rowid = $(e.target).closest('tr').find(".cls-sel-change-status_prod").attr('ps_rowid');
 			var ps_column_text = $(this).text();
 			if (ps_rowid > 0) {
@@ -282,7 +282,7 @@ $(function () {
 		});
 
 		$('body').on('click', '#tblSearchResult tbody tr td.prod_cost', function (e) {
-			if($('td.img').children('img').attr('alt') == "edit"){
+			if($(this).siblings('td.img').children('img').attr('alt') == "edit"){
 			var ps_rowid = $(e.target).closest('tr').find(".cls-sel-change-status_prod").attr('ps_rowid');
 			var ps_column_text = $(this).text();
 			if (ps_rowid > 0) {
@@ -295,7 +295,7 @@ $(function () {
 		//weave
 
 		$('body').on('click', '#tblSearchResult tbody tr td.stitch_number', function (e) {
-			if($('td.img').children('img').attr('alt') == "edit"){
+			if($(this).siblings('td.img').children('img').attr('alt') == "edit"){
 			var ps_rowid = $(e.target).closest('tr').find(".cls-sel-change-status_prod").attr('ps_rowid');
 			var ps_column_text = $(this).text();
 			if (ps_rowid > 0) {
@@ -306,7 +306,7 @@ $(function () {
 		});
 
 		$('body').on('click', '#tblSearchResult tbody tr td.block_number', function (e) {
-			if($('td.img').children('img').attr('alt') == "edit"){
+			if($(this).siblings('td.img').children('img').attr('alt') == "edit"){
 			var ps_rowid = $(e.target).closest('tr').find(".cls-sel-change-status_prod").attr('ps_rowid');
 			var ps_column_text = $(this).text();
 			if (ps_rowid > 0) {
@@ -316,7 +316,7 @@ $(function () {
 		});
 
 		$('body').on('click', '#tblSearchResult tbody tr td.color_silk_qty', function (e) {
-			if($('td.img').children('img').attr('alt') == "edit"){
+			if($(this).siblings('td.img').children('img').attr('alt') == "edit"){
 			var ps_rowid = $(e.target).closest('tr').find(".cls-sel-change-status_prod").attr('ps_rowid');
 			var ps_column_text = $(this).text();
 			if (ps_rowid > 0) {
@@ -371,13 +371,13 @@ $(function () {
 			} else {
 				if (confirm('กรุณายืนยันการเปลี่ยนสถานะของใบเสนอราคา ' + _str + ' เป็นสถานะ "' + _status_text + '"')) {
 					if (_rowid == 0) {
-						if($('td.img').children('img').attr('alt') == 'edit'){
+						if($(this).parent().siblings('td.img').children('img').attr('alt') == 'edit'){
 							__doChangeQuotationStatus(_rowid, _status_rowid, _order_rowid, _order_s_rowid, _seq)
 						}else{
 							_doDisplayToastMessage('ไม่มีสิทธิ์ในการเปลี่ยนแปลงข้อมูล', 3, false);
 						}
 					} else {
-						if($('td.img').children('img').attr('alt') == 'edit' || _prod_id == 30){
+						if($(this).parent().siblings('td.img').children('img').attr('alt') == 'edit' || _prod_id == 30){
 							__doChangeQuotationStatus(_rowid, _status_rowid)
 						}else{
 							_doDisplayToastMessage('ไม่มีสิทธิ์ในการเปลี่ยนแปลงข้อมูล', 3, false);

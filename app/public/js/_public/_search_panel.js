@@ -103,8 +103,10 @@ function doSearch(blnChangeSearchCriteria, opt_fncCallBack) {
 			setTimeout(
 				function() 
 				{
-				  _onload_time = new Date().toLocaleString('th-TH',{hour12:false});
-				}, 200);			
+					_onload_time = new Date().toLocaleString('th-TH',{hour12:false});
+					// console.log(_onload_time)
+				},0);			
+
 		},
 		error: function(jqXHR, textStatus, errorThrown) {
 			$("#dialog-modal").dialog( "close" );
