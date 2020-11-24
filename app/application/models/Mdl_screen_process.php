@@ -22,7 +22,7 @@ class Mdl_screen_process extends MY_Model
 		$_sql = <<<EOT
 		-- SCREEN SQL
 		select  DISTINCT ON (o.job_number, d.seq, o.order_date)
-		o.job_number, o.customer , CONCAT(o.type, ' [ ', o.category, ' ] ') as disp_order , o.standard_pattern as pattern
+		o.job_number, o.customer , CONCAT(o.type, ' [ ', o.category, ' ] ') as disp_order , o.standard_pattern as pattern, osd.start_ps_date
 		, d.position, o.fabric, o.sum_qty as qty, d.detail, d.size, d.job_hist, s.screen_type, s.name AS disp_type
 		, tmp.rowid  as prod_id, tmp.prod_status  as status_rowid, ss.name  as disp_status, tmp.screen_type as type_rowid, mst.name as disp_screen_type
 		, tmp.width , tmp.height, tmp.fabric_date , tmp.eg_date, tmp.block_emp , tmp.color_qty, tmp.prod_cost, tmp.img, tmp.eg_remark
@@ -79,6 +79,7 @@ class Mdl_screen_process extends MY_Model
 			LEFT JOIN pm_t_manu_screen_production tmp on tmp.order_screen_rowid = d.order_screen_rowid and  tmp.order_rowid = d.order_rowid and tmp.seq = d.seq
 			LEFT JOIN m_manu_screen_status ss ON ss.rowid = tmp.prod_status
 			LEFT join m_manu_screen_type mst on mst.rowid = tmp.screen_type
+			LEFT JOIN v_order_start_date osd ON osd.job_number = o.job_number
 		WHERE o.ps_rowid >= 30
 		AND o.ps_rowid != 60 
 		AND s.screen_type = 2
