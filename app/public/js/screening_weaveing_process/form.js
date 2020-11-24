@@ -1165,7 +1165,7 @@ function _doOpenDialogEditColumn(ps_rowid, _ownTextVal, _column, _column_disp){
 function _doUploadFileImg(_rowid, _seq, _job_number,  _dataForm){
 	var _file_name = $('#div_edit_dialog').attr('name');
 	var _eg_remark = $('#txa-eg_remark').val();
-	console.log(_eg_remark);
+	
 	var data = new FormData(_dataForm[0]);
 	data.append('type', _MANU_TYPE);   
 	if(_file_name != ''){
