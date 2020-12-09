@@ -25,20 +25,26 @@ class Mdl_weave_process extends MY_Model
 		, d.position, o.fabric, o.total_qty as qty, d.detail, d.size, d.job_hist, s.screen_type, s.name AS disp_type
 		, tmp.rowid  as prod_id, tmp.prod_status  as status_rowid, ss.name  as disp_status, tmp.weave_type as type_rowid, mst.name as disp_weave_type
 		, tmp.width , tmp.height, tmp.fabric_date , tmp.eg_date, tmp.block_emp , tmp.block_number , tmp.stitch_number , tmp.color_silk_qty, tmp.prod_cost, tmp.img, tmp.eg_remark
-		,d.order_rowid, d.order_screen_rowid as order_s_rowid, d.seq, tmp.prod_cost, tmp.is_cancel as is_cancel, tmp.status_remark, tmp.approve_date
+		,d.order_rowid, d.order_screen_rowid as order_s_rowid, d.seq, tmp.prod_cost, tmp.is_cancel as is_cancel, tmp.status_remark, tmp.approve_date, tmp.order_remark
+		, fs.name as disp_fabric_status
 		, ARRAY_TO_JSON(ARRAY(
 			SELECT UNNEST(fnc_manu_weave_avai_status(tmp.prod_status)) 
 			INTERSECT 
 			SELECT UNNEST(uac.arr_avail_status)
 		)) AS arr_avail_status
 		, ARRAY_TO_JSON(ARRAY(
-			--SELECT UNNEST(fnc_quotation_avai_action(GREATEST(t.deliver_status_rowid, t.produce_status_rowid))) 
 			SELECT UNNEST(fnc_manu_weave_avai_action(tmp.prod_status)) 
 			INTERSECT 
 			SELECT UNNEST(uac.arr_avail_action)
 		)) AS arr_avail_action
+		, ARRAY_TO_JSON(ARRAY(
+			SELECT UNNEST(fnc_manu_fabric_avai_status(tmp.fabric_status)) 
+			INTERSECT 
+			SELECT UNNEST(uacf.arr_avail_status)
+		)) AS arr_avail_fabric
 		FROM v_order_report o 
 			INNER JOIN fnc_listmanu_weave_accright_byuser($_userid) uac ON True 
+			INNER JOIN fnc_listmanu_fabric_accright_byuser($_userid) uacf ON True 
 			INNER JOIN (
 				SELECT 1 AS type_id, order_rowid, order_screen_rowid, position, detail, size, job_hist, price, seq
 				FROM pm_t_order_screen_polo 
@@ -79,6 +85,7 @@ class Mdl_weave_process extends MY_Model
 			LEFT JOIN m_manu_weave_status ss ON ss.rowid = tmp.prod_status
 			LEFT JOIN m_manu_weave_type mst ON mst.rowid = tmp.weave_type
 			LEFT JOIN v_order_start_date osd ON osd.job_number = o.job_number
+			LEFT JOIN m_fabric_status fs ON tmp.fabric_status = fs.rowid 
 		WHERE o.ps_rowid >= 30
 		AND o.ps_rowid != 60
 		AND s.screen_type = 1
@@ -153,7 +160,7 @@ EOT;
 		}
 	}
 
-	function change_status_by_id($rowid, $status_rowid, $status_remark = FALSE, $order_rowid, $order_s_rowid, $seq, $_timestamp)
+	function change_status_by_id($rowid, $status_rowid, $status_remark = FALSE, $order_rowid, $order_s_rowid, $seq, $job_number, $_timestamp)
 	{
 		$_rowid = $this->db->escape((int) $rowid);
 		$status_rowid = $this->db->escape((int) $status_rowid);
@@ -173,12 +180,16 @@ EOT;
 				'stitch_number' => '0',
 				'color_silk_qty' => '0',
 				'prod_cost' => '0',
+				'job_number' => $job_number,
 				'is_cancel' => '0',
 				'seq' => $seq,
 				'create_by' => $_userid,
-				'prod_status' => '10'
+				'prod_status' => '10',
+				'fabric_status' => '10'
 			);
 			$this->db->insert($this->_TABLE_NAME, $data);
+
+			// echo $this->db->last_query();
 
 			$data['timestamp'] = $_timestamp;
 			$this->save_log($_userid,'INSERT', $data);
@@ -203,6 +214,32 @@ EOT;
 
 			$this->save_log($_userid,'UPDATE', $data);
 		}
+		$this->error_message = $this->db->error()['message'];
+		return true;
+	}
+
+	function change_status_fabric_by_id($rowid, $status_rowid, $_timestamp)
+	{
+		$_rowid = $this->db->escape((int) $rowid);
+		$status_rowid = $this->db->escape((int) $status_rowid);
+		$_userid = $this->db->escape((int)$this->session->userdata('user_id'));
+
+			if($_timestamp && $rowid){
+				$_rowid =  $rowid;
+				if(!$this->_checkUpdateTime($_rowid, $_timestamp)){
+					return false;
+				};
+			}
+			$this->db->set('fabric_status', $status_rowid);
+			$this->db->set('update_by', $this->db->escape((int)$this->session->userdata('user_id')));
+			$this->db->where('rowid', $_rowid);
+			$this->db->update($this->_TABLE_NAME);
+			$data = array(
+				'rowid' => $rowid,
+				'fabric_status' => $status_rowid,
+				'update_by' => $_userid
+			);
+			$this->save_log($_userid,'UPDATE', $data);
 		$this->error_message = $this->db->error()['message'];
 		return true;
 	}

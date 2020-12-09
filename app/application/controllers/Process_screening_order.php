@@ -84,25 +84,24 @@ SCRPT
 		$this->_prepareControlsDefault();
 
 		//++ set special attributes		
-		$this->_setController("job_number", "เลขที่งาน", NULL, array("selectable"=>TRUE,"default"=>TRUE,"class"=>"center","order"=>1));
-		$this->_setController("start_ps_date", "วันที่เริ่มการผลิต", NULL, array("selectable"=>TRUE,"default"=>TRUE,"class"=>"center","order"=>2));
-		$this->_setController("customer", "ลูกค้า", NULL, array("selectable"=>TRUE,"default"=>TRUE,"class"=>"center","order"=>3));
-		// $this->_setController("fabric_date", "วันที่รับผ้า", NULL, array("selectable"=>TRUE,"default"=>FALSE,"class"=>"center","order"=>5));
-		$this->_setController("fabric_date", "วันที่รับผ้า", NULL, array("selectable"=>TRUE,"default"=>TRUE,"class"=>"center","order"=>6));
-		$this->_setController("disp_order", "ประเภทสินค้า", NULL, array("selectable"=>TRUE,"default"=>TRUE,"class"=>"center","order"=>7));
-		$this->_setController("pattern", "แบบเสื้อ", NULL, array("selectable"=>TRUE,"default"=>TRUE,"order"=>8));
-		$this->_setController("position", "ตำแหน่ง", NULL, array("selectable"=>TRUE,"default"=>TRUE,"class"=>"center position","order"=>9));
-		$this->_setController("disp_screen_type", "ประเภทงาน", NULL, array("selectable"=>TRUE,"default"=>TRUE,"class"=>"edit center screen_type","order"=>11));
+		$this->_setController("job_number", "เลขที่งาน", NULL, array("selectable"=>TRUE,"default"=>TRUE,"class"=>"center","order"=>2));
+		$this->_setController("start_ps_date", "วันที่เริ่มการผลิต", NULL, array("selectable"=>TRUE,"default"=>TRUE,"class"=>"center","order"=>3));
+		$this->_setController("customer", "ลูกค้า", NULL, array("selectable"=>TRUE,"default"=>TRUE,"class"=>"center","order"=>4));
+		$this->_setController("disp_order", "ประเภทสินค้า", NULL, array("selectable"=>TRUE,"default"=>TRUE,"class"=>"center","order"=>10));
+		$this->_setController("pattern", "แบบเสื้อ", NULL, array("selectable"=>TRUE,"default"=>TRUE,"order"=>12));
+		$this->_setController("position", "ตำแหน่ง", NULL, array("selectable"=>TRUE,"default"=>TRUE,"class"=>"center position","order"=>13));
+		$this->_setController("disp_screen_type", "ประเภทงาน", NULL, array("selectable"=>TRUE,"default"=>TRUE,"class"=>"edit center screen_type","order"=>14));
 		// $this->_setController("detail", "รายละเอียด", NULL, array("selectable"=>TRUE,"default"=>TRUE,"class"=>"center","order"=>9));
-		$this->_setController("width", "กว้าง", NULL, array("selectable"=>TRUE,"default"=>TRUE,"class"=>"edit center width","width"=>"60","order"=>12));
-		$this->_setController("height", "สูง", NULL, array("selectable"=>TRUE,"default"=>TRUE,"class"=>"edit center height","width"=>"60","order"=>13));
-		$this->_setController("fabric", "ชนิดผ้า", NULL, array("selectable"=>TRUE,"default"=>TRUE,"class"=>"center","order"=>14));
-		$this->_setController("qty", "จำนวน", NULL, array("selectable"=>TRUE,"default"=>TRUE,"class"=>"center","order"=>15));
-		$this->_setController("eg_date", "วันที่ส่งแบบ", NULL, array("selectable"=>TRUE,"default"=>TRUE,"class"=>"center","order"=>16));
-		$this->_setController("approve_date", "วันที่ Sale Approve", NULL, array("selectable"=>TRUE,"default"=>TRUE,"class"=>"center","order"=>17));
-		$this->_setController("block_emp", "ช่างตีบล็อค", NULL, array("selectable"=>TRUE,"default"=>TRUE,"class"=>"edit center block_emp","order"=>18));
-		$this->_setController("color_qty", "จำนวนสี", NULL, array("selectable"=>TRUE,"default"=>TRUE,"class"=>"edit center color_qty","order"=>19));
-		$this->_setController("prod_cost", "ต้นทุน", NULL, array("selectable"=>TRUE,"default"=>TRUE,"class"=>"edit center default_number prod_cost","order"=>20));
+		$this->_setController("width", "กว้าง", NULL, array("selectable"=>TRUE,"default"=>TRUE,"class"=>"edit center width","width"=>"60","order"=>15));
+		$this->_setController("height", "สูง", NULL, array("selectable"=>TRUE,"default"=>TRUE,"class"=>"edit center height","width"=>"60","order"=>16));
+		$this->_setController("fabric", "ชนิดผ้า", NULL, array("selectable"=>TRUE,"default"=>TRUE,"class"=>"center","order"=>17));
+		$this->_setController("qty", "จำนวน", NULL, array("selectable"=>TRUE,"default"=>TRUE,"class"=>"center","order"=>18));
+		$this->_setController("eg_date", "วันที่ส่งแบบ", NULL, array("selectable"=>TRUE,"default"=>TRUE,"class"=>"center","order"=>19));
+		$this->_setController("approve_date", "วันที่ Sale Approve", NULL, array("selectable"=>TRUE,"default"=>TRUE,"class"=>"center","order"=>20));
+		$this->_setController("fabric_date", "วันที่รับผ้า", NULL, array("selectable"=>TRUE,"default"=>TRUE,"class"=>"center","order"=>21));
+		$this->_setController("block_emp", "ช่างตีบล็อค", NULL, array("selectable"=>TRUE,"default"=>TRUE,"class"=>"edit center block_emp","order"=>22));
+		$this->_setController("color_qty", "จำนวนสี", NULL, array("selectable"=>TRUE,"default"=>TRUE,"class"=>"edit center color_qty","order"=>23));
+		$this->_setController("prod_cost", "ต้นทุน", NULL, array("selectable"=>TRUE,"default"=>TRUE,"class"=>"edit center default_number prod_cost","order"=>24));
 		//-- set special attribute
 
 		/*++ dummy field, use it value to show span on panel (just add to array keep value) */
@@ -111,32 +110,50 @@ SCRPT
 		$this->_setController("seq", "", NULL);
 		$this->_setController("rowid", "", NULL);
 		$this->_setController("disp_status", "", NULL);
+		$this->_setController("disp_fabric_status", "", NULL);
 		$this->_setController("prod_id", "", NULL);
 		$this->_setController("status_rowid", "", NULL);
 		$this->_setController("prod_cost", "", NULL);
 		$this->_setController("img", "", NULL);
 		$this->_setController("eg_remark", "", NULL);
+		$this->_setController("order_remark", "", NULL);
 		$this->_setController("status_remark", "", NULL);
 		$this->_setController("arr_avail_status", "", array());
 		$this->_setController("arr_avail_action", "", array());
+		$this->_setController("arr_avail_fabric", "", array());
 		/*-- dummy field, use it value to show span on panel (just add to array keep value) */
 
 		$_custom_columns = array( 
 			array(
 				"column" => <<<CCLMS
+{ "sTitle":"note","width":"180","sClass":"center order_remark","mData":"rowid","mRender":function(data,type,full) { return fnc__DDT_Row_RenderOrderReamerk(data, type, full); } , "bSortable": false}
+CCLMS
+				, "order" => 1),
+			array(
+				"column" => <<<CCLMS
 { "sTitle":"สถานะ","width":"100","sClass":"center","mData":'rowid',"mRender":function(data,type,full) { return fnc__DDT_Row_RenderStatus(data, type, full); }, "bSortable": true }
 CCLMS
-				, "order" => 4),
+				, "order" => 5),
 			array(
 			"column" => <<<CCLMS
 { "sTitle":"แก้ไขสถานะ","width":"180","sClass":"center","mData":'rowid',"mRender":function(data,type,full) { return fnc__DDT_Row_RenderAvailStatus(data, type, full); }, "bSortable": false }
 CCLMS
-			, "order" => 5),
+			, "order" => 6),
+			array(
+				"column" => <<<CCLMS
+{ "sTitle":"สถานะผ้า","width":"100","sClass":"center","mData":'rowid',"mRender":function(data,type,full) { return fnc__DDT_Row_RenderFabricStatus(data, type, full); }, "bSortable": true }
+CCLMS
+				, "order" => 7),
+			array(
+				"column" => <<<CCLMS
+{ "sTitle":"แก้ไขสถานะผ้า","width":"100","sClass":"center","mData":'rowid',"mRender":function(data,type,full) { return fnc__DDT_Row_RenderAvailFabricStatus(data, type, full); }, "bSortable": true }
+CCLMS
+				, "order" => 8),
 			array(
 				"column" => <<<CCLMS
 { "sTitle":"อัพโหลดรูป","width":"180","sClass":"center edit img","mData":"rowid","mRender":function(data,type,full) { return fnc__DDT_Row_RenderEdit(data, type, full); } , "bSortable": false}
 CCLMS
-				, "order" => 10)
+				, "order" => 11)
 		);
 
 		$pass['left_panel'] = $this->add_view('_public/_search_panel', $this->_arrSearchParams(), TRUE);
@@ -179,6 +196,9 @@ SCR;
 
 		$qo_status = $this->mt->list_where('manu_screen_type', 'is_cancel=0', NULL, 'm_');
 		$this->add_js("var _ARR_SCREEN_TYPE = " . json_encode($qo_status) . ";", 'custom');
+
+		$qo_status = $this->mt->list_where('fabric_status', 'is_cancel=0', NULL, 'm_');
+		$this->add_js("var _ARR_FABRIC_STATUS = " . json_encode($qo_status) . ";", 'custom');
 
 		$this->_DISABLE_ON_LOAD_SEARCH = True;
 		$this->add_view_with_script_header('_public/_template_main', $pass);
@@ -413,14 +433,14 @@ TMP;
 			if ($strError == '') {
 				if (isset($_arrData['order_rowid']) && isset($_arrData['order_s_rowid']) && isset($_arrData['seq'])){
 					//create new
-					if($this->m->change_status_by_id($_arrData['rowid'], $_arrData['status_rowid'], $_remark, $_arrData['order_rowid'], $_arrData['order_s_rowid'], $_arrData['seq'], $_arrData['timestamp'])){
+					if($this->m->change_status_by_id($_arrData['rowid'], $_arrData['status_rowid'], $_remark, $_arrData['order_rowid'], $_arrData['order_s_rowid'], $_arrData['seq'], $_arrData['job_number'], $_arrData['timestamp'])){
 						$strError = $this->m->error_message;
 					}else{
 						$strError = "refresh";
 					}
 				}else{
 					//update by id
-					if($this->m->change_status_by_id($_arrData['rowid'], $_arrData['status_rowid'],  $_remark, '', '', '',$_arrData['timestamp'])){
+					if($this->m->change_status_by_id($_arrData['rowid'], $_arrData['status_rowid'],  $_remark, '', '', '','',$_arrData['timestamp'])){
 						$strError = $this->m->error_message;
 					}else{
 						$strError = "refresh";
@@ -431,6 +451,44 @@ TMP;
 			$strError = 'Invalid parameters passed ( None )';
 		}
 
+		if ($strError == '') {
+			$blnSuccess = TRUE;
+		}
+		$json = json_encode(
+			array(
+				'success' => $blnSuccess,
+				'error' => $strError
+			)
+		);
+		header('content-type: application/json; charset=utf-8');
+		echo isset($_GET['callback'])? "{" . $_GET['callback']. "}(".$json.")":$json;
+	}
+
+	function change_status_fabric_by_id() {
+		$blnSuccess = FALSE;
+		$strError = '';
+		$this->load->model($this->modelName, 'm');
+		$json_input_data = json_decode(trim(file_get_contents('php://input')), true); //get json
+		$_arrData = (isset($json_input_data))?$json_input_data:$this->input->post(); //or post data submit
+		// print_r($_arrData);exit;
+		if (isset($_arrData) && ($_arrData != FALSE)) {
+			if (! isset($_arrData['rowid'])) $strError .= '"rowid" not found,';
+			if (! isset($_arrData['status_rowid'])) $strError .= '"status_rowid" not found,';
+			$_remark = FALSE;
+			if (isset($_arrData['status_remark']) && (!(empty($_arrData['status_remark'])))) $_remark = $_arrData['status_remark'];
+			if ($strError == '') {
+				//create new
+				if (isset($_arrData['rowid']) && isset($_arrData['status_rowid'])){
+					if($this->m->change_status_fabric_by_id($_arrData['rowid'], $_arrData['status_rowid'], $_arrData['timestamp'])){
+						$strError = $this->m->error_message;
+					}else{
+						$strError = "refresh";
+					}
+				}
+			}
+		} else {
+			$strError = 'Invalid parameters passed ( None )';
+		}
 		if ($strError == '') {
 			$blnSuccess = TRUE;
 		}
