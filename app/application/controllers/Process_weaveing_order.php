@@ -284,7 +284,7 @@ TMP;
 					,"label" => "จากวันที่"
 					,"name" => "date_from"
 					// ,"value" => $_frm->format('d/m/Y')
-					,"value" => '01/09/2020'
+					,"value" => '18/11/2020'
 				),
 				array(
 					"type" => "dpk"
