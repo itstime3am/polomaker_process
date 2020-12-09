@@ -100,11 +100,12 @@ SCRPT
 		$this->_setController("fabric", "ชนิดผ้า", NULL, array("selectable"=>TRUE,"default"=>TRUE,"class"=>"center","order"=>14));
 		$this->_setController("qty", "จำนวน", NULL, array("selectable"=>TRUE,"default"=>TRUE,"class"=>"center","order"=>15));
 		$this->_setController("eg_date", "วันที่ส่งแบบ", NULL, array("selectable"=>TRUE,"default"=>TRUE,"class"=>"center","order"=>16));
-		$this->_setController("block_emp", "ช่างตีบล็อค", NULL, array("selectable"=>TRUE,"default"=>TRUE,"class"=>"edit center block_emp","order"=>17));
-		$this->_setController("block_number", "เลขที่บล็อค", NULL, array("selectable"=>TRUE,"default"=>TRUE,"class"=>"edit center block_number","order"=>18));
-		$this->_setController("stitch_number", "ฝีเข็ม", NULL, array("selectable"=>TRUE,"default"=>TRUE,"class"=>"edit center stitch_number","order"=>19));
-		$this->_setController("color_silk_qty", "จำนวนสีไหม", NULL, array("selectable"=>TRUE,"default"=>TRUE,"class"=>"edit center color_silk_qty","order"=>20));
-		$this->_setController("prod_cost", "ต้นทุน", NULL, array("selectable"=>TRUE,"default"=>TRUE,"class"=>"edit center default_number prod_cost","order"=>21));
+		$this->_setController("approve_date", "วันที่ Sale Approve", NULL, array("selectable"=>TRUE,"default"=>TRUE,"class"=>"center","order"=>17));
+		$this->_setController("block_emp", "ช่างตีบล็อค", NULL, array("selectable"=>TRUE,"default"=>TRUE,"class"=>"edit center block_emp","order"=>18));
+		$this->_setController("block_number", "เลขที่บล็อค", NULL, array("selectable"=>TRUE,"default"=>TRUE,"class"=>"edit center block_number","order"=>19));
+		$this->_setController("stitch_number", "ฝีเข็ม", NULL, array("selectable"=>TRUE,"default"=>TRUE,"class"=>"edit center stitch_number","order"=>20));
+		$this->_setController("color_silk_qty", "จำนวนสีไหม", NULL, array("selectable"=>TRUE,"default"=>TRUE,"class"=>"edit center color_silk_qty","order"=>21));
+		$this->_setController("prod_cost", "ต้นทุน", NULL, array("selectable"=>TRUE,"default"=>TRUE,"class"=>"edit center default_number prod_cost","order"=>22));
 		//-- set special attribute
 
 		/*++ dummy field, use it value to show span on panel (just add to array keep value) */
