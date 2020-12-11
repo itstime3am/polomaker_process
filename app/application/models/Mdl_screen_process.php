@@ -185,9 +185,10 @@ EOT;
 				'prod_cost' => '0',
 				'job_number' => $job_number,
 				'is_cancel' => '0',
+				'eg_count' => '0',
 				'seq' => $seq,
 				'create_by' =>$_userid,
-				'prod_status' => '10',
+				'prod_status' => $status_rowid,
 				'fabric_status' => '10'
 			);
 			$this->db->insert($this->_TABLE_NAME, $data);

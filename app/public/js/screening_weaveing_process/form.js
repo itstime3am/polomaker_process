@@ -1434,7 +1434,7 @@ function fnc__DDT_Row_RenderAvailStatus(data, type, full) {
 	if ('arr_avail_status' in full) {
 		_arrStt = full['arr_avail_status'];
 		if (typeof _arrStt == 'string') _arrStt = JSON.parse(_arrStt);
-		if (_arrStt == '' && _qo_status < 80 && _qo_status != 30) _arrStt = ["wbl"];
+		if (_arrStt == '' && _qo_status < 80 && _qo_status != 30) _arrStt = ["wbl","wex","wok"];
 		
 	}
 	if (_qo_code) _elSel.attr("ps_code", _qo_code);
