@@ -108,6 +108,7 @@ SCRPT
 		$this->_setController("order_s_rowid", "", NULL);
 		$this->_setController("order_rowid", "", NULL);
 		$this->_setController("seq", "", NULL);
+		$this->_setController("type_id", "", NULL);
 		$this->_setController("rowid", "", NULL);
 		$this->_setController("disp_status", "", NULL);
 		$this->_setController("disp_fabric_status", "", NULL);
@@ -433,7 +434,7 @@ TMP;
 			if ($strError == '') {
 				if (isset($_arrData['order_rowid']) && isset($_arrData['order_s_rowid']) && isset($_arrData['seq'])){
 					//create new
-					if($this->m->change_status_by_id($_arrData['rowid'], $_arrData['status_rowid'], $_remark, $_arrData['order_rowid'], $_arrData['order_s_rowid'], $_arrData['seq'], $_arrData['job_number'], $_arrData['timestamp'])){
+					if($this->m->change_status_by_id($_arrData['rowid'], $_arrData['status_rowid'], $_remark, $_arrData['order_rowid'], $_arrData['order_s_rowid'], $_arrData['seq'], $_arrData['job_number'], $_arrData['type_id'], $_arrData['timestamp'])){
 						$strError = $this->m->error_message;
 					}else{
 						$strError = "refresh";

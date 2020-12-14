@@ -6,52 +6,52 @@ $(function () {
 	//	$('.cls-div-form-edit-dialog[index="0"]').dialog('option', 'height', 520);
 	//	$('.cls-div-form-edit-dialog[index="1"]').dialog('option', 'height', 500);
 
-	_DLG_STATUS_REMARK = $('#div_status_remark').dialog({
-		height: 180
-		, width: 780
-		, show: { effect: "puff", duration: 1000 }
-		, hide: { effect: "fade", duration: 1000 }
-		, modal: true
-		, resizable: true
-		, closeOnEscape: true
-		, autoOpen: false
-		, beforeClose: function (event, ui) {
-			$(this).removeAttr('status_rowid').removeAttr('status_text');
-		}
-		, buttons: {
-			'Commit': function () {
-				var _rowid = $(this).attr('ps_rowid') || false;
-				var _code = $(this).attr('ps_code') || false;
-				var _curr_status = $(this).attr('curr_status_text') || false;
-				var _status_rowid = $(this).attr('status_rowid') || false;
-				var _status_text = $(this).attr('status_text') || false;
-				var _remark = getValue($('#sel-status_remark'), '');
-				_remark += ' ' + getValue($('#txa-status_remark'), '');
-				_remark = _remark.trim();
-				doClearVldrErrorElement($('#sel-status_remark'));
-				doClearVldrErrorElement($('#txa-status_remark'));
-				if (_remark == '') {
-					doSetVldrError($('#sel-status_remark'), 'status_remark', 'required', 'กรุณาระบุเหตุผลในการเปลี่ยนเป็นสถานะ', 1);
-					doSetVldrError($('#txa-status_remark'), 'status_remark', 'required', 'กรุณาระบุเหตุผลในการเปลี่ยนเป็นสถานะ', 1);
-					_doDisplayToastMessage('กรุณาระบุเหตุผลในการเปลี่ยนเป็นสถานะ \"' + _status_text + '\"', 3, false);
-				} else {
-					var _str = 'id:' + _rowid;
-					if (_code) _str = 'เลขที่ \"' + _code + '\"';
-					if (confirm('กรุณายืนยันการเปลี่ยนสถานะของใบเสนอราคา ' + _str + ' เป็นสถานะ "' + _status_text + '"')) {
-						__doChangeQuotationStatus(_rowid, _status_rowid, _remark, function () {
-							clearValue($('#sel-status_remark'));
-							clearValue($('#txa-status_remark'));
-						});
-						$(this).dialog('close');
-					}
-				}
-				return false;
-			}
-			, 'Cancel': function () {
-				$(this).dialog('close');
-			}
-		}
-	});
+	// _DLG_STATUS_REMARK = $('#div_status_remark').dialog({
+	// 	height: 180
+	// 	, width: 780
+	// 	, show: { effect: "puff", duration: 1000 }
+	// 	, hide: { effect: "fade", duration: 1000 }
+	// 	, modal: true
+	// 	, resizable: true
+	// 	, closeOnEscape: true
+	// 	, autoOpen: false
+	// 	, beforeClose: function (event, ui) {
+	// 		$(this).removeAttr('status_rowid').removeAttr('status_text');
+	// 	}
+	// 	, buttons: {
+	// 		'Commit': function () {
+	// 			var _rowid = $(this).attr('ps_rowid') || false;
+	// 			var _code = $(this).attr('ps_code') || false;
+	// 			var _curr_status = $(this).attr('curr_status_text') || false;
+	// 			var _status_rowid = $(this).attr('status_rowid') || false;
+	// 			var _status_text = $(this).attr('status_text') || false;
+	// 			var _remark = getValue($('#sel-status_remark'), '');
+	// 			_remark += ' ' + getValue($('#txa-status_remark'), '');
+	// 			_remark = _remark.trim();
+	// 			doClearVldrErrorElement($('#sel-status_remark'));
+	// 			doClearVldrErrorElement($('#txa-status_remark'));
+	// 			if (_remark == '') {
+	// 				doSetVldrError($('#sel-status_remark'), 'status_remark', 'required', 'กรุณาระบุเหตุผลในการเปลี่ยนเป็นสถานะ', 1);
+	// 				doSetVldrError($('#txa-status_remark'), 'status_remark', 'required', 'กรุณาระบุเหตุผลในการเปลี่ยนเป็นสถานะ', 1);
+	// 				_doDisplayToastMessage('กรุณาระบุเหตุผลในการเปลี่ยนเป็นสถานะ \"' + _status_text + '\"', 3, false);
+	// 			} else {
+	// 				var _str = 'id:' + _rowid;
+	// 				if (_code) _str = 'เลขที่ \"' + _code + '\"';
+	// 				if (confirm('กรุณายืนยันการเปลี่ยนสถานะของใบเสนอราคา ' + _str + ' เป็นสถานะ "' + _status_text + '"')) {
+	// 					__doChangeQuotationStatus(_rowid, _status_rowid, _remark, function () {
+	// 						clearValue($('#sel-status_remark'));
+	// 						clearValue($('#txa-status_remark'));
+	// 					});
+	// 					$(this).dialog('close');
+	// 				}
+	// 			}
+	// 			return false;
+	// 		}
+	// 		, 'Cancel': function () {
+	// 			$(this).dialog('close');
+	// 		}
+	// 	}
+	// });
 
 	_DLG_EDIT_COLUMN = $('#div_edit_dialog').dialog({
 		height: 'auto'
@@ -391,6 +391,7 @@ $(function () {
 		var _code = $(this).attr('ps_code') || false;
 		var _order_rowid = $(this).attr('order_rowid') || -1;
 		var _order_s_rowid = $(this).attr('order_s_rowid') || -1;
+		var _type_id = $(this).attr('type_id') || -1;
 		var _seq = $(this).attr('seq') || -1;
 		var _curr_status_text = $(this).attr('curr_status_text') || false;
 		var _selOpt = $('option:selected', this);
@@ -412,7 +413,7 @@ $(function () {
 				if (confirm('กรุณายืนยันการเปลี่ยนสถานะของใบเสนอราคา ' + _str + ' เป็นสถานะ "' + _status_text + '"')) {
 					if (_rowid == 0) {
 						if($(this).parent().siblings('td.img').children('img').attr('alt') == 'edit'){
-							__doChangeQuotationStatus(_rowid, _status_rowid, _order_rowid, _order_s_rowid, _seq, _job_number)
+							__doChangeQuotationStatus(_rowid, _status_rowid, _order_rowid, _order_s_rowid, _seq, _job_number, _type_id)
 						}else{
 							_doDisplayToastMessage('ไม่มีสิทธิ์ในการเปลี่ยนแปลงข้อมูล', 3, false);
 						}
@@ -1285,9 +1286,10 @@ function _doPrepareChangeDataColumn(_rowid, _column, _val, disp_val) {
 		return false;
 	}
 };
-function __doChangeQuotationStatus(rowid, status_rowid, order_rowid, order_s_rowid, seq, job_number, strStatusRemark, fncOnSuccess) {
+function __doChangeQuotationStatus(rowid, status_rowid, order_rowid, order_s_rowid, seq, job_number, typ_id , strStatusRemark, fncOnSuccess) {
 	var _index = 0;
 	var _rowid = rowid || false;
+	var _type_id = typ_id || false;
 	var _job_number = job_number || false;
 	var _status_rowid = status_rowid || false;
 	var _status_remark = strStatusRemark || false;
@@ -1305,6 +1307,7 @@ function __doChangeQuotationStatus(rowid, status_rowid, order_rowid, order_s_row
 	if (_order_s_rowid) _json["order_s_rowid"] = _order_s_rowid;
 	if (_seq) _json["seq"] = _seq;
 	if (_job_number) _json["job_number"] = _job_number;
+	if (_type_id) _json["type_id"] = _type_id;
 	_json["timestamp"] = datePostFormat(_onload_time);
 	_str = JSON.stringify(_json);
 	$.ajax({
@@ -1416,6 +1419,7 @@ function fnc__DDT_Row_RenderAvailStatus(data, type, full) {
 	var _short_job_number = String(_qo_job_number).substring(5,10);
 	var _qo_code = full['prod_id'] || false;
 	var _qo_status = full['status_rowid'] || false;
+	var _qo_type_id = full['type_id'] || false;
 	var _qo_order_rowid = full['order_rowid'] || -1;
 	var _qo_order_s_rowid = full['order_s_rowid'] || -1;
 	var _qo_seq = full['seq'] || - 1;
@@ -1427,6 +1431,7 @@ function fnc__DDT_Row_RenderAvailStatus(data, type, full) {
 		.attr('seq', _qo_seq)
 		.attr('short_job_number', _short_job_number)
 		.attr('job_number', _qo_job_number)
+		.attr('type_id',_qo_type_id)
 		.addClass('cls-sel-change-status_prod')
 		.append($('<option>').html('--'))
 		.appendTo(_elPanel);

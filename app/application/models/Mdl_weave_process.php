@@ -22,7 +22,7 @@ class Mdl_weave_process extends MY_Model
 		-- WEAVE SQL
 		select  DISTINCT ON (o.job_number, d.seq, o.order_date)
 		o.job_number, o.customer , CONCAT(o.type, ' [ ', o.category, ' ] ') as disp_order , o.standard_pattern as pattern, osd.start_ps_date
-		, d.position, o.fabric, o.total_qty as qty, d.detail, d.size, d.job_hist, s.screen_type, s.name AS disp_type
+		, d.position, o.fabric, o.total_qty as qty, d.detail, d.size, d.job_hist, s.screen_type, s.name AS disp_type,  o.type_id
 		, tmp.rowid  as prod_id, tmp.prod_status  as status_rowid, ss.name  as disp_status, tmp.weave_type as type_rowid, mst.name as disp_weave_type
 		, tmp.width , tmp.height, tmp.fabric_date , tmp.eg_date, tmp.block_emp , tmp.block_number , tmp.stitch_number , tmp.color_silk_qty, tmp.prod_cost, tmp.img, tmp.eg_remark
 		,d.order_rowid, d.order_screen_rowid as order_s_rowid, d.seq, tmp.prod_cost, tmp.is_cancel as is_cancel, tmp.status_remark, tmp.approve_date, tmp.order_remark
@@ -81,7 +81,7 @@ class Mdl_weave_process extends MY_Model
 				ON d.type_id = o.type_id
 				AND d.order_rowid = o.order_rowid
 			INNER JOIN pm_m_order_screen s on s.rowid = d.order_screen_rowid
-			LEFT JOIN pm_t_manu_weave_production tmp on tmp.order_weave_rowid = d.order_screen_rowid and  tmp.order_rowid = d.order_rowid and tmp.seq = d.seq
+			LEFT JOIN pm_t_manu_weave_production tmp on tmp.order_weave_rowid = d.order_screen_rowid and tmp.order_rowid = d.order_rowid and tmp.seq = d.seq and tmp.type_id = o.type_id
 			LEFT JOIN m_manu_weave_status ss ON ss.rowid = tmp.prod_status
 			LEFT JOIN m_manu_weave_type mst ON mst.rowid = tmp.weave_type
 			LEFT JOIN v_order_start_date osd ON osd.job_number = o.job_number
@@ -160,14 +160,14 @@ EOT;
 		}
 	}
 
-	function change_status_by_id($rowid, $status_rowid, $status_remark = FALSE, $order_rowid, $order_s_rowid, $seq, $job_number, $_timestamp)
+	function change_status_by_id($rowid, $status_rowid, $status_remark = FALSE, $order_rowid, $order_s_rowid, $seq, $job_number, $typeid, $_timestamp)
 	{
 		$_rowid = $this->db->escape((int) $rowid);
 		$status_rowid = $this->db->escape((int) $status_rowid);
 		$_userid = $this->db->escape((int)$this->session->userdata('user_id'));
 		if ($status_remark) $this->db->set('status_remark', $status_remark);
 
-		if ($order_rowid && $order_s_rowid && $seq) {
+		if ($order_rowid && $order_s_rowid && $seq && $typeid) {
 			if(!$this->_checkIsExits($order_rowid,  $seq)){
 				return false;
 			}
@@ -183,6 +183,7 @@ EOT;
 				'prod_cost' => '0',
 				'job_number' => $job_number,
 				'is_cancel' => '0',
+				'type_id' => $typeid,
 				'seq' => $seq,
 				'create_by' => $_userid,
 				'prod_status' => $status_rowid,
