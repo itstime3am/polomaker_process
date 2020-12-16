@@ -86,9 +86,7 @@ class Mdl_weave_process extends MY_Model
 			LEFT JOIN m_manu_weave_type mst ON mst.rowid = tmp.weave_type
 			LEFT JOIN v_order_start_date osd ON osd.job_number = o.job_number
 			LEFT JOIN m_fabric_status fs ON tmp.fabric_status = fs.rowid 
-		WHERE o.ps_rowid >= 30
-		AND o.ps_rowid != 60
-		AND s.screen_type = 1
+		WHERE s.screen_type = 1
 		AND COALESCE(o.is_cancel, 0) < 1
 EOT;
 
@@ -102,10 +100,15 @@ EOT;
 			, 'date_from' => array('type'=>'dat', 'dbcol'=>'o.order_date', 'operand'=>'>=')
 			, 'date_to' => array('type'=>'dat', 'dbcol'=>'o.order_date', 'operand'=>'<=')
 		);
-		
 		$_sql .= $this->_getSearchConditionSQL($arrObj, $_arrSpecSearch);
-		$_sql .= "\n ORDER BY o.order_date DESC LIMIT 1000";
 
+		if(strpos($_sql,"t.is_order_active LIKE CONCAT('%', '1', '%')")){
+			$_sql = str_replace("t.is_order_active LIKE CONCAT('%', '1', '%')", " o.ps_rowid != 60 AND o.ps_rowid >= 30 ", $_sql);
+		}else{
+			$_sql .= "\n AND o.ps_rowid >= 30";
+		}
+		
+		$_sql .= "\n ORDER BY o.order_date DESC LIMIT 1000";
 		return $this->arr_execute($_sql);
 	}
 

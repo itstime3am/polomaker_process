@@ -321,6 +321,12 @@ TMP;
 					"value" => FALSE
 				),
 				array(
+					"type" => "chk",
+					"label" => "แสดงเฉพาะใบงานที่ Active",
+					"name" => "is_order_active",
+					"value" => TRUE
+				),
+				array(
 					"type" => "info",
 					"value" => "&nbsp;"
 				)
