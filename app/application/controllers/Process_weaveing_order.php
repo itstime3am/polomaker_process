@@ -88,15 +88,16 @@ SCRPT
 		$this->_setController("job_number", "เลขที่งาน", NULL, array("selectable"=>TRUE,"default"=>TRUE,"class"=>"center","order"=>2));
 		$this->_setController("start_ps_date", "วันที่เริ่มการผลิต", NULL, array("selectable"=>TRUE,"default"=>TRUE,"class"=>"center","order"=>3));
 		$this->_setController("customer", "ลูกค้า", NULL, array("selectable"=>TRUE,"default"=>TRUE,"class"=>"center","order"=>4));
-		$this->_setController("disp_order", "ประเภทสินค้า", NULL, array("selectable"=>TRUE,"default"=>TRUE,"class"=>"center","order"=>9));
-		$this->_setController("pattern", "แบบเสื้อ", NULL, array("selectable"=>TRUE,"default"=>TRUE,"order"=>11));
-		$this->_setController("fabric", "ชนิดผ้า", NULL, array("selectable"=>TRUE,"default"=>TRUE,"class"=>"center","order"=>12));
-		$this->_setController("qty", "จำนวน", NULL, array("selectable"=>TRUE,"default"=>TRUE,"class"=>"center","order"=>13));
-		$this->_setController("position", "ตำแหน่ง", NULL, array("selectable"=>TRUE,"default"=>TRUE,"class"=>"center position","order"=>14));
-		$this->_setController("disp_weave_type", "ประเภทงาน", NULL, array("selectable"=>TRUE,"default"=>TRUE,"class"=>"edit center weave_type","order"=>15));
+		$this->_setController("company", "บริษัท", NULL, array("selectable"=>TRUE,"default"=>FALSE,"class"=>"center","order"=>5));
+		$this->_setController("disp_order", "ประเภทสินค้า", NULL, array("selectable"=>TRUE,"default"=>TRUE,"class"=>"center","order"=>10));
+		$this->_setController("pattern", "แบบเสื้อ", NULL, array("selectable"=>TRUE,"default"=>TRUE,"order"=>12));
+		$this->_setController("fabric", "ชนิดผ้า", NULL, array("selectable"=>TRUE,"default"=>TRUE,"class"=>"center","order"=>13));
+		$this->_setController("qty", "จำนวน", NULL, array("selectable"=>TRUE,"default"=>TRUE,"class"=>"center","order"=>14));
+		$this->_setController("position", "ตำแหน่ง", NULL, array("selectable"=>TRUE,"default"=>TRUE,"class"=>"center position","order"=>15));
+		$this->_setController("disp_weave_type", "ประเภทงาน", NULL, array("selectable"=>TRUE,"default"=>TRUE,"class"=>"edit center weave_type","order"=>16));
 		// $this->_setController("detail", "รายละเอียด", NULL, array("selectable"=>TRUE,"default"=>TRUE,"class"=>"center","order"=>9));
-		$this->_setController("width", "กว้าง", NULL, array("selectable"=>TRUE,"default"=>TRUE,"class"=>"edit center width","width"=>"60","order"=>16));
-		$this->_setController("height", "สูง", NULL, array("selectable"=>TRUE,"default"=>TRUE,"class"=>"edit center height","width"=>"60","order"=>17));
+		$this->_setController("width", "กว้าง", NULL, array("selectable"=>TRUE,"default"=>TRUE,"class"=>"edit center width","width"=>"60","order"=>17));
+		$this->_setController("height", "สูง", NULL, array("selectable"=>TRUE,"default"=>TRUE,"class"=>"edit center height","width"=>"60","order"=>18));
 		$this->_setController("eg_date", "วันที่ส่งแบบ", NULL, array("selectable"=>TRUE,"default"=>TRUE,"class"=>"center","order"=>19));
 		$this->_setController("approve_date", "วันที่ Sale Approve", NULL, array("selectable"=>TRUE,"default"=>TRUE,"class"=>"center","order"=>20));
 		$this->_setController("fabric_date", "วันที่รับผ้า", NULL, array("selectable"=>TRUE,"default"=>TRUE,"class"=>"center","order"=>21));
@@ -136,30 +137,30 @@ CCLMS
 				"column" => <<<CCLMS
 { "sTitle":"สถานะ","width":"100","sClass":"center","mData":'rowid',"mRender":function(data,type,full) { return fnc__DDT_Row_RenderStatus(data, type, full); }, "bSortable": true }
 CCLMS
-				, "order" => 5
+				, "order" => 6
 			),
 			array(
 				"column" => <<<CCLMS
 { "sTitle":"แก้ไขสถานะ","width":"180","sClass":"center","mData":'rowid',"mRender":function(data,type,full) { return fnc__DDT_Row_RenderAvailStatus(data, type, full); }, "bSortable": false }
 CCLMS
-			, "order" => 6),
+			, "order" => 7),
 			array(
 				"column" => <<<CCLMS
 { "sTitle":"สถานะผ้า","width":"100","sClass":"center","mData":'rowid',"mRender":function(data,type,full) { return fnc__DDT_Row_RenderFabricStatus(data, type, full); }, "bSortable": true }
-CCLMS
-				, "order" => 7
-			),
-			array(
-				"column" => <<<CCLMS
-{ "sTitle":"แก้ไขสถานะผ้า","width":"100","sClass":"center","mData":'rowid',"mRender":function(data,type,full) { return fnc__DDT_Row_RenderAvailFabricStatus(data, type, full); }, "bSortable": true }
 CCLMS
 				, "order" => 8
 			),
 			array(
 				"column" => <<<CCLMS
+{ "sTitle":"แก้ไขสถานะผ้า","width":"100","sClass":"center","mData":'rowid',"mRender":function(data,type,full) { return fnc__DDT_Row_RenderAvailFabricStatus(data, type, full); }, "bSortable": true }
+CCLMS
+				, "order" => 9
+			),
+			array(
+				"column" => <<<CCLMS
 { "sTitle":"อัพโหลดรูป","width":"180","sClass":"center edit img","mData":"rowid","mRender":function(data,type,full) { return fnc__DDT_Row_RenderEdit(data, type, full); } , "bSortable": false}
 CCLMS
-				, "order" => 10)
+				, "order" => 11)
 			);
 
 		$pass['left_panel'] = $this->add_view('_public/_search_panel', $this->_arrSearchParams(), TRUE);
@@ -300,6 +301,16 @@ TMP;
 					"type" => "txt",
 					"label" => $this->_getDisplayLabel('เลขที่งาน'),
 					"name" => "job_number"
+				),
+				array(
+					"type" => "txt",
+					"label" => $this->_getDisplayLabel('ชื่อลูกค้า'),
+					"name" => "customer_name"
+				),
+				array(
+					"type" => "txt",
+					"label" => $this->_getDisplayLabel('ชื่อบริษัท'),
+					"name" => "customer_company"
 				),
 				array(
 					"type" => "dpk"

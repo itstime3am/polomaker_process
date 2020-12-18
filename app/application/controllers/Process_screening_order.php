@@ -87,6 +87,7 @@ SCRPT
 		$this->_setController("job_number", "เลขที่งาน", NULL, array("selectable"=>TRUE,"default"=>TRUE,"class"=>"center","order"=>2));
 		$this->_setController("start_ps_date", "วันที่เริ่มการผลิต", NULL, array("selectable"=>TRUE,"default"=>TRUE,"class"=>"center","order"=>3));
 		$this->_setController("customer", "ลูกค้า", NULL, array("selectable"=>TRUE,"default"=>TRUE,"class"=>"center","order"=>4));
+		$this->_setController("company", "บริษัท", NULL, array("selectable"=>TRUE,"default"=>FALSE,"class"=>"center","order"=>5));
 		$this->_setController("disp_order", "ประเภทสินค้า", NULL, array("selectable"=>TRUE,"default"=>TRUE,"class"=>"center","order"=>10));
 		$this->_setController("pattern", "แบบเสื้อ", NULL, array("selectable"=>TRUE,"default"=>TRUE,"order"=>12));
 		$this->_setController("fabric", "ชนิดผ้า", NULL, array("selectable"=>TRUE,"default"=>TRUE,"class"=>"center","order"=>13));
@@ -134,22 +135,22 @@ CCLMS
 				"column" => <<<CCLMS
 { "sTitle":"สถานะ","width":"100","sClass":"center","mData":'rowid',"mRender":function(data,type,full) { return fnc__DDT_Row_RenderStatus(data, type, full); }, "bSortable": true }
 CCLMS
-				, "order" => 5),
+				, "order" => 6),
 			array(
 			"column" => <<<CCLMS
 { "sTitle":"แก้ไขสถานะ","width":"180","sClass":"center","mData":'rowid',"mRender":function(data,type,full) { return fnc__DDT_Row_RenderAvailStatus(data, type, full); }, "bSortable": false }
 CCLMS
-			, "order" => 6),
+			, "order" => 7),
 			array(
 				"column" => <<<CCLMS
 { "sTitle":"สถานะผ้า","width":"100","sClass":"center","mData":'rowid',"mRender":function(data,type,full) { return fnc__DDT_Row_RenderFabricStatus(data, type, full); }, "bSortable": true }
 CCLMS
-				, "order" => 7),
+				, "order" => 8),
 			array(
 				"column" => <<<CCLMS
 { "sTitle":"แก้ไขสถานะผ้า","width":"100","sClass":"center","mData":'rowid',"mRender":function(data,type,full) { return fnc__DDT_Row_RenderAvailFabricStatus(data, type, full); }, "bSortable": true }
 CCLMS
-				, "order" => 8),
+				, "order" => 9),
 			array(
 				"column" => <<<CCLMS
 { "sTitle":"อัพโหลดรูป","width":"180","sClass":"center edit img","mData":"rowid","mRender":function(data,type,full) { return fnc__DDT_Row_RenderEdit(data, type, full); } , "bSortable": false}
@@ -296,6 +297,16 @@ TMP;
 					"type" => "txt",
 					"label" => $this->_getDisplayLabel('เลขที่งาน'),
 					"name" => "job_number"
+				),
+				array(
+					"type" => "txt",
+					"label" => $this->_getDisplayLabel('ชื่อลูกค้า'),
+					"name" => "customer_name"
+				),
+				array(
+					"type" => "txt",
+					"label" => $this->_getDisplayLabel('ชื่อบริษัท'),
+					"name" => "customer_company"
 				),
 				array(
 					"type" => "dpk"

@@ -22,7 +22,7 @@ class Mdl_weave_process extends MY_Model
 		-- WEAVE SQL
 		select  DISTINCT ON (o.job_number, d.seq, o.order_date)
 		o.job_number, o.customer , CONCAT(o.type, ' [ ', o.category, ' ] ') as disp_order , o.standard_pattern as pattern, osd.start_ps_date
-		, d.position, o.fabric, o.total_qty as qty, d.detail, d.size, d.job_hist, s.screen_type, s.name AS disp_type,  o.type_id
+		, d.position, o.fabric, o.total_qty as qty, d.detail, d.size, d.job_hist, s.screen_type, s.name AS disp_type,  o.type_id, o.company
 		, tmp.rowid  as prod_id, tmp.prod_status  as status_rowid, ss.name  as disp_status, tmp.weave_type as type_rowid, mst.name as disp_weave_type
 		, tmp.width , tmp.height, tmp.fabric_date , tmp.eg_date, tmp.block_emp , tmp.block_number , tmp.stitch_number , tmp.color_silk_qty, tmp.prod_cost, tmp.img, tmp.eg_remark
 		,d.order_rowid, d.order_screen_rowid as order_s_rowid, d.seq, tmp.prod_cost, tmp.is_cancel as is_cancel, tmp.status_remark, tmp.approve_date, tmp.order_remark
@@ -96,16 +96,35 @@ EOT;
 		}
 
 		$_arrSpecSearch = array(
-			'job_number' => array("type"=>"txt", 'dbcol'=>'o.job_number')
+			'job_number' => array("type"=>"txt", 'dbcol'=>'o.job_number',)
 			, 'date_from' => array('type'=>'dat', 'dbcol'=>'o.order_date', 'operand'=>'>=')
 			, 'date_to' => array('type'=>'dat', 'dbcol'=>'o.order_date', 'operand'=>'<=')
 		);
 		$_sql .= $this->_getSearchConditionSQL($arrObj, $_arrSpecSearch);
 
-		if(strpos($_sql,"t.is_order_active LIKE CONCAT('%', '1', '%')")){
-			$_sql = str_replace("t.is_order_active LIKE CONCAT('%', '1', '%')", " o.ps_rowid != 60 AND o.ps_rowid >= 30 ", $_sql);
-		}else{
-			$_sql .= "\n AND o.ps_rowid >= 30";
+		//search order all ( include not active )
+		if (isset($arrObj['is_order_active']) && ($arrObj['is_order_active'])) {
+			if(strpos($_sql,"t.is_order_active LIKE CONCAT('%', '1', '%')")){
+				$_sql = str_replace("t.is_order_active LIKE CONCAT('%', '1', '%')", " o.ps_rowid != 60 AND o.ps_rowid >= 30 ", $_sql);
+			}else{
+				$_sql .= "\n AND o.ps_rowid >= 30";
+			}
+		}
+
+		//search by customer_nanme ( lik condition )
+		if (isset($arrObj['customer_name']) && ($arrObj['customer_name'])) {
+			$searchStr = "t.customer_name LIKE CONCAT('%', '".$arrObj['customer_name']."', '%')";
+			if(strpos($_sql,$searchStr)){
+				$_sql = str_replace($searchStr, " o.customer_name like '%".$arrObj['customer_name']."%'", $_sql);
+			}
+		}
+
+		//search by customer_company ( lik condition )
+		if (isset($arrObj['customer_company']) && ($arrObj['customer_company'])) {
+			$searchStr = "t.customer_company LIKE CONCAT('%', '".$arrObj['customer_company']."', '%')";
+			if(strpos($_sql,$searchStr)){
+				$_sql = str_replace($searchStr, " o.company like '%".$arrObj['customer_company']."%'", $_sql);
+			}
 		}
 		
 		$_sql .= "\n ORDER BY o.order_date DESC LIMIT 1000";
