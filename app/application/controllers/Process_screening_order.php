@@ -303,11 +303,11 @@ TMP;
 					"label" => $this->_getDisplayLabel('ชื่อลูกค้า'),
 					"name" => "customer_name"
 				),
-				array(
-					"type" => "txt",
-					"label" => $this->_getDisplayLabel('ชื่อบริษัท'),
-					"name" => "customer_company"
-				),
+				// array(
+				// 	"type" => "txt",
+				// 	"label" => $this->_getDisplayLabel('ชื่อบริษัท'),
+				// 	"name" => "customer_company"
+				// ),
 				array(
 					"type" => "dpk"
 					,"label" => "จากวันที่"

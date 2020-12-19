@@ -115,19 +115,19 @@ EOT;
 		if (isset($arrObj['customer_name']) && ($arrObj['customer_name'])) {
 			$searchStr = "t.customer_name LIKE CONCAT('%', '".$arrObj['customer_name']."', '%')";
 			if(strpos($_sql,$searchStr)){
-				$_sql = str_replace($searchStr, " o.customer_name like '%".$arrObj['customer_name']."%'", $_sql);
+				$_sql = str_replace($searchStr, " ( o.customer_name like '%".$arrObj['customer_name']."%' OR o.company like '%".$arrObj['customer_name']."%')", $_sql);
 			}
 		}
 
 		//search by customer_company ( lik condition )
-		if (isset($arrObj['customer_company']) && ($arrObj['customer_company'])) {
-			$searchStr = "t.customer_company LIKE CONCAT('%', '".$arrObj['customer_company']."', '%')";
-			if(strpos($_sql,$searchStr)){
-				$_sql = str_replace($searchStr, " o.company like '%".$arrObj['customer_company']."%'", $_sql);
-			}
-		}
+		// if (isset($arrObj['customer_company']) && ($arrObj['customer_company'])) {
+		// 	$searchStr = "t.customer_company LIKE CONCAT('%', '".$arrObj['customer_company']."', '%')";
+		// 	if(strpos($_sql,$searchStr)){
+		// 		$_sql = str_replace($searchStr, " o.company like '%".$arrObj['customer_company']."%'", $_sql);
+		// 	}
+		// }
 		
-		$_sql .= "\n ORDER BY o.order_date DESC LIMIT 1000";
+		$_sql .= "\n ORDER BY o.order_date DESC LIMIT 2000";
 		return $this->arr_execute($_sql);
 	}
 
