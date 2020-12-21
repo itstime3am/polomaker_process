@@ -118,14 +118,6 @@ EOT;
 				$_sql = str_replace($searchStr, " ( o.customer_name like '%".$arrObj['customer_name']."%' OR o.company like '%".$arrObj['customer_name']."%')", $_sql);
 			}
 		}
-
-		//search by customer_company ( lik condition )
-		// if (isset($arrObj['customer_company']) && ($arrObj['customer_company'])) {
-		// 	$searchStr = "t.customer_company LIKE CONCAT('%', '".$arrObj['customer_company']."', '%')";
-		// 	if(strpos($_sql,$searchStr)){
-		// 		$_sql = str_replace($searchStr, " o.company like '%".$arrObj['customer_company']."%'", $_sql);
-		// 	}
-		// }
 		
 		$_sql .= "\n ORDER BY o.order_date DESC LIMIT 2000";
 		return $this->arr_execute($_sql);
@@ -151,6 +143,7 @@ EOT;
 		$_user_id = $this->db->escape((int)$this->session->userdata('user_id'));
 		$_rowid =  $_arrData[0]['rowid'];
 		$_timestamp = $_arrData[0]['timestamp'];
+		$eg_remark = '';
 
 		if($_timestamp && $_rowid){
 			if(!$this->_checkUpdateTime($_rowid, $_timestamp)){
@@ -165,12 +158,23 @@ EOT;
 							if($_col != 'timestamp'){
 								$this->db->set('"'. $_col .'"', $_val);
 							}
+							if($_col == 'eg_remark') $eg_remark = $_val;
 						}	
 					}
 			}
 			$this->db->set('update_by', $_user_id);
 			$this->db->where('rowid', $_arrData[$i]['rowid']);
 			$this->db->update($this->_TABLE_NAME);
+		}
+
+		if($eg_remark != ''){
+			$data = array(
+				'weave_rowid' => $_rowid,
+				'department' =>  'manu_weave',
+				'remark_text' => $eg_remark,
+				'create_by' => $_user_id,
+			);
+			$this->db->insert('pm_t_manu_weave_remark_timeline', $data);
 		}
 
 		$this->error_message = $this->db->error()['message'];

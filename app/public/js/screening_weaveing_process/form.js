@@ -6,53 +6,6 @@ $(function () {
 	//	$('.cls-div-form-edit-dialog[index="0"]').dialog('option', 'height', 520);
 	//	$('.cls-div-form-edit-dialog[index="1"]').dialog('option', 'height', 500);
 
-	// _DLG_STATUS_REMARK = $('#div_status_remark').dialog({
-	// 	height: 180
-	// 	, width: 780
-	// 	, show: { effect: "puff", duration: 1000 }
-	// 	, hide: { effect: "fade", duration: 1000 }
-	// 	, modal: true
-	// 	, resizable: true
-	// 	, closeOnEscape: true
-	// 	, autoOpen: false
-	// 	, beforeClose: function (event, ui) {
-	// 		$(this).removeAttr('status_rowid').removeAttr('status_text');
-	// 	}
-	// 	, buttons: {
-	// 		'Commit': function () {
-	// 			var _rowid = $(this).attr('ps_rowid') || false;
-	// 			var _code = $(this).attr('ps_code') || false;
-	// 			var _curr_status = $(this).attr('curr_status_text') || false;
-	// 			var _status_rowid = $(this).attr('status_rowid') || false;
-	// 			var _status_text = $(this).attr('status_text') || false;
-	// 			var _remark = getValue($('#sel-status_remark'), '');
-	// 			_remark += ' ' + getValue($('#txa-status_remark'), '');
-	// 			_remark = _remark.trim();
-	// 			doClearVldrErrorElement($('#sel-status_remark'));
-	// 			doClearVldrErrorElement($('#txa-status_remark'));
-	// 			if (_remark == '') {
-	// 				doSetVldrError($('#sel-status_remark'), 'status_remark', 'required', 'กรุณาระบุเหตุผลในการเปลี่ยนเป็นสถานะ', 1);
-	// 				doSetVldrError($('#txa-status_remark'), 'status_remark', 'required', 'กรุณาระบุเหตุผลในการเปลี่ยนเป็นสถานะ', 1);
-	// 				_doDisplayToastMessage('กรุณาระบุเหตุผลในการเปลี่ยนเป็นสถานะ \"' + _status_text + '\"', 3, false);
-	// 			} else {
-	// 				var _str = 'id:' + _rowid;
-	// 				if (_code) _str = 'เลขที่ \"' + _code + '\"';
-	// 				if (confirm('กรุณายืนยันการเปลี่ยนสถานะของใบเสนอราคา ' + _str + ' เป็นสถานะ "' + _status_text + '"')) {
-	// 					__doChangeQuotationStatus(_rowid, _status_rowid, _remark, function () {
-	// 						clearValue($('#sel-status_remark'));
-	// 						clearValue($('#txa-status_remark'));
-	// 					});
-	// 					$(this).dialog('close');
-	// 				}
-	// 			}
-	// 			return false;
-	// 		}
-	// 		, 'Cancel': function () {
-	// 			$(this).dialog('close');
-	// 		}
-	// 	}
-	// });
-
 	_DLG_EDIT_COLUMN = $('#div_edit_dialog').dialog({
 		height: 'auto'
 		, width: 780
@@ -189,6 +142,7 @@ $(function () {
 			if($(this).children('img').attr('alt') == "edit"){
 				$('.btn-input-file-upload').show();
 			}else{
+				$('#txa-eg_remark').attr('readonly', true);
 				$("#btn-download-img").show();
 			}
 			var ps_rowid = $(e.target).closest('tr').find(".cls-sel-change-status_prod").attr('ps_rowid');

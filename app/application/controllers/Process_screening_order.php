@@ -458,7 +458,7 @@ TMP;
 					}
 				}else{
 					//update by id
-					if($this->m->change_status_by_id($_arrData['rowid'], $_arrData['status_rowid'],  $_remark, '', '', '','',$_arrData['timestamp'])){
+					if($this->m->change_status_by_id($_arrData['rowid'], $_arrData['status_rowid'],  $_remark, '', '', '','','',$_arrData['timestamp'])){
 						$strError = $this->m->error_message;
 					}else{
 						$strError = "refresh";
