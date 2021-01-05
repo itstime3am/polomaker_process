@@ -194,7 +194,7 @@ EOT;
 		if ($status_remark) $this->db->set('status_remark', $status_remark);
 
 		if ($order_rowid && $order_s_rowid && $seq && $typeid) {
-			if(!$this->_checkIsExits($order_rowid,  $seq)){
+			if(!$this->_checkIsExits($order_rowid,  $seq, $typeid)){
 				return false;
 			}
 			$data = array(
@@ -290,9 +290,9 @@ EOT;
 				}
 	}
 
-	function _checkIsExits($_order_rowid, $_seq){
+	function _checkIsExits($_order_rowid, $_seq, $typeid){
 
-		$_sql = "SELECT COUNT(rowid) FROM pm_t_manu_weave_production WHERE order_rowid = $_order_rowid AND seq = $_seq";
+		$_sql = "SELECT COUNT(rowid) FROM pm_t_manu_weave_production WHERE order_rowid = $_order_rowid AND seq = $_seq AND type_id = $typeid";
 		$arrData_count = $this->arr_execute($_sql);
 		if( $arrData_count[0]['count'] < 1 ){ 
 			return true;
